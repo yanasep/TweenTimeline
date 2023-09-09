@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
 using Yanasep;
@@ -16,9 +15,6 @@ namespace TweenTimeline
     [DisplayName("Tween/Text Count Up Tween Track")]
     public class TextMeshProUGUICountUpTweenTrack : TextMeshProUGUITweenTrack
     {
-#if UNITY_EDITOR
-        public override Texture2D Icon => EditorGUIUtility.IconContent("d_scenevis_visible_hover").image as Texture2D;
-#endif
         [SerializeField, ExtractContent] private TextMeshProUGUICountUpTweenMixerBehaviour _behaviour;
         protected override TweenMixerBehaviour<TextMeshProUGUI> Template => _behaviour;
     }
