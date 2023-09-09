@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.Timeline;
 using UnityEngine.UI;
 
 namespace TweenTimeline
@@ -10,6 +11,16 @@ namespace TweenTimeline
         [SerializeField] private TextMeshProUGUI countryNameText;
         [SerializeField] private Image countryFlagImage;
         [SerializeField] private TextMeshProUGUI scoreText;
+        [SerializeField] private TweenTimelineDirector _tweenDirector;
+        [SerializeField] private TimelineAsset _scoreUpTween;
+        [SerializeField] private TimelineAsset _changePlaceTween;
+
+        private static readonly int TweenHashScore = TweenParameterContainer.StringToHash("Score");
+
+        public void Initialize()
+        {
+            _tweenDirector.Initialize();
+        }
 
         public void Set(CountryCode country, int place, int score)
         {
@@ -17,15 +28,23 @@ namespace TweenTimeline
             countryNameText.SetText(data.CountryName);
             countryFlagImage.sprite = data.CountryFlag;
             UpdatePlace(place);
-            UpdateScore(score);
+            UpdateScore(score, false);
         }
 
-        public void UpdateScore(int score)
-        {
-            scoreText.SetText("{0}", score);
+        public void UpdateScore(int score, bool playAnimation = true)
+        {   
+            if (playAnimation)
+            {
+                _tweenDirector.ParameterContainer.Int.Set(TweenHashScore, score);
+                _tweenDirector.Play(_scoreUpTween);
+            }
+            else
+            {
+                scoreText.SetText("{0}", score);
+            }
         }
 
-        public void UpdatePlace(int place)
+        public void UpdatePlace(int place, bool playAnimation = true)
         {
             placeText.SetText("{0}", place);
         }

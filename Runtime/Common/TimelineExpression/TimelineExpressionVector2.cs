@@ -11,7 +11,7 @@ namespace TweenTimeline
     public abstract class TimelineExpressionVector2
     {
         /// <summary>値取得</summary>
-        public abstract Vector2 GetValue(TimelineParameterContainer parameter);
+        public abstract Vector2 GetValue(TweenParameterContainer parameter);
     }
 
     /// <summary>
@@ -24,7 +24,7 @@ namespace TweenTimeline
         [NoPropertyLabel] public Vector2 Value;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TimelineParameterContainer parameter)
+        public override Vector2 GetValue(TweenParameterContainer parameter)
         {
             return Value;
         }
@@ -42,7 +42,7 @@ namespace TweenTimeline
         private int paramHash;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TimelineParameterContainer parameter)
+        public override Vector2 GetValue(TweenParameterContainer parameter)
         {
             return parameter.Vector2.GetOrDefault(paramHash);
         }
@@ -53,7 +53,7 @@ namespace TweenTimeline
 
         public void OnAfterDeserialize()
         {
-            paramHash = TimelineParameterContainer.StringToHash(ParameterName);
+            paramHash = TweenParameterContainer.StringToHash(ParameterName);
         }
     }
 
@@ -71,7 +71,7 @@ namespace TweenTimeline
         public TimelineExpressionVector2 Right;
         
         /// <inheritdoc/>
-        public override Vector2 GetValue(TimelineParameterContainer parameter)
+        public override Vector2 GetValue(TweenParameterContainer parameter)
         {
             return Left.GetValue(parameter) + Right.GetValue(parameter);
         }
@@ -91,7 +91,7 @@ namespace TweenTimeline
         public TimelineExpressionVector2 Right;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TimelineParameterContainer parameter)
+        public override Vector2 GetValue(TweenParameterContainer parameter)
         {
             return Left.GetValue(parameter) - Right.GetValue(parameter);
         }
@@ -111,7 +111,7 @@ namespace TweenTimeline
         public TimelineExpressionFloat Right;
         
         /// <inheritdoc/>
-        public override Vector2 GetValue(TimelineParameterContainer parameter)
+        public override Vector2 GetValue(TweenParameterContainer parameter)
         {
             return Left.GetValue(parameter) * Right.GetValue(parameter);
         }
@@ -131,7 +131,7 @@ namespace TweenTimeline
         public TimelineExpressionFloat Right;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TimelineParameterContainer parameter)
+        public override Vector2 GetValue(TweenParameterContainer parameter)
         {
             return Left.GetValue(parameter) / Right.GetValue(parameter);
         }
@@ -151,7 +151,7 @@ namespace TweenTimeline
         public TimelineExpressionVector2 Right;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TimelineParameterContainer parameter)
+        public override Vector2 GetValue(TweenParameterContainer parameter)
         {
             return Vector2.Scale(Left.GetValue(parameter), Right.GetValue(parameter));
         }

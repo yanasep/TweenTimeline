@@ -10,10 +10,10 @@ namespace TweenTimeline
     /// スケールTweenクリップ
     /// </summary>
     [Serializable]
-    [DisplayName("Scale Tween")]
-    public class TransformScaleTweenClip : TweenClip<Transform>
+    [DisplayName("Punch Scale Tween")]
+    public class TransformPunchScaleTweenClip : TweenClip<Transform>
     {
-        [SerializeField, ExtractContent] private RectTransformScaleTweenBehaviour _behaviour;
+        [SerializeField, ExtractContent] private RectTransformPunchScaleTweenBehaviour _behaviour;
         protected override TweenBehaviour<Transform> Template => _behaviour;
     }
 
@@ -21,19 +21,21 @@ namespace TweenTimeline
     /// スケールTweenビヘイビア
     /// </summary>
     [Serializable]
-    public class RectTransformScaleTweenBehaviour : TweenBehaviour<Transform>
+    public class RectTransformPunchScaleTweenBehaviour : TweenBehaviour<Transform>
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant { Value = new Vector3(1, 1, 1) };
+        public TimelineExpressionVector3 Punch = new TimelineExpressionVector3Constant();
         
         public Ease Ease;
+        public int Vibrato = 10;
+        public float Elasticity = 1f;
 
         private Tween _tween;
 
         /// <inheritdoc/>
         public override void Start()
         {
-            _tween = Target.DOScale(EndValue.GetValue(Parameter), Duration).SetEase(Ease).SetUpdate(UpdateType.Manual);
+            _tween = Target.DOPunchScale(Punch.GetValue(Parameter), Duration, Vibrato, Elasticity).SetEase(Ease).SetUpdate(UpdateType.Manual);
         }
 
         /// <inheritdoc/>

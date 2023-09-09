@@ -10,9 +10,9 @@ namespace TweenTimeline
     /// <summary>
     /// サイズTweenトラック
     /// </summary>
-    [TrackClipType(typeof(RectTransformSizeDeltaTweenClip))]
-    [TrackBindingType(typeof(RectTransform))]
     [DisplayName("Tween/RectTransform Size Tween Track")]
+    [TrackBindingType(typeof(RectTransform))]
+    [TrackClipType(typeof(RectTransformSizeDeltaTweenClip))]
     public class RectTransformSizeDeltaTweenTrack : RectTransformTweenTrack
     {   
 #if UNITY_EDITOR

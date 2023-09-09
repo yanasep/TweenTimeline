@@ -10,9 +10,9 @@ namespace TweenTimeline
     /// <summary>
     /// 回転Tweenトラック
     /// </summary>
-    [TrackClipType(typeof(TransformRotationTweenClip))]
-    [TrackBindingType(typeof(RectTransform))]
     [DisplayName("Tween/Rotation Tween Track")]
+    [TrackBindingType(typeof(RectTransform))]
+    [TrackClipType(typeof(TransformRotationTweenClip))]
     public class TransformRotationTweenTrack : TransformTweenTrack
     {   
 #if UNITY_EDITOR

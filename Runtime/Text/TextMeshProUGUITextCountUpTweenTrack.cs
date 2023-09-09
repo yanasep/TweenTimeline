@@ -10,9 +10,9 @@ namespace TweenTimeline
     /// <summary>
     /// CanvasGroupのAlphaのTweenトラック
     /// </summary>
-    [TrackClipType(typeof(TextMeshProUGUICountUpTweenClip))]
-    [TrackBindingType(typeof(TextMeshProUGUI))]
     [DisplayName("Tween/Text Count Up Tween Track")]
+    [TrackBindingType(typeof(TextMeshProUGUI))]
+    [TrackClipType(typeof(TextMeshProUGUICountUpTweenClip))]
     public class TextMeshProUGUICountUpTweenTrack : TextMeshProUGUITweenTrack
     {
         [SerializeField, ExtractContent] private TextMeshProUGUICountUpTweenMixerBehaviour _behaviour;

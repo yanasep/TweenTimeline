@@ -10,9 +10,9 @@ namespace TweenTimeline
     /// <summary>
     /// CanvasGroupのAlphaのTweenトラック
     /// </summary>
-    [TrackClipType(typeof(CanvasGroupAlphaTweenClip))]
-    [TrackBindingType(typeof(CanvasGroup))]
     [DisplayName("Tween/Canvas Group Alpha Tween Track")]
+    [TrackBindingType(typeof(CanvasGroup))]
+    [TrackClipType(typeof(CanvasGroupAlphaTweenClip))]
     public class CanvasGroupAlphaTweenTrack : CanvasGroupTweenTrack
     {
 #if UNITY_EDITOR

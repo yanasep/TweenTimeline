@@ -9,15 +9,17 @@ namespace TweenTimeline
     public class TweenTimelineDefaultParameter : MonoBehaviour
     {
         [SerializeField] private SerializableDictionary<string, float> floats;
+        [SerializeField] private SerializableDictionary<string, int> ints;
+        [SerializeField] private SerializableDictionary<string, Color> colors;
         [SerializeField] private SerializableDictionary<string, Vector3> vector3s;
         [SerializeField] private SerializableDictionary<string, bool> bools;
 
         /// <summary>
         /// デフォルト値が入ったTimelineParameterContainerを生成して取得
         /// </summary>
-        public TimelineParameterContainer GetParameterContainer()
+        public TweenParameterContainer GetParameterContainer()
         {
-            var parameter = new TimelineParameterContainer();
+            var parameter = new TweenParameterContainer();
             
             foreach (var (key, val) in floats)
             {

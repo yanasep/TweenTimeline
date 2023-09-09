@@ -11,7 +11,7 @@ namespace TweenTimeline
     public abstract class TimelineExpressionColor
     {
         /// <summary>値取得</summary>
-        public abstract Color GetValue(TimelineParameterContainer parameter);
+        public abstract Color GetValue(TweenParameterContainer parameter);
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace TweenTimeline
         public Color Value;
 
         /// <inheritdoc/>
-        public override Color GetValue(TimelineParameterContainer parameter)
+        public override Color GetValue(TweenParameterContainer parameter)
         {
             return Value;
         }
@@ -43,7 +43,7 @@ namespace TweenTimeline
         private int paramHash;
 
         /// <inheritdoc/>
-        public override Color GetValue(TimelineParameterContainer parameter)
+        public override Color GetValue(TweenParameterContainer parameter)
         {
             return parameter.Color.GetOrDefault(paramHash);
         }
@@ -55,7 +55,7 @@ namespace TweenTimeline
 
         public void OnAfterDeserialize()
         {
-            paramHash = TimelineParameterContainer.StringToHash(ParameterName);
+            paramHash = TweenParameterContainer.StringToHash(ParameterName);
         }
     }
 }

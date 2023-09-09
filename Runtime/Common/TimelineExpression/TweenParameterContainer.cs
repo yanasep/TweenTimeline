@@ -6,7 +6,7 @@ namespace TweenTimeline
     /// <summary>
     /// タイムラインに渡すパラメータを保持するクラス
     /// </summary>
-    public class TimelineParameterContainer
+    public class TweenParameterContainer
     {
         public readonly TimelineParameterHolder<Vector3> Vector3 = new();
         public readonly TimelineParameterHolder<Vector3> Vector2 = new();
@@ -38,7 +38,7 @@ namespace TweenTimeline
         /// <summary>パラメータセット</summary>
         public void Set(string key, T value)
         {
-            Set(TimelineParameterContainer.StringToHash(key), value);
+            Set(TweenParameterContainer.StringToHash(key), value);
         }
 
         /// <summary>パラメータ取得</summary>
@@ -55,7 +55,7 @@ namespace TweenTimeline
         /// <summary>パラメータ取得</summary>
         public T GetOrDefault(string key)
         {
-            return GetOrDefault(TimelineParameterContainer.StringToHash(key));
+            return GetOrDefault(TweenParameterContainer.StringToHash(key));
         }
     }
 }

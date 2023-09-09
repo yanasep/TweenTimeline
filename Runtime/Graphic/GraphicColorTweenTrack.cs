@@ -11,9 +11,9 @@ namespace TweenTimeline
     /// <summary>
     /// カラーTweenトラック
     /// </summary>
-    [TrackClipType(typeof(GraphicColorTweenClip))]
-    [TrackBindingType(typeof(Graphic))]
     [DisplayName("Tween/Color Tween Track")]
+    [TrackBindingType(typeof(Graphic))]
+    [TrackClipType(typeof(GraphicColorTweenClip))]
     public class GraphicColorTweenTrack : GraphicTweenTrack
     {
 #if UNITY_EDITOR
@@ -34,13 +34,15 @@ namespace TweenTimeline
         [EnableIf(nameof(SetStartValue), true)]
         public Color StartValue = Color.white;
 
+        public RGBAFlags Enable;
+
         private Color _originalValue;
 
         /// <inheritdoc/>
         protected override void OnTrackStart()
         {
             if (!SetStartValue) return;
-            Target.color = StartValue;
+            Target.color = Enable.Apply(_originalValue, StartValue);
         }
 
         /// <inheritdoc/>

@@ -18,7 +18,7 @@ namespace TweenTimeline
         public virtual Texture2D Icon => null;  
 #endif
         
-        public TimelineParameterContainer Parameter { get; set; }
+        public TweenParameterContainer Parameter { get; set; }
     }
     
     /// <summary>
@@ -59,7 +59,7 @@ namespace TweenTimeline
                 }
                 else
                 {
-                    behaviour.Parameter = new TimelineParameterContainer();
+                    behaviour.Parameter = new TweenParameterContainer();
                 }
             }
             return playable;
@@ -84,7 +84,7 @@ namespace TweenTimeline
     /// </summary>
     public class TweenMixerBehaviour : PlayableBehaviour 
     {
-        public TimelineParameterContainer Parameter { get; set; }
+        public TweenParameterContainer Parameter { get; set; }
     }
 
     /// <summary>
@@ -106,7 +106,10 @@ namespace TweenTimeline
         public override void OnGraphStop(Playable playable)
         {
             base.OnGraphStop(playable);
-            ResetToOriginalState();
+            if (!Application.isPlaying)
+            {
+                ResetToOriginalState();
+            }
         }
 
         /// <inheritdoc/>

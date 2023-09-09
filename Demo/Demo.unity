@@ -1378,6 +1378,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: ListElement
       objectReference: {fileID: 0}
+    - target: {fileID: 3195262331388677768, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3195262331388677768, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3195262331388677768, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5177623822733020442, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: ints.m_keys.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5177623822733020442, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: ints.m_values.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5177623822733020442, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: ints.m_keys.Array.data[0]
+      value: Score
+      objectReference: {fileID: 0}
+    - target: {fileID: 5177623822733020442, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: ints.m_values.Array.data[0]
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 6156900289746747223, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

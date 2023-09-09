@@ -11,7 +11,7 @@ namespace TweenTimeline
     public abstract class TimelineExpressionBool
     {
         /// <summary>値取得</summary>
-        public abstract bool GetValue(TimelineParameterContainer parameter);
+        public abstract bool GetValue(TweenParameterContainer parameter);
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace TweenTimeline
         public bool Value;
 
         /// <inheritdoc/>
-        public override bool GetValue(TimelineParameterContainer parameter)
+        public override bool GetValue(TweenParameterContainer parameter)
         {
             return Value;
         }
@@ -43,7 +43,7 @@ namespace TweenTimeline
         private int paramHash;
 
         /// <inheritdoc/>
-        public override bool GetValue(TimelineParameterContainer parameter)
+        public override bool GetValue(TweenParameterContainer parameter)
         {
             return parameter.Bool.GetOrDefault(paramHash);
         }
@@ -55,7 +55,7 @@ namespace TweenTimeline
 
         public void OnAfterDeserialize()
         {
-            paramHash = TimelineParameterContainer.StringToHash(ParameterName);
+            paramHash = TweenParameterContainer.StringToHash(ParameterName);
         }
     }
 
@@ -73,7 +73,7 @@ namespace TweenTimeline
         public TimelineExpressionBool Right;
         
         /// <inheritdoc/>
-        public override bool GetValue(TimelineParameterContainer parameter)
+        public override bool GetValue(TweenParameterContainer parameter)
         {
             return Left.GetValue(parameter) && Right.GetValue(parameter);
         }
@@ -93,7 +93,7 @@ namespace TweenTimeline
         public TimelineExpressionBool Right;
 
         /// <inheritdoc/>
-        public override bool GetValue(TimelineParameterContainer parameter)
+        public override bool GetValue(TweenParameterContainer parameter)
         {
             return Left.GetValue(parameter) || Right.GetValue(parameter);
         }
@@ -110,7 +110,7 @@ namespace TweenTimeline
         public TimelineExpressionBool Value;
         
         /// <inheritdoc/>
-        public override bool GetValue(TimelineParameterContainer parameter)
+        public override bool GetValue(TweenParameterContainer parameter)
         {
             return !Value.GetValue(parameter);
         }

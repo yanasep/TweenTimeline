@@ -24,7 +24,9 @@ namespace TweenTimeline
     [Serializable]
     public class TextMeshProUGUICountUpTweenBehaviour : TweenBehaviour<TextMeshProUGUI>
     {
+        [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionInt EndValue = new TimelineExpressionIntConstant { Value = 0 };
+        
         public Ease Ease;
 
         private int _startValue;

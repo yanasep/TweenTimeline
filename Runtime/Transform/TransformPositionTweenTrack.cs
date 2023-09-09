@@ -10,9 +10,9 @@ namespace TweenTimeline
     /// <summary>
     /// 移動Tweenトラック
     /// </summary>
-    [TrackClipType(typeof(TransformPositionTweenClip))]
-    [TrackBindingType(typeof(Transform))]
     [DisplayName("Tween/Position Tween Track")]
+    [TrackBindingType(typeof(Transform))]
+    [TrackClipType(typeof(TransformPositionTweenClip))]
     public class TransformPositionTweenTrack : TransformTweenTrack
     {
 #if UNITY_EDITOR

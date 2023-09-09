@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 namespace TweenTimeline
 {
@@ -10,7 +11,7 @@ namespace TweenTimeline
     public class TweenTimelineDirector : MonoBehaviour
     {
         [SerializeField] private PlayableDirector _director;
-        public TimelineParameterContainer ParameterContainer { get; private set; }
+        public TweenParameterContainer ParameterContainer { get; private set; }
 
         /// <summary>
         /// 初期化
@@ -26,15 +27,37 @@ namespace TweenTimeline
                 ParameterContainer = new();
             }
 
-            SetParameterContainer(ParameterContainer);
+            if (_director.playableAsset != null)
+            {
+                SetParameterContainer(_director.playableAsset, ParameterContainer);
+            }
+        }
+
+        /// <summary>
+        /// 再生
+        /// </summary>
+        public void Play()
+        {
+            _director.Play();
+        }
+
+        /// <summary>
+        /// 再生
+        /// </summary>
+        public void Play(TimelineAsset timelineAsset)
+        {
+            // TODO: アセットへの変更が残る
+            SetParameterContainer(_director.playableAsset, ParameterContainer);
+            _director.playableAsset = timelineAsset;
+            _director.Play();
         }
 
         /// <summary>
         /// TimelineParameterContainerをタイムラインに渡す
         /// </summary>
-        private void SetParameterContainer(TimelineParameterContainer parameter)
+        private void SetParameterContainer(PlayableAsset playableAsset, TweenParameterContainer parameter)
         {
-            foreach (var trackBinding in _director.playableAsset.outputs)
+            foreach (var trackBinding in playableAsset.outputs)
             {
                 if (trackBinding.sourceObject is TweenTrack tweenTrack)
                 {
@@ -46,14 +69,6 @@ namespace TweenTimeline
                     }   
                 }
             }
-        }
-
-        /// <summary>
-        /// 再生
-        /// </summary>
-        public void Play()
-        {
-            _director.Play();
         }
     }
 }

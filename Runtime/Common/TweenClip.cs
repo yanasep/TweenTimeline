@@ -12,7 +12,7 @@ namespace TweenTimeline
     {
         public object PlayerData { get; set; }
         public TimelineClip Clip { get; set; }
-        public TimelineParameterContainer Parameter { get; set; }
+        public TweenParameterContainer Parameter { get; set; }
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ namespace TweenTimeline
                 }
                 else
                 {
-                    behaviour.Parameter = new TimelineParameterContainer();
+                    behaviour.Parameter = new TweenParameterContainer();
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace TweenTimeline
     public class TweenBehaviour<TTweenObj> : TweenBehaviour where TTweenObj : class
     {
         public TTweenObj Target { get; set; }
-        public TimelineParameterContainer Parameter { get; set; }
+        public TweenParameterContainer Parameter { get; set; }
 
         /// <inheritdoc/>
         public override void OnBehaviourPlay(Playable playable, FrameData info)

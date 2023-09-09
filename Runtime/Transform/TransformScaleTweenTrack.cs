@@ -10,9 +10,10 @@ namespace TweenTimeline
     /// <summary>
     /// スケールTweenトラック
     /// </summary>
-    [TrackClipType(typeof(TransformScaleTweenClip))]
-    [TrackBindingType(typeof(RectTransform))]
     [DisplayName("Tween/Scale Tween Track")]
+    [TrackBindingType(typeof(RectTransform))]
+    [TrackClipType(typeof(TransformScaleTweenClip))]
+    [TrackClipType(typeof(TransformPunchScaleTweenClip))]
     public class TransformScaleTweenTrack : TransformTweenTrack
     {   
 #if UNITY_EDITOR

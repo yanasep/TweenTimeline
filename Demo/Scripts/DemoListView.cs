@@ -44,6 +44,7 @@ namespace TweenTimeline
         {
             var instance = Instantiate(_elementTemplate, _elementTemplate.transform.parent);
             instance.gameObject.SetActive(true);
+            instance.Initialize();
             return instance;
         }
         
