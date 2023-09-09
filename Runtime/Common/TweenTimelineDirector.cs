@@ -11,25 +11,20 @@ namespace TweenTimeline
     public class TweenTimelineDirector : MonoBehaviour
     {
         [SerializeField] private PlayableDirector _director;
-        public TweenParameterContainer ParameterContainer { get; private set; }
+        public TweenParameter Parameter { get; private set; }
 
         /// <summary>
         /// 初期化
         /// </summary>
         public void Initialize()
         {
-            if (TryGetComponent<TweenTimelineDefaultParameter>(out var defaultComponent))
+            if (TryGetComponent<TweenParameterInjector>(out var injector))
             {
-                ParameterContainer = defaultComponent.GetParameterContainer();
+                Parameter = injector.GetParameter();
             }
             else
             {
-                ParameterContainer = new();
-            }
-
-            if (_director.playableAsset != null)
-            {
-                SetParameterContainer(_director.playableAsset, ParameterContainer);
+                Parameter = new();
             }
         }
 
@@ -46,29 +41,8 @@ namespace TweenTimeline
         /// </summary>
         public void Play(TimelineAsset timelineAsset)
         {
-            // TODO: アセットへの変更が残る
-            SetParameterContainer(_director.playableAsset, ParameterContainer);
             _director.playableAsset = timelineAsset;
             _director.Play();
-        }
-
-        /// <summary>
-        /// TimelineParameterContainerをタイムラインに渡す
-        /// </summary>
-        private void SetParameterContainer(PlayableAsset playableAsset, TweenParameterContainer parameter)
-        {
-            foreach (var trackBinding in playableAsset.outputs)
-            {
-                if (trackBinding.sourceObject is TweenTrack tweenTrack)
-                {
-                    tweenTrack.Parameter = parameter;
-                    foreach (var clip in tweenTrack.GetClips())
-                    {
-                        var tweenClip = (TweenClip)clip.asset;
-                        tweenClip.Parameter = parameter;
-                    }   
-                }
-            }
         }
     }
 }

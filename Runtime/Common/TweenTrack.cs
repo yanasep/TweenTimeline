@@ -17,8 +17,6 @@ namespace TweenTimeline
         /// <remarks>ビルトインアイコン： https://github.com/halak/unity-editor-icons</remarks>
         public virtual Texture2D Icon => null;  
 #endif
-        
-        public TweenParameterContainer Parameter { get; set; }
     }
     
     /// <summary>
@@ -49,18 +47,9 @@ namespace TweenTimeline
             }
             var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, Template, inputCount);
             var behaviour = playable.GetBehaviour();
-            behaviour.Parameter = Parameter;
-            // デフォルトのパラメータを注入
-            if (behaviour.Parameter == null)
+            if (go.TryGetComponent<TweenParameterInjector>(out var parameterContainer))
             {
-                if (go.TryGetComponent<TweenTimelineDefaultParameter>(out var parameterComponent))
-                {
-                    behaviour.Parameter = parameterComponent.GetParameterContainer();
-                }
-                else
-                {
-                    behaviour.Parameter = new TweenParameterContainer();
-                }
+                behaviour.Parameter = parameterContainer.GetParameter();
             }
             return playable;
         }
@@ -84,7 +73,7 @@ namespace TweenTimeline
     /// </summary>
     public class TweenMixerBehaviour : PlayableBehaviour 
     {
-        public TweenParameterContainer Parameter { get; set; }
+        public TweenParameter Parameter { get; set; }
     }
 
     /// <summary>

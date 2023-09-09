@@ -11,7 +11,7 @@ namespace TweenTimeline
     public abstract class TimelineExpressionInt
     {
         /// <summary>値取得</summary>
-        public abstract int GetValue(TweenParameterContainer parameter);
+        public abstract int GetValue(TweenParameter parameter);
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace TweenTimeline
         public int Value;
 
         /// <inheritdoc/>
-        public override int GetValue(TweenParameterContainer parameter)
+        public override int GetValue(TweenParameter parameter)
         {
             return Value;
         }
@@ -43,7 +43,7 @@ namespace TweenTimeline
         private int paramHash;
 
         /// <inheritdoc/>
-        public override int GetValue(TweenParameterContainer parameter)
+        public override int GetValue(TweenParameter parameter)
         {
             return parameter.Int.GetOrDefault(paramHash);
         }
@@ -55,7 +55,7 @@ namespace TweenTimeline
 
         public void OnAfterDeserialize()
         {
-            paramHash = TweenParameterContainer.StringToHash(ParameterName);
+            paramHash = TweenParameter.StringToHash(ParameterName);
         }
     }
 
@@ -73,7 +73,7 @@ namespace TweenTimeline
         public TimelineExpressionInt Right;
         
         /// <inheritdoc/>
-        public override int GetValue(TweenParameterContainer parameter)
+        public override int GetValue(TweenParameter parameter)
         {
             return Left.GetValue(parameter) + Right.GetValue(parameter);
         }
@@ -93,7 +93,7 @@ namespace TweenTimeline
         public TimelineExpressionInt Right;
 
         /// <inheritdoc/>
-        public override int GetValue(TweenParameterContainer parameter)
+        public override int GetValue(TweenParameter parameter)
         {
             return Left.GetValue(parameter) - Right.GetValue(parameter);
         }
@@ -113,7 +113,7 @@ namespace TweenTimeline
         public TimelineExpressionInt Right;
         
         /// <inheritdoc/>
-        public override int GetValue(TweenParameterContainer parameter)
+        public override int GetValue(TweenParameter parameter)
         {
             return Left.GetValue(parameter) * Right.GetValue(parameter);
         }
@@ -133,7 +133,7 @@ namespace TweenTimeline
         public TimelineExpressionInt Right;
 
         /// <inheritdoc/>
-        public override int GetValue(TweenParameterContainer parameter)
+        public override int GetValue(TweenParameter parameter)
         {
             return Left.GetValue(parameter) / Right.GetValue(parameter);
         }

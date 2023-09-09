@@ -12,7 +12,6 @@ namespace TweenTimeline
     {
         public object PlayerData { get; set; }
         public TimelineClip Clip { get; set; }
-        public TweenParameterContainer Parameter { get; set; }
     }
 
     /// <summary>
@@ -43,18 +42,9 @@ namespace TweenTimeline
             behaviour.Duration = (float)Clip.duration;
             behaviour.StartTime = (float)Clip.start;
             behaviour.Target = PlayerData as TBinding;
-            behaviour.Parameter = Parameter;
-            // デフォルトのパラメータを注入
-            if (behaviour.Parameter == null)
+            if (owner.TryGetComponent<TweenParameterInjector>(out var parameterContainer))
             {
-                if (owner.TryGetComponent<TweenTimelineDefaultParameter>(out var parameterComponent))
-                {
-                    behaviour.Parameter = parameterComponent.GetParameterContainer();
-                }
-                else
-                {
-                    behaviour.Parameter = new TweenParameterContainer();
-                }
+                behaviour.Parameter = parameterContainer.GetParameter();
             }
         }
     }
@@ -93,7 +83,7 @@ namespace TweenTimeline
     public class TweenBehaviour<TTweenObj> : TweenBehaviour where TTweenObj : class
     {
         public TTweenObj Target { get; set; }
-        public TweenParameterContainer Parameter { get; set; }
+        public TweenParameter Parameter { get; set; }
 
         /// <inheritdoc/>
         public override void OnBehaviourPlay(Playable playable, FrameData info)

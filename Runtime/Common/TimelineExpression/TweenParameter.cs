@@ -6,13 +6,13 @@ namespace TweenTimeline
     /// <summary>
     /// タイムラインに渡すパラメータを保持するクラス
     /// </summary>
-    public class TweenParameterContainer
-    {
-        public readonly TimelineParameterHolder<Vector3> Vector3 = new();
-        public readonly TimelineParameterHolder<Vector3> Vector2 = new();
+    public class TweenParameter
+    {   
         public readonly TimelineParameterHolder<float> Float = new();
         public readonly TimelineParameterHolder<int> Int = new();
         public readonly TimelineParameterHolder<bool> Bool = new();
+        public readonly TimelineParameterHolder<Vector3> Vector3 = new();
+        public readonly TimelineParameterHolder<Vector2> Vector2 = new();
         public readonly TimelineParameterHolder<Color> Color = new();
 
         /// <summary>文字列をハッシュに</summary>
@@ -38,7 +38,7 @@ namespace TweenTimeline
         /// <summary>パラメータセット</summary>
         public void Set(string key, T value)
         {
-            Set(TweenParameterContainer.StringToHash(key), value);
+            Set(TweenParameter.StringToHash(key), value);
         }
 
         /// <summary>パラメータ取得</summary>
@@ -55,7 +55,7 @@ namespace TweenTimeline
         /// <summary>パラメータ取得</summary>
         public T GetOrDefault(string key)
         {
-            return GetOrDefault(TweenParameterContainer.StringToHash(key));
+            return GetOrDefault(TweenParameter.StringToHash(key));
         }
     }
 }
