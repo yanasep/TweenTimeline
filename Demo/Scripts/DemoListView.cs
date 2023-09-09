@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Yanasep;
 using Random = UnityEngine.Random;
 
 namespace TweenTimeline
 {
     public class DemoListView : MonoBehaviour
     {
-        [SerializeField] private TweenTimelineDirector _director;
         [SerializeField] private Vector3 _targetPosition;
         [SerializeField] private List<CountryResult> _countryResults;
         [SerializeField] private DemoListElement _elementTemplate;
@@ -27,8 +25,6 @@ namespace TweenTimeline
 
         private void Start()
         {
-            _director.Initialize();
-
             _elementTemplate.gameObject.SetActive(false);
             _countryElements = new Dictionary<CountryCode, DemoListElement>(8);
 
@@ -49,13 +45,6 @@ namespace TweenTimeline
             var instance = Instantiate(_elementTemplate, _elementTemplate.transform.parent);
             instance.gameObject.SetActive(true);
             return instance;
-        }
-
-        [EditorPlayModeButton("Play")]
-        public void Play()
-        {
-            _director.ParameterContainer.Vector3.Set("TargetPosition", _targetPosition);
-            _director.Play();
         }
         
         private void AddScoreRandom()

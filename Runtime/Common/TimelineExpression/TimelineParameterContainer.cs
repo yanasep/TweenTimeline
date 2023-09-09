@@ -11,6 +11,7 @@ namespace TweenTimeline
         public readonly TimelineParameterHolder<Vector3> Vector3 = new();
         public readonly TimelineParameterHolder<Vector3> Vector2 = new();
         public readonly TimelineParameterHolder<float> Float = new();
+        public readonly TimelineParameterHolder<int> Int = new();
         public readonly TimelineParameterHolder<bool> Bool = new();
         public readonly TimelineParameterHolder<Color> Color = new();
 

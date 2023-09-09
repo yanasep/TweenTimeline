@@ -78,6 +78,11 @@ namespace TweenTimeline
         /// クリップ再生中の更新
         /// </summary>
         public virtual void Update(float localTime) { }
+
+        /// <summary>
+        /// クリップ終了時
+        /// </summary>
+        public virtual void End() { }
     }
 
     /// <summary>
@@ -85,8 +90,7 @@ namespace TweenTimeline
     /// NOTE: ScriptPlayableの型引数に取りたいのでabstractにしていない
     /// </summary>
     [Serializable]
-    public class TweenBehaviour<TTweenObj> : TweenBehaviour
-        where TTweenObj : class
+    public class TweenBehaviour<TTweenObj> : TweenBehaviour where TTweenObj : class
     {
         public TTweenObj Target { get; set; }
         public TimelineParameterContainer Parameter { get; set; }
@@ -105,6 +109,15 @@ namespace TweenTimeline
 
             float t = (float)playable.GetTime();
             Update(t);
+        }
+
+        /// <inheritdoc/>
+        public override void OnBehaviourPause(Playable playable, FrameData info)
+        {
+            if (info.evaluationType == FrameData.EvaluationType.Playback)
+            {
+                End();
+            }
         }
     }
 }

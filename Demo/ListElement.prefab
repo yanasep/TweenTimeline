@@ -146,6 +146,9 @@ GameObject:
   - component: {fileID: 7794713565363630199}
   - component: {fileID: 2368171384188348163}
   - component: {fileID: 3738478153506845068}
+  - component: {fileID: 9183012952338647487}
+  - component: {fileID: 5179969882006784725}
+  - component: {fileID: 5177623822733020442}
   m_Layer: 5
   m_Name: ListElement
   m_TagString: Untagged
@@ -227,6 +230,59 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!320 &9183012952338647487
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412471426031753313}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: c45c39f86d3d71d4d9c1d800cabf700d, type: 2}
+  m_InitialState: 0
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 7551977788470551592, guid: c45c39f86d3d71d4d9c1d800cabf700d, type: 2}
+    value: {fileID: 5384480340215735575}
+  m_ExposedReferences:
+    m_References: []
+--- !u!114 &5179969882006784725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412471426031753313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ed95e73492400496b1b378ac4e5035, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _director: {fileID: 9183012952338647487}
+--- !u!114 &5177623822733020442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412471426031753313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919560cfcefb4f6687cbd59f17be75c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floats:
+    m_keys: []
+    m_values: []
+  vector3s:
+    m_keys: []
+    m_values: []
+  bools:
+    m_keys: []
+    m_values: 
 --- !u!1 &2078929958079890466
 GameObject:
   m_ObjectHideFlags: 0

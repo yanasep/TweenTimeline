@@ -802,9 +802,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 655510311}
-  - component: {fileID: 655510315}
-  - component: {fileID: 655510314}
-  - component: {fileID: 655510313}
   - component: {fileID: 655510312}
   - component: {fileID: 655510317}
   - component: {fileID: 655510316}
@@ -849,7 +846,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f176a67e13f941dbb755d7b382c227d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _director: {fileID: 655510314}
+  _director: {fileID: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _countryResults:
   - CountryCode: 0
@@ -863,57 +860,6 @@ MonoBehaviour:
   _elementTemplate: {fileID: 1063181141}
   _randomAddButton: {fileID: 812948605}
   scoreToAdd: 200
---- !u!114 &655510313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655510310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 919560cfcefb4f6687cbd59f17be75c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  floats:
-    m_keys: []
-    m_values: []
-  vector3s:
-    m_keys: []
-    m_values: []
-  bools:
-    m_keys: []
-    m_values: 
---- !u!114 &655510314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655510310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ed95e73492400496b1b378ac4e5035, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _director: {fileID: 655510315}
---- !u!320 &655510315
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655510310}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: c45c39f86d3d71d4d9c1d800cabf700d, type: 2}
-  m_InitialState: 0
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings: []
-  m_ExposedReferences:
-    m_References: []
 --- !u!114 &655510316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1679,7 +1625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

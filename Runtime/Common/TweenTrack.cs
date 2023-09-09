@@ -141,9 +141,13 @@ namespace TweenTimeline
                 var inputPlayable = (ScriptPlayable<TweenBehaviour>)input;
                 var clipBehaviour = inputPlayable.GetBehaviour();
                 float clipTime = trackTime - clipBehaviour.StartTime;
-                if (clipTime < 0) return;
+                if (clipTime < 0) break;
                 clipBehaviour.Start();
                 clipBehaviour.Update(Mathf.Min(clipTime, clipBehaviour.Duration));
+                if (clipTime >= clipBehaviour.Duration)
+                {
+                    clipBehaviour.End();
+                }
             }
         }
 
