@@ -1470,6 +1470,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_PlayableAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 4d2c1b690291075488698151a95be5cd, type: 2}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_SceneBindings.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_SceneBindings.Array.data[5].key
+      value: 
+      objectReference: {fileID: -7215035069367347987, guid: 4d2c1b690291075488698151a95be5cd, type: 2}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_SceneBindings.Array.data[6].key
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_SceneBindings.Array.data[7].key
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_SceneBindings.Array.data[8].key
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

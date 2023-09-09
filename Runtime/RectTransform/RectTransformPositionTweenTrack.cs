@@ -10,9 +10,10 @@ namespace TweenTimeline
     /// <summary>
     /// 移動Tweenトラック
     /// </summary>
-    [DisplayName("Tween/Position Track")]
+    [DisplayName("Tween/RectTransform Position Tween Track")]
     [TrackBindingType(typeof(RectTransform))]
     [TrackClipType(typeof(RectTransformPositionTweenClip))]
+    [TrackClipType(typeof(RectTransformPositionKeepClip))]
     [TrackClipType(typeof(TransformPositionTweenClip))]
     public class RectTransformPositionTweenTrack : RectTransformTweenTrack
     {

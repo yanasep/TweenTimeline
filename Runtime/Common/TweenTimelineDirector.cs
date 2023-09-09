@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -41,8 +42,16 @@ namespace TweenTimeline
         /// </summary>
         public void Play(TimelineAsset timelineAsset)
         {
-            _director.playableAsset = timelineAsset;
-            _director.Play();
+            _director.Play(timelineAsset);
+        }
+
+        /// <summary>
+        /// 再生
+        /// </summary>
+        public UniTask PlayAsync(TimelineAsset timelineAsset)
+        {
+            _director.Play(timelineAsset);
+            return UniTask.WaitWhile(() => _director.state == PlayState.Playing);
         }
     }
 }

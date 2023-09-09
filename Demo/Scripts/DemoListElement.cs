@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
@@ -27,26 +28,20 @@ namespace TweenTimeline
             var data = CountryDB.Instance.Get(country);
             countryNameText.SetText(data.CountryName);
             countryFlagImage.sprite = data.CountryFlag;
-            UpdatePlace(place);
-            UpdateScore(score, false);
+            placeText.SetText("{0}", place);
+            scoreText.SetText("{0}", score);
         }
 
-        public void UpdateScore(int score, bool playAnimation = true)
+        public UniTask UpdateScoreAsync(int score)
         {   
-            if (playAnimation)
-            {
-                _tweenDirector.Parameter.Int.Set(TweenHashScore, score);
-                _tweenDirector.Play(_scoreUpTween);
-            }
-            else
-            {
-                scoreText.SetText("{0}", score);
-            }
+            _tweenDirector.Parameter.Int.Set(TweenHashScore, score);
+            return _tweenDirector.PlayAsync(_scoreUpTween);
         }
 
-        public void UpdatePlace(int place, bool playAnimation = true)
+        public UniTask UpdatePlaceAsync(int place)
         {
             placeText.SetText("{0}", place);
+            return _tweenDirector.PlayAsync(_changePlaceTween);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -34,10 +35,16 @@ namespace TweenTimeline
                 var result = _countryResults[i];
                 var elem = RentElement();
                 elem.Set(result.CountryCode, i + 1, result.Score);
+                elem.gameObject.name = $"DemoListElement_{result.CountryCode}";
                 _countryElements.Add(result.CountryCode, elem);
             }
             
-            _randomAddButton.onClick.AddListener(AddScoreRandom);
+            _randomAddButton.onClick.AddListener(UniTask.UnityAction(async () =>
+            {
+                _randomAddButton.interactable = false;
+                await AddScoreRandomAsync();
+                _randomAddButton.interactable = true;
+            }));
         }
 
         private DemoListElement RentElement()
@@ -48,13 +55,13 @@ namespace TweenTimeline
             return instance;
         }
         
-        private void AddScoreRandom()
+        private async UniTask AddScoreRandomAsync()
         {
             int prevIndex = Random.Range(0, _countryResults.Count);
             var data = _countryResults[prevIndex];
             data.Score += scoreToAdd;
             var elem = _countryElements[data.CountryCode];
-            elem.UpdateScore(data.Score);
+            await elem.UpdateScoreAsync(data.Score);
 
             int newIndex = prevIndex;
             for (int i = 0; i < prevIndex; i++)
@@ -72,15 +79,18 @@ namespace TweenTimeline
             _countryResults.RemoveAt(prevIndex);
             _countryResults.Insert(newIndex, data);
 
-            // 最初の子templateが入っている
+            // 最初の子にtemplateが入っているので+1
             _countryElements[data.CountryCode].transform.SetSiblingIndex(newIndex + 1);
 
+            var tasks = new UniTask[prevIndex - newIndex + 1];
             for (int i = newIndex; i <= prevIndex; i++)
             {
                 var d = _countryResults[i];
                 var e = _countryElements[d.CountryCode];
-                e.UpdatePlace(i + 1);
+                tasks[i - newIndex] = e.UpdatePlaceAsync(i + 1);
             }
+
+            await UniTask.WhenAll(tasks);
         }
     }
 }
