@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cc5836320bc78f04999a06d633dc0555
+guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -134,7 +134,91 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: country_flags_0
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 428
+        width: 128
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ddf0c3fdf3e0e541814845420cbeb0f
+      internalID: -1101545716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: country_flags_1
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 428
+        width: 128
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 009a557e96f067041b653bc54ec46e7d
+      internalID: -657483280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: country_flags_2
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 240
+        width: 128
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f8c0568515298940bc85a9cca484704
+      internalID: 369261176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: country_flags_3
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 52
+        width: 128
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adb301d8727b63b4e8640f27933ba823
+      internalID: -1765898998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -145,7 +229,11 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      country_flags_0: -1101545716
+      country_flags_1: -657483280
+      country_flags_2: 369261176
+      country_flags_3: -1765898998
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

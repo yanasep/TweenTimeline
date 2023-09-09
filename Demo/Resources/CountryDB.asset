@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3508d0e640174d079c8dbe73dfeb6145, type: 3}
+  m_Name: CountryDB
+  m_EditorClassIdentifier: UnityEngine.CoreModule:UnityEngine:ScriptableObject
+  _db:
+  - <CountryFlag>k__BackingField: {fileID: -1101545716, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
+    <CountryName>k__BackingField: Great Britain
+  - <CountryFlag>k__BackingField: {fileID: -657483280, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
+    <CountryName>k__BackingField: United States
+  - <CountryFlag>k__BackingField: {fileID: 369261176, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
+    <CountryName>k__BackingField: Japan
+  - <CountryFlag>k__BackingField: {fileID: -1765898998, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
+    <CountryName>k__BackingField: Germany
