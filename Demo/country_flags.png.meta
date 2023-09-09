@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: country_flags_0
+      name: country_flags_uk
       rect:
         serializedVersion: 2
         x: 36
@@ -144,7 +144,7 @@ TextureImporter:
         width: 128
         height: 84
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -157,7 +157,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: country_flags_1
+      name: country_flags_us
       rect:
         serializedVersion: 2
         x: 236
@@ -165,7 +165,7 @@ TextureImporter:
         width: 128
         height: 84
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -178,7 +178,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: country_flags_2
+      name: country_flags_ger
       rect:
         serializedVersion: 2
         x: 36
@@ -186,7 +186,7 @@ TextureImporter:
         width: 128
         height: 84
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -199,7 +199,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: country_flags_3
+      name: country_flags_jpn
       rect:
         serializedVersion: 2
         x: 236
@@ -207,7 +207,7 @@ TextureImporter:
         width: 128
         height: 84
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -230,10 +230,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      country_flags_0: -1101545716
-      country_flags_1: -657483280
-      country_flags_2: 369261176
-      country_flags_3: -1765898998
+      country_flags_ger: 369261176
+      country_flags_jpn: -1765898998
+      country_flags_uk: -1101545716
+      country_flags_us: -657483280
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

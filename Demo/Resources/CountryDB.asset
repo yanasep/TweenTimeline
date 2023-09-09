@@ -17,7 +17,7 @@ MonoBehaviour:
     <CountryName>k__BackingField: Great Britain
   - <CountryFlag>k__BackingField: {fileID: -657483280, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
     <CountryName>k__BackingField: United States
-  - <CountryFlag>k__BackingField: {fileID: 369261176, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
-    <CountryName>k__BackingField: Japan
   - <CountryFlag>k__BackingField: {fileID: -1765898998, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
+    <CountryName>k__BackingField: Japan
+  - <CountryFlag>k__BackingField: {fileID: 369261176, guid: 4b7a97ba1c427fc4c8a8fcfb3ce05583, type: 3}
     <CountryName>k__BackingField: Germany
