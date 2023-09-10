@@ -33,31 +33,20 @@ namespace TweenTimeline
         
         public Ease Ease;
 
-        private Tween _tween;
-
         /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
-            switch (PositionType)
+            Tween tween = PositionType switch
             {
-                case TransformTweenPositionType.Position:
-                    _tween = Target.DOMove(EndValue.GetValue(Parameter), Duration);
-                    break;
-                case TransformTweenPositionType.LocalPosition:
-                    _tween = Target.DOLocalMove(EndValue.GetValue(Parameter), Duration);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            
-            _tween.SetEase(Ease).SetUpdate(UpdateType.Manual);
-            if (IsRelative.GetValue(Parameter)) _tween.SetRelative(true);
-        }
+                TransformTweenPositionType.Position => Target.DOMove(EndValue.GetValue(Parameter), Duration),
+                TransformTweenPositionType.LocalPosition => Target.DOLocalMove(EndValue.GetValue(Parameter), Duration),
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            _tween.Goto(localTime);
+            tween.SetEase(Ease);
+            if (IsRelative.GetValue(Parameter)) tween.SetRelative(true);
+
+            return tween;
         }
     }
 }

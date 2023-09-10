@@ -28,22 +28,27 @@ namespace TweenTimeline
 
         private int _endValue;
 
-        /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
-            _endValue = Target.text.Length;
+            throw new NotImplementedException();
         }
 
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            Target.maxVisibleCharacters = (int)DOVirtual.EasedValue(0, _endValue, localTime / Duration, Ease);
-        }
-
-        /// <inheritdoc/>
-        public override void End()
-        {
-            Target.maxVisibleCharacters = 99999;
-        }
+        // /// <inheritdoc/>
+        // public override void Start()
+        // {
+        //     _endValue = Target.text.Length;
+        // }
+        //
+        // /// <inheritdoc/>
+        // public override void Update(float localTime)
+        // {
+        //     Target.maxVisibleCharacters = (int)DOVirtual.EasedValue(0, _endValue, localTime / Duration, Ease);
+        // }
+        //
+        // /// <inheritdoc/>
+        // public override void End()
+        // {
+        //     Target.maxVisibleCharacters = 99999;
+        // }
     }
 }

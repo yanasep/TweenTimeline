@@ -26,18 +26,10 @@ namespace TweenTimeline
         public float EndValue = 1f;
         public Ease Ease;
 
-        private Tween _tween;
-
         /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
-            _tween = Target.DOFade(EndValue, Duration).SetEase(Ease).SetUpdate(UpdateType.Manual);
-        }
-
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            _tween.Goto(localTime);
+            return Target.DOFade(EndValue, Duration).SetEase(Ease);
         }
     }
 }

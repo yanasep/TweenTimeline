@@ -32,23 +32,28 @@ namespace TweenTimeline
         private int _startValue;
         private int _endValue;
 
-        /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
-            int.TryParse(Target.text, out _startValue);
-            _endValue = EndValue.GetValue(Parameter);
+            throw new NotImplementedException();
         }
 
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            Target.SetText("{0}", (int)DOVirtual.EasedValue(_startValue, _endValue, localTime / Duration, Ease));
-        }
-
-        /// <inheritdoc/>
-        public override void End()
-        {
-            Target.SetText("{0}", _endValue);
-        }
+        // /// <inheritdoc/>
+        // public override void Start()
+        // {
+        //     int.TryParse(Target.text, out _startValue);
+        //     _endValue = EndValue.GetValue(Parameter);
+        // }
+        //
+        // /// <inheritdoc/>
+        // public override void Update(float localTime)
+        // {
+        //     Target.SetText("{0}", (int)DOVirtual.EasedValue(_startValue, _endValue, localTime / Duration, Ease));
+        // }
+        //
+        // /// <inheritdoc/>
+        // public override void End()
+        // {
+        //     Target.SetText("{0}", _endValue);
+        // }
     }
 }

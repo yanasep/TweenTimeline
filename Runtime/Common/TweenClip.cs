@@ -1,4 +1,5 @@
 ﻿using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -12,6 +13,8 @@ namespace TweenTimeline
     {
         public object PlayerData { get; set; }
         public TimelineClip Clip { get; set; }
+
+        public abstract Tween GetTween();
     }
 
     /// <summary>
@@ -29,8 +32,8 @@ namespace TweenTimeline
             // OnPlayableCreateでTargetを参照できるように、Templateにセットしておく
             Template.Target = PlayerData as TBinding;
             if (Template.Target == null) return default;
-            var playable = ScriptPlayable<TweenBehaviour<TBinding>>.Create(graph, Template);
-            SetupBehaviour(playable.GetBehaviour(), owner);
+            var playable = ScriptPlayable<TweenBehaviour>.Create(graph, Template);
+            SetupBehaviour((TweenBehaviour<TBinding>)playable.GetBehaviour(), owner);
             return playable;
         }
 
@@ -46,6 +49,11 @@ namespace TweenTimeline
             {
                 behaviour.Parameter = parameterContainer.GetParameter();
             }
+        }
+
+        public override Tween GetTween()
+        {
+            return Template.GetTween();
         }
     }
 
@@ -77,13 +85,14 @@ namespace TweenTimeline
 
     /// <summary>
     /// タイムラインTweenビヘイビア
-    /// NOTE: ScriptPlayableの型引数に取りたいのでabstractにしていない
     /// </summary>
     [Serializable]
-    public class TweenBehaviour<TTweenObj> : TweenBehaviour where TTweenObj : class
+    public abstract class TweenBehaviour<TTweenObj> : TweenBehaviour where TTweenObj : class
     {
         public TTweenObj Target { get; set; }
         public TweenParameter Parameter { get; set; }
+
+        private Tween _tween;
 
         /// <inheritdoc/>
         public override void OnBehaviourPlay(Playable playable, FrameData info)
@@ -108,6 +117,22 @@ namespace TweenTimeline
             {
                 End();
             }
+        }
+
+        public abstract Tween GetTween();
+
+        public sealed override void Start()
+        {
+            _tween = GetTween();
+        }
+
+        public override void Update(float localTime)
+        {
+            _tween.Goto(localTime);
+        }
+
+        public sealed override void End()
+        {
         }
     }
 }

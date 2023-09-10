@@ -29,25 +29,17 @@ namespace TweenTimeline
         public Ease Ease;
         public bool IsLocal;
 
-        private Tween _tween;
-
         /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
             if (IsLocal)
             {
-                _tween = Target.DOLocalRotate(EndValue.GetValue(Parameter), Duration, RotateMode.FastBeyond360).SetEase(Ease).SetUpdate(UpdateType.Manual);   
+                return Target.DOLocalRotate(EndValue.GetValue(Parameter), Duration, RotateMode.FastBeyond360).SetEase(Ease);
             }
             else
             {
-                _tween = Target.DORotate(EndValue.GetValue(Parameter), Duration, RotateMode.FastBeyond360).SetEase(Ease).SetUpdate(UpdateType.Manual);
+                return Target.DORotate(EndValue.GetValue(Parameter), Duration, RotateMode.FastBeyond360).SetEase(Ease);
             }
-        }
-
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            _tween.Goto(localTime);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEngine;
 using Yanasep;
 
@@ -30,44 +31,25 @@ namespace TweenTimeline
         [SerializeReference, SelectableSerializeReference] 
         public TimelineExpressionVector3 Value = new TimelineExpressionVector3Constant();
 
-        private Vector3 _startValue;
-
         /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
+            Vector3 startValue = Vector3.zero;
             if (SpecifyValue)
             {
-                _startValue = Value.GetValue(Parameter);
+                startValue = Value.GetValue(Parameter);
             }
-            else
+            
+            Tween tween = PositionType switch
             {
-                _startValue = PositionType switch
-                {
-                    RectTransformTweenPositionType.Position => Target.position,
-                    RectTransformTweenPositionType.LocalPosition => Target.localPosition,
-                    RectTransformTweenPositionType.AnchoredPosition => Target.anchoredPosition,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-            }
-        }
+                RectTransformTweenPositionType.Position => Target.DOMove(SpecifyValue ? startValue : Target.position, Duration),
+                RectTransformTweenPositionType.LocalPosition =>  Target.DOLocalMove(SpecifyValue ? startValue : Target.localPosition, Duration),
+                RectTransformTweenPositionType.AnchoredPosition =>  Target.DOAnchorPos(SpecifyValue ? startValue : Target.anchoredPosition, Duration),
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            switch (PositionType)
-            {
-                case RectTransformTweenPositionType.Position:
-                    Target.position = _startValue;
-                    break;
-                case RectTransformTweenPositionType.LocalPosition:
-                    Target.localPosition = _startValue;
-                    break;
-                case RectTransformTweenPositionType.AnchoredPosition:
-                    Target.anchoredPosition = _startValue;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            tween.SetEase(Ease.Linear);
+            return tween;
         }
     }
 }

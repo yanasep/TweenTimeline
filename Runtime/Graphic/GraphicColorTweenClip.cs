@@ -29,19 +29,11 @@ namespace TweenTimeline
         public RGBAFlags Enable;
         public Ease Ease;
 
-        private Tween _tween;
-
         /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
             var endVal = Enable.Apply(Target.color, EndValue.GetValue(Parameter));
-            _tween = Target.DOColor(endVal, Duration).SetEase(Ease).SetUpdate(UpdateType.Manual);
-        }
-
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            _tween.Goto(localTime);
+            return Target.DOColor(endVal, Duration).SetEase(Ease);
         }
     }
 }

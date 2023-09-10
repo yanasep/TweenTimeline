@@ -28,18 +28,10 @@ namespace TweenTimeline
         
         public Ease Ease;
 
-        private Tween _tween;
-
         /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
-            _tween = Target.DOScale(EndValue.GetValue(Parameter), Duration).SetEase(Ease).SetUpdate(UpdateType.Manual);
-        }
-
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            _tween.Goto(localTime);
+            return Target.DOScale(EndValue.GetValue(Parameter), Duration).SetEase(Ease);
         }
     }
 }

@@ -30,18 +30,10 @@ namespace TweenTimeline
         public int Vibrato = 10;
         public float Elasticity = 1f;
 
-        private Tween _tween;
-
         /// <inheritdoc/>
-        public override void Start()
+        public override Tween GetTween()
         {
-            _tween = Target.DOPunchScale(Punch.GetValue(Parameter), Duration, Vibrato, Elasticity).SetEase(Ease).SetUpdate(UpdateType.Manual);
-        }
-
-        /// <inheritdoc/>
-        public override void Update(float localTime)
-        {
-            _tween.Goto(localTime);
+            return Target.DOPunchScale(Punch.GetValue(Parameter), Duration, Vibrato, Elasticity).SetEase(Ease);
         }
     }
 }

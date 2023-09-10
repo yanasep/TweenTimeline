@@ -28,6 +28,24 @@ namespace TweenTimeline
                 Parameter = new();
             }
         }
+        
+        /// <summary>
+        /// TimelineParameterContainerをタイムラインに渡す
+        /// </summary>
+        private void SetParameterContainer(PlayableAsset playableAsset)
+        {
+            var timelineAsset = (TimelineAsset)_director.playableAsset;
+            foreach (var track in timelineAsset.GetOutputTracks())
+            {
+                if (track is TweenTrack tweenTrack)
+                {
+                    foreach (var clip in tweenTrack.GetClips())
+                    {
+                        var tweenClip = (TweenClip)clip.asset;
+                    }   
+                }
+            }
+        }
 
         /// <summary>
         /// 再生
