@@ -38,7 +38,8 @@ namespace TweenTimeline
             foreach (var clip in GetClips())
             {
                 var animAsset = (TweenClip)clip.asset;
-                animAsset.PlayerData = binding;
+                // TODO
+                // animAsset.PlayerData = binding;
                 animAsset.Clip = clip;
             }
 
@@ -86,9 +87,9 @@ namespace TweenTimeline
     /// TweenTimelineのMixerBehaviourのベースクラス
     /// </summary>
     [Serializable]
-    public abstract class TweenMixerBehaviour<TBinding> : TweenMixerBehaviour
+    public abstract class TweenMixerBehaviour<TBinding> : TweenMixerBehaviour where TBinding : class
     {
-        public TBinding Target { get; set; }
+        protected TBinding Target { get; private set; }
 
         /// <inheritdoc/>
         public override void OnPlayableCreate(Playable playable)
@@ -138,17 +139,18 @@ namespace TweenTimeline
             
             for (int i = 0; i < inputCount; i++)
             {
-                var input = playable.GetInput(i);
-                var inputPlayable = (ScriptPlayable<TweenBehaviour>)input;
-                var clipBehaviour = inputPlayable.GetBehaviour();
-                float clipTime = trackTime - clipBehaviour.StartTime;
-                if (clipTime < 0) break;
-                clipBehaviour.Start();
-                clipBehaviour.Update(Mathf.Min(clipTime, clipBehaviour.Duration));
-                if (clipTime >= clipBehaviour.Duration)
-                {
-                    clipBehaviour.End();
-                }
+                // TODO
+                // var input = playable.GetInput(i);
+                // var inputPlayable = (ScriptPlayable<TweenBehaviour<TBinding>>)input;
+                // var clipBehaviour = inputPlayable.GetBehaviour();
+                // float clipTime = trackTime - clipBehaviour.StartTime;
+                // if (clipTime < 0) break;
+                // clipBehaviour.Start(Target);
+                // clipBehaviour.Update(Target, Mathf.Min(clipTime, clipBehaviour.Duration));
+                // if (clipTime >= clipBehaviour.Duration)
+                // {
+                //     clipBehaviour.End(Target);
+                // }
             }
         }
 
