@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -14,14 +15,14 @@ namespace TweenTimeline
     [TrackBindingType(typeof(RectTransform))]
     [TrackClipType(typeof(RectTransformSizeDeltaTweenClip))]
     public class RectTransformSizeDeltaTweenTrack : RectTransformTweenTrack
-    {   
+    {
 #if UNITY_EDITOR
-        public override Texture2D Icon => EditorGUIUtility.IconContent("RectTool").image as Texture2D;  
+        public override Texture2D Icon => EditorGUIUtility.IconContent("RectTool").image as Texture2D;
 #endif
         [SerializeField, ExtractContent] private RectTransformSizeDeltaTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<RectTransform> Template => _behaviour;
+        protected override TweenMixerBehaviour<RectTransform> template => _behaviour;
     }
-    
+
     /// <summary>
     /// サイズTweenミキサー
     /// </summary>
@@ -29,7 +30,7 @@ namespace TweenTimeline
     public class RectTransformSizeDeltaTweenMixerBehaviour : TweenMixerBehaviour<RectTransform>
     {
         public bool SetStartValue;
-        
+
         [EnableIf(nameof(SetStartValue), true)]
         [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionVector2 StartValue = new TimelineExpressionVector2Constant { Value = new Vector2(100, 100) };
@@ -37,10 +38,13 @@ namespace TweenTimeline
         private Vector2 _originalValue;
 
         /// <inheritdoc/>
-        protected override void OnTrackStart()
+        public override TweenCallback OnStartCallback
         {
-            if (!SetStartValue) return;
-            Target.sizeDelta = StartValue.GetValue(Parameter);
+            get
+            {
+                if (!SetStartValue) return null;
+                return () => { Target.sizeDelta = StartValue.GetValue(Parameter); };
+            }
         }
 
         /// <inheritdoc/>

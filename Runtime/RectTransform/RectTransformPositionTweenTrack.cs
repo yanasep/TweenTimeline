@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -21,7 +22,7 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
 #endif
         [SerializeField, ExtractContent] private RectTransformPositionTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<RectTransform> Template => _behaviour;
+        protected override TweenMixerBehaviour<RectTransform> template => _behaviour;
     }
     
     /// <summary>
@@ -41,24 +42,28 @@ namespace TweenTimeline
 
         private Vector3 _originalValue;
 
-        /// <inheritdoc/>
-        protected override void OnTrackStart()
-        {
-            if (!SetStartValue) return;
-            
-            switch (positionType)
+        public override TweenCallback OnStartCallback {
+            get
             {
-                case RectTransformTweenPositionType.AnchoredPosition:
-                    Target.anchoredPosition = StartValue.GetValue(Parameter);
-                    break;
-                case RectTransformTweenPositionType.Position:
-                    Target.position = StartValue.GetValue(Parameter);
-                    break;
-                case RectTransformTweenPositionType.LocalPosition:
-                    Target.localPosition = StartValue.GetValue(Parameter);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                if (!SetStartValue) return null;   
+                return () =>
+                {
+
+                    switch (positionType)
+                    {
+                        case RectTransformTweenPositionType.AnchoredPosition:
+                            Target.anchoredPosition = StartValue.GetValue(Parameter);
+                            break;
+                        case RectTransformTweenPositionType.Position:
+                            Target.position = StartValue.GetValue(Parameter);
+                            break;
+                        case RectTransformTweenPositionType.LocalPosition:
+                            Target.localPosition = StartValue.GetValue(Parameter);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                };   
             }
         }
 

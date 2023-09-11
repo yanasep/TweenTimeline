@@ -14,7 +14,7 @@ namespace TweenTimeline
     public class RectTransformSizeDeltaTweenClip : TweenClip<RectTransform>
     {
         [SerializeField, ExtractContent] private RectTransformSizeDeltaTweenBehaviour _behaviour;
-        protected override TweenBehaviour<RectTransform> Template => _behaviour;
+        protected override TweenBehaviour<RectTransform> template => _behaviour;
     }
 
     /// <summary>

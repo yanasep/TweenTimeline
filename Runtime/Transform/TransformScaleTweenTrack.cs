@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -20,7 +21,7 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("ScaleTool").image as Texture2D;  
 #endif
         [SerializeField, ExtractContent] private TransformScaleTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<Transform> Template => _behaviour;
+        protected override TweenMixerBehaviour<Transform> template => _behaviour;
     }
     
     /// <summary>
@@ -38,10 +39,16 @@ namespace TweenTimeline
         private Vector3 _originalValue;
 
         /// <inheritdoc/>
-        protected override void OnTrackStart()
+        public override TweenCallback OnStartCallback 
         {
-            if (!SetStartValue) return;
-            Target.localScale = StartValue.GetValue(Parameter);
+            get
+            {   
+                if (!SetStartValue) return null;
+                return () =>
+                {
+                    Target.localScale = StartValue.GetValue(Parameter);
+                };   
+            }
         }
 
         /// <inheritdoc/>

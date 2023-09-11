@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -19,7 +20,7 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("RotateTool").image as Texture2D;  
 #endif
         [SerializeField, ExtractContent] private RectTransformRotationTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<Transform> Template => _behaviour;
+        protected override TweenMixerBehaviour<Transform> template => _behaviour;
     }
     
     /// <summary>
@@ -37,10 +38,16 @@ namespace TweenTimeline
         private Quaternion _originalValue;
 
         /// <inheritdoc/>
-        protected override void OnTrackStart()
+        public override TweenCallback OnStartCallback 
         {
-            if (!SetStartValue) return;
-            Target.localRotation = Quaternion.Euler(StartValue.GetValue(Parameter));
+            get
+            {   
+                if (!SetStartValue) return null;
+                return () =>
+                {
+                    Target.localRotation = Quaternion.Euler(StartValue.GetValue(Parameter));
+                };   
+            }
         }
 
         /// <inheritdoc/>

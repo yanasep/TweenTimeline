@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed95e73492400496b1b378ac4e5035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _director: {fileID: 9183012952338647487}
+  _timelineAsset: {fileID: 0}
 --- !u!114 &5177623822733020442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -689,7 +689,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 6290431
-  m_fontColor: {r: 1, g: 0.9824324, b: 0.37169808, a: 0}
+  m_fontColor: {r: 1, g: 0.9824324, b: 0.37169808, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

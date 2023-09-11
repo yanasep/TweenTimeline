@@ -14,7 +14,7 @@ namespace TweenTimeline
     public class CanvasGroupAlphaTweenClip : TweenClip<CanvasGroup>
     {
         [SerializeField, ExtractContent] private CanvasGroupAlphaTweenBehaviour _behaviour;
-        protected override TweenBehaviour<CanvasGroup> Template => _behaviour;
+        protected override TweenBehaviour<CanvasGroup> template => _behaviour;
     }
 
     /// <summary>

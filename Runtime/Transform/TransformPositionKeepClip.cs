@@ -14,7 +14,7 @@ namespace TweenTimeline
     public class TransformPositionKeepClip : TweenClip<Transform>
     {
         [SerializeField, ExtractContent] private TransformPositionKeepBehaviour _behaviour;
-        protected override TweenBehaviour<Transform> Template => _behaviour;
+        protected override TweenBehaviour<Transform> template => _behaviour;
     }
 
     /// <summary>
@@ -31,19 +31,32 @@ namespace TweenTimeline
         [SerializeReference, SelectableSerializeReference] 
         public TimelineExpressionVector3 Value = new TimelineExpressionVector3Constant();
 
+        private Vector3 _startValue;
+
+        public override TweenCallback OnStartCallback => () =>
+        {
+            if (SpecifyValue)
+            {
+                _startValue = Value.GetValue(Parameter);
+            }
+            else
+            {
+                _startValue = PositionType switch
+                {
+                    TransformTweenPositionType.Position => Target.position,
+                    TransformTweenPositionType.LocalPosition => Target.localPosition,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+        };
+
         /// <inheritdoc/>
         public override Tween GetTween()
         {
-            Vector3 startValue = Vector3.zero;
-            if (SpecifyValue)
-            {
-                startValue = Value.GetValue(Parameter);
-            }
-            
             Tween tween = PositionType switch
             {
-                TransformTweenPositionType.Position => Target.DOMove(SpecifyValue ? startValue : Target.position, Duration),
-                TransformTweenPositionType.LocalPosition =>  Target.DOLocalMove(SpecifyValue ? startValue : Target.localPosition, Duration),
+                TransformTweenPositionType.Position => Target.DOMove(SpecifyValue ? _startValue : Target.position, Duration),
+                TransformTweenPositionType.LocalPosition =>  Target.DOLocalMove(SpecifyValue ? _startValue : Target.localPosition, Duration),
                 _ => throw new ArgumentOutOfRangeException()
             };
 

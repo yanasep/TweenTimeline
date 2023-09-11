@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -20,7 +21,7 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("Grid.FillTool").image as Texture2D;
 #endif
         [SerializeField, ExtractContent] private GraphicColorTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<Graphic> Template => _behaviour;
+        protected override TweenMixerBehaviour<Graphic> template => _behaviour;
     }
     
     /// <summary>
@@ -39,11 +40,11 @@ namespace TweenTimeline
         private Color _originalValue;
 
         /// <inheritdoc/>
-        protected override void OnTrackStart()
+        public override TweenCallback OnStartCallback => () =>
         {
             if (!SetStartValue) return;
             Target.color = Enable.Apply(_originalValue, StartValue);
-        }
+        };
 
         /// <inheritdoc/>
         protected override void CacheOriginalState()

@@ -123,6 +123,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &109035960 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1412471426031753313, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+  m_PrefabInstance: {fileID: 1063181139}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &214793291
 GameObject:
   m_ObjectHideFlags: 0
@@ -1473,10 +1478,10 @@ PrefabInstance:
     - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
       propertyPath: m_PlayableAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 4d2c1b690291075488698151a95be5cd, type: 2}
+      objectReference: {fileID: 11400000, guid: 4042a172b03a48e4b9fcd0c3eac344c0, type: 2}
     - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
       propertyPath: m_SceneBindings.Array.size
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
       propertyPath: m_SceneBindings.Array.data[5].key
@@ -1485,7 +1490,7 @@ PrefabInstance:
     - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
       propertyPath: m_SceneBindings.Array.data[6].key
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: -7215035069367347987, guid: 4042a172b03a48e4b9fcd0c3eac344c0, type: 2}
     - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
       propertyPath: m_SceneBindings.Array.data[7].key
       value: 
@@ -1494,6 +1499,18 @@ PrefabInstance:
       propertyPath: m_SceneBindings.Array.data[8].key
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_ExposedReferences.m_References.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_ExposedReferences.m_References.Array.data[0].first
+      value: 8c23b546537992749b1d11061fa7fec5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183012952338647487, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
+      propertyPath: m_ExposedReferences.m_References.Array.data[0].second
+      value: 
+      objectReference: {fileID: 109035960}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1509,7 +1526,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2368171384188348163, guid: 1dd57fd8a1278e54194cc45b215ba80f, type: 3}
   m_PrefabInstance: {fileID: 1063181139}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 109035960}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3d2453e86fe414ab39059cc533ac7f8, type: 3}

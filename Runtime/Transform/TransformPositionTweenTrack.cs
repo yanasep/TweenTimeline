@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -20,7 +21,7 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
 #endif
         [SerializeField, ExtractContent] private TransformPositionTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<Transform> Template => _behaviour;
+        protected override TweenMixerBehaviour<Transform> template => _behaviour;
     }
     
     /// <summary>
@@ -41,20 +42,25 @@ namespace TweenTimeline
         private Vector3 _originalValue;
 
         /// <inheritdoc/>
-        protected override void OnTrackStart()
+        public override TweenCallback OnStartCallback 
         {
-            if (!SetStartValue) return;
-            
-            switch (positionType)
-            {
-                case TransformTweenPositionType.Position:
-                    Target.position = StartValue.GetValue(Parameter);
-                    break;
-                case TransformTweenPositionType.LocalPosition:
-                    Target.localPosition = StartValue.GetValue(Parameter);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+            get
+            {   
+                if (!SetStartValue) return null;
+                return () =>
+                {
+                    switch (positionType)
+                    {
+                        case TransformTweenPositionType.Position:
+                            Target.position = StartValue.GetValue(Parameter);
+                            break;
+                        case TransformTweenPositionType.LocalPosition:
+                            Target.localPosition = StartValue.GetValue(Parameter);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                };   
             }
         }
 

@@ -15,7 +15,7 @@ namespace TweenTimeline
     public class GraphicColorTweenClip : TweenClip<Graphic>
     {
         [SerializeField, ExtractContent] private GraphicColorTweenBehaviour _behaviour;
-        protected override TweenBehaviour<Graphic> Template => _behaviour;
+        protected override TweenBehaviour<Graphic> template => _behaviour;
     }
 
     /// <summary>
@@ -29,11 +29,17 @@ namespace TweenTimeline
         public RGBAFlags Enable;
         public Ease Ease;
 
+        private Color _endValue;
+
+        public override TweenCallback OnStartCallback => () =>
+        {
+            _endValue = Enable.Apply(Target.color, EndValue.GetValue(Parameter));
+        };
+
         /// <inheritdoc/>
         public override Tween GetTween()
         {
-            var endVal = Enable.Apply(Target.color, EndValue.GetValue(Parameter));
-            return Target.DOColor(endVal, Duration).SetEase(Ease);
+            return Target.DOColor(_endValue, Duration).SetEase(Ease);
         }
     }
 }

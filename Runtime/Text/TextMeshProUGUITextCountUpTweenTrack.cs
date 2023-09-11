@@ -16,7 +16,7 @@ namespace TweenTimeline
     public class TextMeshProUGUICountUpTweenTrack : TextMeshProUGUITweenTrack
     {
         [SerializeField, ExtractContent] private TextMeshProUGUICountUpTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<TextMeshProUGUI> Template => _behaviour;
+        protected override TweenMixerBehaviour<TextMeshProUGUI> template => _behaviour;
     }
     
     /// <summary>

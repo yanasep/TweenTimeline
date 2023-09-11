@@ -14,7 +14,7 @@ namespace TweenTimeline
     public class RectTransformPositionKeepClip : TweenClip<RectTransform>
     {
         [SerializeField, ExtractContent] private RectTransformPositionKeepBehaviour _behaviour;
-        protected override TweenBehaviour<RectTransform> Template => _behaviour;
+        protected override TweenBehaviour<RectTransform> template => _behaviour;
     }
 
     /// <summary>
@@ -31,20 +31,34 @@ namespace TweenTimeline
         [SerializeReference, SelectableSerializeReference] 
         public TimelineExpressionVector3 Value = new TimelineExpressionVector3Constant();
 
-        /// <inheritdoc/>
-        public override Tween GetTween()
+        private Vector3 _startValue;
+
+        public override TweenCallback OnStartCallback => () =>
         {
-            Vector3 startValue = Vector3.zero;
             if (SpecifyValue)
             {
-                startValue = Value.GetValue(Parameter);
+                _startValue = Value.GetValue(Parameter);
             }
-            
+            else
+            {
+                _startValue = PositionType switch
+                {
+                    RectTransformTweenPositionType.Position => Target.position,
+                    RectTransformTweenPositionType.LocalPosition => Target.localPosition,
+                    RectTransformTweenPositionType.AnchoredPosition => Target.anchoredPosition,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+        };
+
+        /// <inheritdoc/>
+        public override Tween GetTween()
+        {   
             Tween tween = PositionType switch
             {
-                RectTransformTweenPositionType.Position => Target.DOMove(SpecifyValue ? startValue : Target.position, Duration),
-                RectTransformTweenPositionType.LocalPosition =>  Target.DOLocalMove(SpecifyValue ? startValue : Target.localPosition, Duration),
-                RectTransformTweenPositionType.AnchoredPosition =>  Target.DOAnchorPos(SpecifyValue ? startValue : Target.anchoredPosition, Duration),
+                RectTransformTweenPositionType.Position => Target.DOMove(SpecifyValue ? _startValue : Target.position, Duration),
+                RectTransformTweenPositionType.LocalPosition =>  Target.DOLocalMove(SpecifyValue ? _startValue : Target.localPosition, Duration),
+                RectTransformTweenPositionType.AnchoredPosition =>  Target.DOAnchorPos(SpecifyValue ? _startValue : Target.anchoredPosition, Duration),
                 _ => throw new ArgumentOutOfRangeException()
             };
 

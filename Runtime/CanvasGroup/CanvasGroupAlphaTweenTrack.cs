@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -19,7 +20,7 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("d_scenevis_visible_hover").image as Texture2D;
 #endif
         [SerializeField, ExtractContent] private CanvasGroupAlphaTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<CanvasGroup> Template => _behaviour;
+        protected override TweenMixerBehaviour<CanvasGroup> template => _behaviour;
     }
     
     /// <summary>
@@ -36,10 +37,16 @@ namespace TweenTimeline
         private float _originalValue;
 
         /// <inheritdoc/>
-        protected override void OnTrackStart()
+        public override TweenCallback OnStartCallback 
         {
-            if (!SetStartValue) return;
-            Target.alpha = StartValue;
+            get
+            {   
+                if (!SetStartValue) return null;
+                return () =>
+                {
+                    Target.alpha = StartValue;
+                };   
+            }
         }
 
         /// <inheritdoc/>

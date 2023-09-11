@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -16,7 +17,7 @@ namespace TweenTimeline
     public class TextMeshProUGUITextTweenTrack : TextMeshProUGUITweenTrack
     {
         [SerializeField, ExtractContent] private TextMeshProUGUITextTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<TextMeshProUGUI> Template => _behaviour;
+        protected override TweenMixerBehaviour<TextMeshProUGUI> template => _behaviour;
     }
     
     /// <summary>
@@ -28,10 +29,15 @@ namespace TweenTimeline
         private int _originalVisibleCharacters;
 
         /// <inheritdoc/>
-        protected override void OnTrackStart()
+        public override TweenCallback OnStartCallback 
         {
-            base.OnTrackStart();
-            Target.maxVisibleCharacters = 0;
+            get
+            {   
+                return () =>
+                {
+                    Target.maxVisibleCharacters = 0;
+                };   
+            }
         }
 
         /// <inheritdoc/>

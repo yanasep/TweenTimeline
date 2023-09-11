@@ -15,7 +15,7 @@ namespace TweenTimeline
     public class TextMeshProUGUITextTweenClip : TweenClip<TextMeshProUGUI>
     {
         [SerializeField, ExtractContent] private TextMeshProUGUITextTweenBehaviour _behaviour;
-        protected override TweenBehaviour<TextMeshProUGUI> Template => _behaviour;
+        protected override TweenBehaviour<TextMeshProUGUI> template => _behaviour;
     }
 
     /// <summary>
@@ -28,27 +28,22 @@ namespace TweenTimeline
 
         private int _endValue;
 
+        /// <inheritdoc/>
+        public override TweenCallback OnStartCallback => () =>
+        {
+            _endValue = Target.text.Length;
+        };
+
+        /// <inheritdoc/>
         public override Tween GetTween()
         {
-            throw new NotImplementedException();
+            return DOVirtual.Int(0, _endValue, Duration, x => Target.maxVisibleCharacters = x).SetEase(Ease);
         }
 
-        // /// <inheritdoc/>
-        // public override void Start()
-        // {
-        //     _endValue = Target.text.Length;
-        // }
-        //
-        // /// <inheritdoc/>
-        // public override void Update(float localTime)
-        // {
-        //     Target.maxVisibleCharacters = (int)DOVirtual.EasedValue(0, _endValue, localTime / Duration, Ease);
-        // }
-        //
-        // /// <inheritdoc/>
-        // public override void End()
-        // {
-        //     Target.maxVisibleCharacters = 99999;
-        // }
+        /// <inheritdoc/>
+        public override TweenCallback OnEndCallback => () =>
+        {
+            Target.maxVisibleCharacters = 99999;
+        };
     }
 }

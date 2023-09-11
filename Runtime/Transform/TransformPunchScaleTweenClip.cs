@@ -14,7 +14,7 @@ namespace TweenTimeline
     public class TransformPunchScaleTweenClip : TweenClip<Transform>
     {
         [SerializeField, ExtractContent] private RectTransformPunchScaleTweenBehaviour _behaviour;
-        protected override TweenBehaviour<Transform> Template => _behaviour;
+        protected override TweenBehaviour<Transform> template => _behaviour;
     }
 
     /// <summary>

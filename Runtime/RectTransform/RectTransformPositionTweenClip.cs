@@ -14,7 +14,7 @@ namespace TweenTimeline
     public class RectTransformPositionTweenClip : TweenClip<RectTransform>
     {
         [SerializeField, ExtractContent] private RectTransformPositionTweenBehaviour _behaviour;
-        protected override TweenBehaviour<RectTransform> Template => _behaviour;
+        protected override TweenBehaviour<RectTransform> template => _behaviour;
     }
 
     /// <summary>

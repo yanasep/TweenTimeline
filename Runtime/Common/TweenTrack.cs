@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -17,6 +18,8 @@ namespace TweenTimeline
         /// <remarks>ビルトインアイコン： https://github.com/halak/unity-editor-icons</remarks>
         public virtual Texture2D Icon => null;  
 #endif
+        
+        public abstract TweenMixerBehaviour Template { get; }
     }
     
     /// <summary>
@@ -24,7 +27,8 @@ namespace TweenTimeline
     /// </summary>
     public abstract class TweenTrack<TBinding> : TweenTrack where TBinding : class
     {
-        protected virtual TweenMixerBehaviour<TBinding> Template => null;
+        public sealed override TweenMixerBehaviour Template => template;
+        protected virtual TweenMixerBehaviour<TBinding> template => null;
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
@@ -39,13 +43,13 @@ namespace TweenTimeline
             }
 
             // OnPlayableCreateでTargetを参照できるように、Templateにセットしておく
-            Template.Target = binding as TBinding;
-            if (Template.Target == null)
+            template.Target = binding as TBinding;
+            if (template.Target == null)
             {
                 // 何もBindされていなければ、空のビヘイビアを生成
                 return base.CreateTrackMixer(graph, go, inputCount);
             }
-            var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, Template, inputCount);
+            var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, template, inputCount);
             var behaviour = playable.GetBehaviour();
             if (go.TryGetComponent<TweenParameterInjector>(out var parameterContainer))
             {
@@ -74,6 +78,8 @@ namespace TweenTimeline
     public class TweenMixerBehaviour : PlayableBehaviour 
     {
         public TweenParameter Parameter { get; set; }
+        public virtual TweenCallback OnStartCallback => null;
+        public virtual TweenCallback OnEndCallback => null;
     }
 
     /// <summary>
@@ -111,7 +117,10 @@ namespace TweenTimeline
         /// <summary>
         /// Track開始時 (ループ時も呼ばれる)
         /// </summary>
-        protected virtual void OnTrackStart() { }
+        private void OnTrackStart()
+        {
+            OnStartCallback?.Invoke();
+        }
 
         /// <inheritdoc/>
         public override void PrepareFrame(Playable playable, FrameData info)

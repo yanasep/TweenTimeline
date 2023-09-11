@@ -13,8 +13,7 @@ namespace TweenTimeline
     {
         public object PlayerData { get; set; }
         public TimelineClip Clip { get; set; }
-
-        public abstract Tween GetTween();
+        public abstract TweenBehaviour Template { get; }
     }
 
     /// <summary>
@@ -24,15 +23,16 @@ namespace TweenTimeline
     public abstract class TweenClip<TBinding> : TweenClip, ITimelineClipAsset where TBinding : class
     {
         public virtual ClipCaps clipCaps => ClipCaps.None;
-        protected abstract TweenBehaviour<TBinding> Template { get; }
+        public sealed override TweenBehaviour Template => template;
+        protected abstract TweenBehaviour<TBinding> template { get; }
 
         /// <inheritdoc/>
         public sealed override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             // OnPlayableCreateでTargetを参照できるように、Templateにセットしておく
-            Template.Target = PlayerData as TBinding;
-            if (Template.Target == null) return default;
-            var playable = ScriptPlayable<TweenBehaviour>.Create(graph, Template);
+            template.Target = PlayerData as TBinding;
+            if (template.Target == null) return default;
+            var playable = ScriptPlayable<TweenBehaviour>.Create(graph, template);
             SetupBehaviour((TweenBehaviour<TBinding>)playable.GetBehaviour(), owner);
             return playable;
         }
@@ -50,11 +50,6 @@ namespace TweenTimeline
                 behaviour.Parameter = parameterContainer.GetParameter();
             }
         }
-
-        public override Tween GetTween()
-        {
-            return Template.GetTween();
-        }
     }
 
     /// <summary>
@@ -66,6 +61,10 @@ namespace TweenTimeline
     {
         public float Duration { get; set; }
         public float StartTime { get; set; }
+
+        public virtual Tween GetTween() => null;
+        public virtual TweenCallback OnStartCallback => null;
+        public virtual TweenCallback OnEndCallback => null;
 
         /// <summary>
         /// クリップ突入時
@@ -119,20 +118,20 @@ namespace TweenTimeline
             }
         }
 
-        public abstract Tween GetTween();
-
         public sealed override void Start()
         {
+            OnStartCallback?.Invoke();
             _tween = GetTween();
         }
 
-        public override void Update(float localTime)
+        public sealed override void Update(float localTime)
         {
             _tween.Goto(localTime);
         }
 
         public sealed override void End()
         {
+            OnEndCallback?.Invoke();
         }
     }
 }

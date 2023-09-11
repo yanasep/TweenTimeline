@@ -15,7 +15,7 @@ namespace TweenTimeline
     public class TextMeshProUGUICountUpTweenClip : TweenClip<TextMeshProUGUI>
     {
         [SerializeField, ExtractContent] private TextMeshProUGUICountUpTweenBehaviour _behaviour;
-        protected override TweenBehaviour<TextMeshProUGUI> Template => _behaviour;
+        protected override TweenBehaviour<TextMeshProUGUI> template => _behaviour;
     }
 
     /// <summary>
@@ -31,29 +31,24 @@ namespace TweenTimeline
 
         private int _startValue;
         private int _endValue;
+        
+        /// <inheritdoc/>
+        public override TweenCallback OnStartCallback => () =>
+        {
+            int.TryParse(Target.text, out _startValue);
+            _endValue = EndValue.GetValue(Parameter);
+        };
 
+        /// <inheritdoc/>
         public override Tween GetTween()
         {
-            throw new NotImplementedException();
+            return DOVirtual.Int(_startValue, _endValue, Duration, x => Target.SetText("{0}", x)).SetEase(Ease);
         }
 
-        // /// <inheritdoc/>
-        // public override void Start()
-        // {
-        //     int.TryParse(Target.text, out _startValue);
-        //     _endValue = EndValue.GetValue(Parameter);
-        // }
-        //
-        // /// <inheritdoc/>
-        // public override void Update(float localTime)
-        // {
-        //     Target.SetText("{0}", (int)DOVirtual.EasedValue(_startValue, _endValue, localTime / Duration, Ease));
-        // }
-        //
-        // /// <inheritdoc/>
-        // public override void End()
-        // {
-        //     Target.SetText("{0}", _endValue);
-        // }
+        /// <inheritdoc/>
+        public override TweenCallback OnEndCallback => () =>
+        {
+            Target.SetText("{0}", _endValue);
+        };
     }
 }
