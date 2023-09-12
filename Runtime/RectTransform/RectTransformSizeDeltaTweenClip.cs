@@ -13,24 +13,14 @@ namespace TweenTimeline
     [DisplayName("Size Tween")]
     public class RectTransformSizeDeltaTweenClip : TweenClip<RectTransform>
     {
-        [SerializeField, ExtractContent] private RectTransformSizeDeltaTweenBehaviour _behaviour;
-        protected override TweenBehaviour<RectTransform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// サイズTweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class RectTransformSizeDeltaTweenBehaviour : TweenBehaviour<RectTransform>
-    {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector2 EndValue = new TimelineExpressionVector2Constant { Value = new Vector2(100, 100) };
-        public Ease Ease;
+        private TimelineExpressionVector2 endValue = new TimelineExpressionVector2Constant { Value = new Vector2(100, 100) };
+        [SerializeField] private Ease ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<RectTransform> info)
         {
-            return Target.DOSizeDelta(EndValue.GetValue(Parameter), Duration).SetEase(Ease);
+            return info.Target.DOSizeDelta(endValue.GetValue(info.Parameter), info.Duration).SetEase(ease);
         }
     }
 }

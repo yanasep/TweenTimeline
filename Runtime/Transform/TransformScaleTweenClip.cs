@@ -13,25 +13,15 @@ namespace TweenTimeline
     [DisplayName("Scale Tween")]
     public class TransformScaleTweenClip : TweenClip<Transform>
     {
-        [SerializeField, ExtractContent] private RectTransformScaleTweenBehaviour _behaviour;
-        protected override TweenBehaviour<Transform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// スケールTweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class RectTransformScaleTweenBehaviour : TweenBehaviour<Transform>
-    {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant { Value = new Vector3(1, 1, 1) };
+        private TimelineExpressionVector3 endValue = new TimelineExpressionVector3Constant { Value = new Vector3(1, 1, 1) };
         
-        public Ease Ease;
+        [SerializeField] private Ease ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<Transform> info)
         {
-            return Target.DOScale(EndValue.GetValue(Parameter), Duration).SetEase(Ease);
+            return info.Target.DOScale(endValue.GetValue(info.Parameter), info.Duration).SetEase(ease);
         }
     }
 }

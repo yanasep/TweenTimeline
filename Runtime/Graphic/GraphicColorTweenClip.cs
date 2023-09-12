@@ -14,32 +14,22 @@ namespace TweenTimeline
     [DisplayName("Color Tween")]
     public class GraphicColorTweenClip : TweenClip<Graphic>
     {
-        [SerializeField, ExtractContent] private GraphicColorTweenBehaviour _behaviour;
-        protected override TweenBehaviour<Graphic> template => _behaviour;
-    }
-
-    /// <summary>
-    /// カラーTweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class GraphicColorTweenBehaviour : TweenBehaviour<Graphic>
-    {
         [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionColor EndValue = new TimelineExpressionColorConstant { Value = Color.white };
         public RGBAFlags Enable;
         public Ease Ease;
-
+        
         private Color _endValue;
 
-        public override TweenCallback OnStartCallback => () =>
+        public override TweenCallback GetStartCallback(TweenClipInfo<Graphic> info)
         {
-            _endValue = Enable.Apply(Target.color, EndValue.GetValue(Parameter));
-        };
+            return () => _endValue = Enable.Apply(info.Target.color, EndValue.GetValue(info.Parameter));
+        }
 
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<Graphic> info)
         {
-            return Target.DOColor(_endValue, Duration).SetEase(Ease);
+            return info.Target.DOColor(_endValue, info.Duration).SetEase(Ease);
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
@@ -20,42 +19,19 @@ namespace TweenTimeline
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("Grid.FillTool").image as Texture2D;
 #endif
-        [SerializeField, ExtractContent] private GraphicColorTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<Graphic> template => _behaviour;
-    }
-    
-    /// <summary>
-    /// カラーTweenミキサー
-    /// </summary>
-    [Serializable]
-    public class GraphicColorTweenMixerBehaviour : TweenMixerBehaviour<Graphic>
-    {
+
         public bool SetStartValue;
-        
+
         [EnableIf(nameof(SetStartValue), true)]
         public Color StartValue = Color.white;
 
         public RGBAFlags Enable;
 
-        private Color _originalValue;
-
         /// <inheritdoc/>
-        public override TweenCallback OnStartCallback => () =>
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<Graphic> info)
         {
-            if (!SetStartValue) return;
-            Target.color = Enable.Apply(_originalValue, StartValue);
-        };
-
-        /// <inheritdoc/>
-        protected override void CacheOriginalState()
-        {
-            _originalValue = Target.color;
-        }
-
-        /// <inheritdoc/>
-        protected override void ResetToOriginalState()
-        {
-            Target.color = _originalValue;
+            if (!SetStartValue) return null;
+            return () => info.Target.color = Enable.Apply(info.Target.color, StartValue);;
         }
     }
 }

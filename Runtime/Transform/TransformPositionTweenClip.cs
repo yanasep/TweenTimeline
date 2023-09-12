@@ -13,16 +13,6 @@ namespace TweenTimeline
     [DisplayName("Position Tween")]
     public class TransformPositionTweenClip : TweenClip<Transform>
     {
-        [SerializeField, ExtractContent] private TransformPositionTweenBehaviour _behaviour;
-        protected override TweenBehaviour<Transform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// 移動Tweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class TransformPositionTweenBehaviour : TweenBehaviour<Transform>
-    {
         public TransformTweenPositionType PositionType;
         
         [SerializeReference, SelectableSerializeReference] 
@@ -34,19 +24,19 @@ namespace TweenTimeline
         public Ease Ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<Transform> info)
         {
             Tween tween = PositionType switch
             {
-                TransformTweenPositionType.Position => Target.DOMove(EndValue.GetValue(Parameter), Duration),
-                TransformTweenPositionType.LocalPosition => Target.DOLocalMove(EndValue.GetValue(Parameter), Duration),
+                TransformTweenPositionType.Position => info.Target.DOMove(EndValue.GetValue(info.Parameter), info.Duration),
+                TransformTweenPositionType.LocalPosition => info.Target.DOLocalMove(EndValue.GetValue(info.Parameter), info.Duration),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
             tween.SetEase(Ease);
-            if (IsRelative.GetValue(Parameter)) tween.SetRelative(true);
+            if (IsRelative.GetValue(info.Parameter)) tween.SetRelative(true);
 
-            return tween;
+            return tween;   
         }
     }
 }

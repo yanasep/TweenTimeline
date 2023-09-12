@@ -13,16 +13,6 @@ namespace TweenTimeline
     [DisplayName("Punch Scale Tween")]
     public class TransformPunchScaleTweenClip : TweenClip<Transform>
     {
-        [SerializeField, ExtractContent] private RectTransformPunchScaleTweenBehaviour _behaviour;
-        protected override TweenBehaviour<Transform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// スケールTweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class RectTransformPunchScaleTweenBehaviour : TweenBehaviour<Transform>
-    {
         [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionVector3 Punch = new TimelineExpressionVector3Constant();
         
@@ -31,9 +21,9 @@ namespace TweenTimeline
         public float Elasticity = 1f;
 
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<Transform> info)
         {
-            return Target.DOPunchScale(Punch.GetValue(Parameter), Duration, Vibrato, Elasticity).SetEase(Ease);
+            return info.Target.DOPunchScale(Punch.GetValue(info.Parameter), info.Duration, Vibrato, Elasticity).SetEase(Ease);
         }
     }
 }

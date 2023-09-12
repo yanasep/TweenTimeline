@@ -13,16 +13,6 @@ namespace TweenTimeline
     [DisplayName("Position Keep")]
     public class TransformPositionKeepClip : TweenClip<Transform>
     {
-        [SerializeField, ExtractContent] private TransformPositionKeepBehaviour _behaviour;
-        protected override TweenBehaviour<Transform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// 移動Tweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class TransformPositionKeepBehaviour : TweenBehaviour<Transform>
-    {
         public TransformTweenPositionType PositionType;
 
         public bool SpecifyValue;
@@ -33,35 +23,39 @@ namespace TweenTimeline
 
         private Vector3 _startValue;
 
-        public override TweenCallback OnStartCallback => () =>
+        /// <inheritdoc/>
+        public override TweenCallback GetStartCallback(TweenClipInfo<Transform> info)
         {
-            if (SpecifyValue)
+            return () =>
             {
-                _startValue = Value.GetValue(Parameter);
-            }
-            else
-            {
-                _startValue = PositionType switch
+                if (SpecifyValue)
                 {
-                    TransformTweenPositionType.Position => Target.position,
-                    TransformTweenPositionType.LocalPosition => Target.localPosition,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-            }
-        };
+                    _startValue = Value.GetValue(info.Parameter);
+                }
+                else
+                {
+                    _startValue = PositionType switch
+                    {
+                        TransformTweenPositionType.Position => info.Target.position,
+                        TransformTweenPositionType.LocalPosition => info.Target.localPosition,
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+                }
+            };
+        }
 
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<Transform> info)
         {
             Tween tween = PositionType switch
             {
-                TransformTweenPositionType.Position => Target.DOMove(SpecifyValue ? _startValue : Target.position, Duration),
-                TransformTweenPositionType.LocalPosition =>  Target.DOLocalMove(SpecifyValue ? _startValue : Target.localPosition, Duration),
+                TransformTweenPositionType.Position => info.Target.DOMove(SpecifyValue ? _startValue : info.Target.position, info.Duration),
+                TransformTweenPositionType.LocalPosition =>  info.Target.DOLocalMove(SpecifyValue ? _startValue : info.Target.localPosition, info.Duration),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
             tween.SetEase(Ease.Linear);
-            return tween;
+            return tween;   
         }
     }
 }

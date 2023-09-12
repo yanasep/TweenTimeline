@@ -21,16 +21,7 @@ namespace TweenTimeline
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
 #endif
-        [SerializeField, ExtractContent] private RectTransformPositionTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<RectTransform> template => _behaviour;
-    }
-    
-    /// <summary>
-    /// 移動Tweenミキサー
-    /// </summary>
-    [Serializable]
-    public class RectTransformPositionTweenMixerBehaviour : TweenMixerBehaviour<RectTransform>
-    {
+
         public bool SetStartValue;
         
         [EnableIf(nameof(SetStartValue), true)]
@@ -38,45 +29,32 @@ namespace TweenTimeline
         public TimelineExpressionVector2 StartValue = new TimelineExpressionVector2Constant();
 
         [EnableIf(nameof(SetStartValue), true)]
-        public RectTransformTweenPositionType positionType;
+        public RectTransformTweenPositionType PositionType;
 
         private Vector3 _originalValue;
 
-        public override TweenCallback OnStartCallback {
-            get
+        /// <inheritdoc/>
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
+        {
+            if (!SetStartValue) return null;
+            
+            return () =>
             {
-                if (!SetStartValue) return null;   
-                return () =>
+                switch (PositionType)
                 {
-
-                    switch (positionType)
-                    {
-                        case RectTransformTweenPositionType.AnchoredPosition:
-                            Target.anchoredPosition = StartValue.GetValue(Parameter);
-                            break;
-                        case RectTransformTweenPositionType.Position:
-                            Target.position = StartValue.GetValue(Parameter);
-                            break;
-                        case RectTransformTweenPositionType.LocalPosition:
-                            Target.localPosition = StartValue.GetValue(Parameter);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                };   
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void CacheOriginalState()
-        {
-            _originalValue = Target.position;
-        }
-
-        /// <inheritdoc/>
-        protected override void ResetToOriginalState()
-        {
-            Target.position = _originalValue;
+                    case RectTransformTweenPositionType.AnchoredPosition:
+                        info.Target.anchoredPosition = StartValue.GetValue(info.Parameter);
+                        break;
+                    case RectTransformTweenPositionType.Position:
+                        info.Target.position = StartValue.GetValue(info.Parameter);
+                        break;
+                    case RectTransformTweenPositionType.LocalPosition:
+                        info.Target.localPosition = StartValue.GetValue(info.Parameter);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            };  
         }
     }
 }

@@ -13,16 +13,6 @@ namespace TweenTimeline
     [DisplayName("Position Keep")]
     public class RectTransformPositionKeepClip : TweenClip<RectTransform>
     {
-        [SerializeField, ExtractContent] private RectTransformPositionKeepBehaviour _behaviour;
-        protected override TweenBehaviour<RectTransform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// 移動Tweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class RectTransformPositionKeepBehaviour : TweenBehaviour<RectTransform>
-    {
         public RectTransformTweenPositionType PositionType;
 
         public bool SpecifyValue;
@@ -33,32 +23,32 @@ namespace TweenTimeline
 
         private Vector3 _startValue;
 
-        public override TweenCallback OnStartCallback => () =>
+        public override TweenCallback GetStartCallback(TweenClipInfo<RectTransform> info)
         {
             if (SpecifyValue)
             {
-                _startValue = Value.GetValue(Parameter);
+                return () => _startValue = Value.GetValue(info.Parameter);
             }
             else
             {
-                _startValue = PositionType switch
+                return () => _startValue = PositionType switch
                 {
-                    RectTransformTweenPositionType.Position => Target.position,
-                    RectTransformTweenPositionType.LocalPosition => Target.localPosition,
-                    RectTransformTweenPositionType.AnchoredPosition => Target.anchoredPosition,
+                    RectTransformTweenPositionType.Position => info.Target.position,
+                    RectTransformTweenPositionType.LocalPosition => info.Target.localPosition,
+                    RectTransformTweenPositionType.AnchoredPosition => info.Target.anchoredPosition,
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }
-        };
-
+        }
+        
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<RectTransform> info)
         {   
             Tween tween = PositionType switch
             {
-                RectTransformTweenPositionType.Position => Target.DOMove(SpecifyValue ? _startValue : Target.position, Duration),
-                RectTransformTweenPositionType.LocalPosition =>  Target.DOLocalMove(SpecifyValue ? _startValue : Target.localPosition, Duration),
-                RectTransformTweenPositionType.AnchoredPosition =>  Target.DOAnchorPos(SpecifyValue ? _startValue : Target.anchoredPosition, Duration),
+                RectTransformTweenPositionType.Position => info.Target.DOMove(SpecifyValue ? _startValue : info.Target.position, info.Duration),
+                RectTransformTweenPositionType.LocalPosition =>  info.Target.DOLocalMove(SpecifyValue ? _startValue : info.Target.localPosition, info.Duration),
+                RectTransformTweenPositionType.AnchoredPosition =>  info.Target.DOAnchorPos(SpecifyValue ? _startValue : info.Target.anchoredPosition, info.Duration),
                 _ => throw new ArgumentOutOfRangeException()
             };
 

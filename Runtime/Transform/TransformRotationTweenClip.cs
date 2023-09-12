@@ -13,33 +13,23 @@ namespace TweenTimeline
     [DisplayName("Rotation Tween")]
     public class TransformRotationTweenClip : TweenClip<Transform>
     {
-        [SerializeField, ExtractContent] private TransformRotationTweenBehaviour _behaviour;
-        protected override TweenBehaviour<Transform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// 回転Tweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class TransformRotationTweenBehaviour : TweenBehaviour<Transform>
-    {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant();
+        private TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant();
         
-        public Ease Ease;
-        public bool IsLocal;
-
+        [SerializeField] private Ease Ease;
+        [SerializeField] private bool IsLocal;
+        
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<Transform> info)
         {
             if (IsLocal)
             {
-                return Target.DOLocalRotate(EndValue.GetValue(Parameter), Duration, RotateMode.FastBeyond360).SetEase(Ease);
+                return info.Target.DOLocalRotate(EndValue.GetValue(info.Parameter), info.Duration, RotateMode.FastBeyond360).SetEase(Ease);
             }
             else
             {
-                return Target.DORotate(EndValue.GetValue(Parameter), Duration, RotateMode.FastBeyond360).SetEase(Ease);
-            }
+                return info.Target.DORotate(EndValue.GetValue(info.Parameter), info.Duration, RotateMode.FastBeyond360).SetEase(Ease);
+            }            
         }
     }
 }

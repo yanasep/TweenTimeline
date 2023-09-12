@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using Yanasep;
 
@@ -13,7 +14,7 @@ namespace TweenTimeline
     /// </summary>
     public class TweenTimelineDirector : MonoBehaviour
     {
-        [SerializeField] private TimelineAsset _timelineAsset;
+        [SerializeField] private PlayableDirector _director;
         public TweenParameter Parameter { get; private set; }
         private Dictionary<TimelineAsset, Tween> _tweenCache;
 
@@ -41,8 +42,9 @@ namespace TweenTimeline
         [EditorPlayModeButton("Play")]
         public void Play()
         {
-            if (_timelineAsset == null) return;
-            Play(_timelineAsset);
+            var asset = _director.playableAsset as TimelineAsset;
+            if (asset == null) return;
+            Play(asset);
         }
 
         /// <summary>
@@ -84,32 +86,13 @@ namespace TweenTimeline
             
             foreach (var track in timelineAsset.GetOutputTracks())
             {
-                if (track is TweenTrack tweenTrack)
-                {
-                    if (tweenTrack.Template.OnStartCallback != null)
-                    {
-                        sequence.AppendCallback(tweenTrack.Template.OnStartCallback);
-                    }
-                    float currentTime = 0;
-                    foreach (var clip in tweenTrack.GetClips())
-                    {
-                        var tweenClip = (TweenClip)clip.asset;
-                        var template = tweenClip.Template;
-                        float interval = (float)clip.start - currentTime;
-                        currentTime = (float)(clip.start + clip.duration);
-                        if (interval > 0) sequence.AppendInterval(interval);
-                        if (template.OnStartCallback != null) sequence.AppendCallback(template.OnStartCallback);
-                        var tween = template.GetTween();
-                        if (tween != null) sequence.Append(tween);
-                        if (template.OnEndCallback != null) sequence.AppendCallback(template.OnEndCallback);
-                    }
-                    if (tweenTrack.Template.OnEndCallback != null)
-                    {
-                        sequence.AppendCallback(tweenTrack.Template.OnEndCallback);
-                    }   
-                }
-            }
+                if (track is not TweenTrack tweenTrack) continue;
 
+                var binding = _director.GetGenericBinding(track);
+                var tween = tweenTrack.CreateTween(binding);
+                if (tween != null) sequence.Join(tween);
+            }
+        
             return sequence;
         }
 

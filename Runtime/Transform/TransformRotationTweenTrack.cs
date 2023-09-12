@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
@@ -19,47 +18,21 @@ namespace TweenTimeline
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("RotateTool").image as Texture2D;  
 #endif
-        [SerializeField, ExtractContent] private RectTransformRotationTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<Transform> template => _behaviour;
-    }
-    
-    /// <summary>
-    /// 回転Tweenミキサー
-    /// </summary>
-    [Serializable]
-    public class RectTransformRotationTweenMixerBehaviour : TweenMixerBehaviour<Transform>
-    {
-        public bool SetStartValue;
+     
+        [SerializeField] private bool setStartValue;
         
-        [EnableIf(nameof(SetStartValue), true)]
+        [EnableIf(nameof(setStartValue), true)]
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector3 StartValue = new TimelineExpressionVector3Constant();
-
-        private Quaternion _originalValue;
+        private TimelineExpressionVector3 startValue = new TimelineExpressionVector3Constant();
 
         /// <inheritdoc/>
-        public override TweenCallback OnStartCallback 
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
         {
-            get
-            {   
-                if (!SetStartValue) return null;
-                return () =>
-                {
-                    Target.localRotation = Quaternion.Euler(StartValue.GetValue(Parameter));
-                };   
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void CacheOriginalState()
-        {
-            _originalValue = Target.localRotation;
-        }
-
-        /// <inheritdoc/>
-        protected override void ResetToOriginalState()
-        {
-            Target.localRotation = _originalValue;
+            if (!setStartValue) return null;
+            return () =>
+            {
+                info.Target.localRotation = Quaternion.Euler(startValue.GetValue(info.Parameter));
+            };   
         }
     }
 }

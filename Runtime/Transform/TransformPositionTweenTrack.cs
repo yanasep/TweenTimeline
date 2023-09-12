@@ -20,16 +20,6 @@ namespace TweenTimeline
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
 #endif
-        [SerializeField, ExtractContent] private TransformPositionTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<Transform> template => _behaviour;
-    }
-    
-    /// <summary>
-    /// 移動Tweenミキサー
-    /// </summary>
-    [Serializable]
-    public class TransformPositionTweenMixerBehaviour : TweenMixerBehaviour<Transform>
-    {
         public bool SetStartValue;
         
         [EnableIf(nameof(SetStartValue), true)]
@@ -39,41 +29,24 @@ namespace TweenTimeline
         [EnableIf(nameof(SetStartValue), true)]
         public TransformTweenPositionType positionType;
 
-        private Vector3 _originalValue;
-
         /// <inheritdoc/>
-        public override TweenCallback OnStartCallback 
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
         {
-            get
-            {   
-                if (!SetStartValue) return null;
-                return () =>
+            if (!SetStartValue) return null;
+            return () =>
+            {
+                switch (positionType)
                 {
-                    switch (positionType)
-                    {
-                        case TransformTweenPositionType.Position:
-                            Target.position = StartValue.GetValue(Parameter);
-                            break;
-                        case TransformTweenPositionType.LocalPosition:
-                            Target.localPosition = StartValue.GetValue(Parameter);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                };   
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void CacheOriginalState()
-        {
-            _originalValue = Target.position;
-        }
-
-        /// <inheritdoc/>
-        protected override void ResetToOriginalState()
-        {
-            Target.position = _originalValue;
+                    case TransformTweenPositionType.Position:
+                        info.Target.position = StartValue.GetValue(info.Parameter);
+                        break;
+                    case TransformTweenPositionType.LocalPosition:
+                        info.Target.localPosition = StartValue.GetValue(info.Parameter);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            };   
         }
     }
 }

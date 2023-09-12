@@ -1,10 +1,7 @@
-using System;
 using System.ComponentModel;
 using DG.Tweening;
 using TMPro;
-using UnityEngine;
 using UnityEngine.Timeline;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -16,40 +13,16 @@ namespace TweenTimeline
     [DisplayName("Tween/Text Tween Track")]
     public class TextMeshProUGUITextTweenTrack : TextMeshProUGUITweenTrack
     {
-        [SerializeField, ExtractContent] private TextMeshProUGUITextTweenMixerBehaviour _behaviour;
-        protected override TweenMixerBehaviour<TextMeshProUGUI> template => _behaviour;
-    }
-    
-    /// <summary>
-    /// CanvasGroupのAlphaのTweenミキサー
-    /// </summary>
-    [Serializable]
-    public class TextMeshProUGUITextTweenMixerBehaviour : TweenMixerBehaviour<TextMeshProUGUI>
-    {
-        private int _originalVisibleCharacters;
-
         /// <inheritdoc/>
-        public override TweenCallback OnStartCallback 
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<TextMeshProUGUI> info)
         {
-            get
-            {   
-                return () =>
-                {
-                    Target.maxVisibleCharacters = 0;
-                };   
-            }
+            return () => info.Target.maxVisibleCharacters = 0;
         }
 
         /// <inheritdoc/>
-        protected override void CacheOriginalState()
+        protected override TweenCallback GetEndCallback(TweenTrackInfo<TextMeshProUGUI> info)
         {
-            _originalVisibleCharacters = Target.maxVisibleCharacters;
-        }
-
-        /// <inheritdoc/>
-        protected override void ResetToOriginalState()
-        {
-            Target.maxVisibleCharacters = _originalVisibleCharacters;
+            return () => info.Target.maxVisibleCharacters = 99999;
         }
     }
 }

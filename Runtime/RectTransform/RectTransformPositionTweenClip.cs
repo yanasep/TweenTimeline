@@ -13,16 +13,6 @@ namespace TweenTimeline
     [DisplayName("Position Tween")]
     public class RectTransformPositionTweenClip : TweenClip<RectTransform>
     {
-        [SerializeField, ExtractContent] private RectTransformPositionTweenBehaviour _behaviour;
-        protected override TweenBehaviour<RectTransform> template => _behaviour;
-    }
-
-    /// <summary>
-    /// 移動Tweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class RectTransformPositionTweenBehaviour : TweenBehaviour<RectTransform>
-    {
         public RectTransformTweenPositionType PositionType;
         
         [SerializeReference, SelectableSerializeReference] 
@@ -32,28 +22,28 @@ namespace TweenTimeline
         public TimelineExpressionBool IsRelative = new TimelineExpressionBoolConstant { Value = false };
         
         public Ease Ease;
-
+        
         /// <inheritdoc/>
-        public override Tween GetTween()
+        public override Tween GetTween(TweenClipInfo<RectTransform> info)
         {
             Tween tween;
             switch (PositionType)
             {
                 case RectTransformTweenPositionType.AnchoredPosition:
-                    tween = Target.DOAnchorPos(EndValue.GetValue(Parameter), Duration);
+                    tween = info.Target.DOAnchorPos(EndValue.GetValue(info.Parameter), info.Duration);
                     break;
                 case RectTransformTweenPositionType.Position:
-                    tween = Target.DOMove(EndValue.GetValue(Parameter), Duration);
+                    tween = info.Target.DOMove(EndValue.GetValue(info.Parameter), info.Duration);
                     break;
                 case RectTransformTweenPositionType.LocalPosition:
-                    tween = Target.DOLocalMove(EndValue.GetValue(Parameter), Duration);
+                    tween = info.Target.DOLocalMove(EndValue.GetValue(info.Parameter), info.Duration);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
             
             tween.SetEase(Ease).SetUpdate(UpdateType.Manual);
-            if (IsRelative.GetValue(Parameter)) tween.SetRelative(true);
+            if (IsRelative.GetValue(info.Parameter)) tween.SetRelative(true);
 
             return tween;
         }

@@ -14,41 +14,37 @@ namespace TweenTimeline
     [DisplayName("Text Count Up Tween")]
     public class TextMeshProUGUICountUpTweenClip : TweenClip<TextMeshProUGUI>
     {
-        [SerializeField, ExtractContent] private TextMeshProUGUICountUpTweenBehaviour _behaviour;
-        protected override TweenBehaviour<TextMeshProUGUI> template => _behaviour;
-    }
-
-    /// <summary>
-    /// TextMeshProUGUIの文字送りTweenビヘイビア
-    /// </summary>
-    [Serializable]
-    public class TextMeshProUGUICountUpTweenBehaviour : TweenBehaviour<TextMeshProUGUI>
-    {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionInt EndValue = new TimelineExpressionIntConstant { Value = 0 };
+        private TimelineExpressionInt endValue = new TimelineExpressionIntConstant { Value = 0 };
         
-        public Ease Ease;
+        [SerializeField] private Ease ease;
 
         private int _startValue;
         private int _endValue;
         
         /// <inheritdoc/>
-        public override TweenCallback OnStartCallback => () =>
+        public override TweenCallback GetStartCallback(TweenClipInfo<TextMeshProUGUI> info)
         {
-            int.TryParse(Target.text, out _startValue);
-            _endValue = EndValue.GetValue(Parameter);
-        };
-
-        /// <inheritdoc/>
-        public override Tween GetTween()
-        {
-            return DOVirtual.Int(_startValue, _endValue, Duration, x => Target.SetText("{0}", x)).SetEase(Ease);
+            return () =>
+            {
+                int.TryParse(info.Target.text, out _startValue);
+                _endValue = endValue.GetValue(info.Parameter);
+            };
         }
 
         /// <inheritdoc/>
-        public override TweenCallback OnEndCallback => () =>
+        public override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
         {
-            Target.SetText("{0}", _endValue);
-        };
+            return DOVirtual.Int(_startValue, _endValue, info.Duration, x => info.Target.SetText("{0}", x)).SetEase(ease);
+        }
+
+        /// <inheritdoc/>
+        public override TweenCallback GetEndCallback(TweenClipInfo<TextMeshProUGUI> info)
+        {
+            return () =>
+            {
+                info.Target.SetText("{0}", _endValue);
+            };
+        }
     }
 }
