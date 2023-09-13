@@ -32,13 +32,7 @@ namespace TweenTimeline
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             // クリップのビヘイビアは使わない
-            // return default;
-            return ScriptPlayable<TweenBehaviour>.Create(graph);
+            return default;
         }
-    }
-
-    public sealed class TweenBehaviour : PlayableBehaviour
-    {
-        
     }
 }

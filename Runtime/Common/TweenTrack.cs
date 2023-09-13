@@ -37,14 +37,12 @@ namespace TweenTimeline
         {
             var binding = go.GetComponent<PlayableDirector>().GetGenericBinding(this);
 
-            // OnPlayableCreateで参照できるように、Templateにセットしておく
             var tween = CreateTween(binding);
             if (tween == null)
             {
                 // Tweenがなければ、空のビヘイビアを生成
                 return base.CreateTrackMixer(graph, go, inputCount);
             }
-            
             var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, inputCount);
             var behaviour = playable.GetBehaviour();
             behaviour.Tween = tween;
@@ -76,17 +74,11 @@ namespace TweenTimeline
                 Parameter = null
             };
 
+            var duration = (float)timelineAsset.duration;
+            
             var sb = new StringBuilder();
             sb.AppendLine("Sequence()");
             string Indent = "    ";
-
-            // if (target is Transform trans)
-            // {
-            //     sequence.Append(trans.DOMove(new Vector3(150, 150), 3f));
-            //     return sequence;
-            // }
-            
-            sequence.AppendCallback(() => Debug.Log("sequence start!"));
 
             var startCallback = GetStartCallback(tweenTrackInfo);
             if (startCallback != null)
@@ -112,7 +104,6 @@ namespace TweenTimeline
                     Parameter = null
                 };
                 // start
-                sequence.AppendCallback(() => Debug.Log("clip start!"));
                 var clipStartCallback = tweenClip.GetStartCallback(tweenClipInfo);
                 if (clipStartCallback != null)
                 {
@@ -136,22 +127,22 @@ namespace TweenTimeline
                     sb.Append(Indent);
                     sb.AppendLine(tweenClip.GetEndLog(tweenClipInfo));
                 }
-
-                sequence.AppendCallback(() => Debug.Log("clip end!"));
             }
 
             var endCallback = GetEndCallback(tweenTrackInfo);
             if (endCallback != null)
             {
+                float interval = duration - currentTime;
+                if (interval > 0) sequence.AppendInterval(interval);
                 sequence.AppendCallback(endCallback);
                 sb.Append(Indent);
                 sb.AppendLine(GetEndLog(tweenTrackInfo));
             }
 
-            sequence.AppendCallback(() => Debug.Log("sequence end!"));
+            sb.Append(Indent);
             sb.Append(";");
 
-            Debug.Log($"CreateTween ({name}):\n{sb}");
+            // Debug.Log($"CreateTween ({name}):\n{sb}");
             return sequence;
         }
     }
@@ -167,8 +158,7 @@ namespace TweenTimeline
         {
             var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
             var trackTime = playable.GetTime() % duration;
-            Tween.Rewind();
-            Tween.Goto((float)trackTime);
+            Tween.GotoWithCallbacks((float)trackTime);
         }
 
         public override void OnPlayableDestroy(Playable playable)
