@@ -25,6 +25,9 @@ namespace TweenTimeline
         public abstract Tween GetTween(TweenClipInfo<TBinding> info);
         public virtual TweenCallback GetStartCallback(TweenClipInfo<TBinding> info) => null;
         public virtual TweenCallback GetEndCallback(TweenClipInfo<TBinding> info) => null;
+        public virtual string GetStartLog(TweenClipInfo<TBinding> info) => null;
+        public virtual string GetTweenLog(TweenClipInfo<TBinding> info) => null;
+        public virtual string GetEndLog(TweenClipInfo<TBinding> info) => null;
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {

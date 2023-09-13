@@ -19,5 +19,10 @@ namespace TweenTimeline
         {
             return info.Target.DOFade(EndValue, info.Duration).SetEase(Ease);
         }
+
+        public override string GetTweenLog(TweenClipInfo<CanvasGroup> info)
+        {
+            return $"DOFade({EndValue}, {info.Duration})";
+        }
     }
 }

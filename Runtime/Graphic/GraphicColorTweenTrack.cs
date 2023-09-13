@@ -33,5 +33,10 @@ namespace TweenTimeline
             if (!SetStartValue) return null;
             return () => info.Target.color = Enable.Apply(info.Target.color, StartValue);;
         }
+
+        protected override string GetStartLog(TweenTrackInfo<Graphic> info)
+        {
+            return "Set Color: original color (" + Color.white + ") => start color " + Enable.Apply(Color.white, StartValue);
+        }
     }
 }
