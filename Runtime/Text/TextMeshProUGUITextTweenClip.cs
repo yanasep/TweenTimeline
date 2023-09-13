@@ -14,24 +14,11 @@ namespace TweenTimeline
     {
         public Ease ease;
 
-        private int endValue;
-        
-        /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(TweenClipInfo<TextMeshProUGUI> info)
-        {
-            return () => endValue = info.Target.text.Length;
-        }
-
         /// <inheritdoc/>
         public override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
         {
-            return DOVirtual.Int(0, endValue, info.Duration, x => info.Target.maxVisibleCharacters = x).SetEase(ease);   
-        }
-
-        /// <inheritdoc/>
-        public override TweenCallback GetEndCallback(TweenClipInfo<TextMeshProUGUI> info)
-        {
-            return () => info.Target.maxVisibleCharacters = 99999;
+            return DOTween.To(() => info.Target.text.Length, x => info.Target.maxVisibleCharacters = x, 0, info.Duration)
+                .From().SetEase(ease);   
         }
     }
 }
