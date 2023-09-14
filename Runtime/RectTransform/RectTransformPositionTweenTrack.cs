@@ -26,12 +26,10 @@ namespace TweenTimeline
         
         [EnableIf(nameof(SetStartValue), true)]
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector2 StartValue = new TimelineExpressionVector2Constant();
+        public TimelineExpressionVector3 StartValue = new TimelineExpressionVector3Constant();
 
         [EnableIf(nameof(SetStartValue), true)]
         public RectTransformTweenPositionType PositionType;
-
-        private Vector3 _originalValue;
 
         /// <inheritdoc/>
         protected override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)

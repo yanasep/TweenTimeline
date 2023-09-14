@@ -19,7 +19,7 @@ namespace TweenTimeline
         public virtual Texture2D Icon => null;  
 #endif
 
-        public abstract Tween CreateTween(Object binding);
+        public abstract Tween CreateTween(CreateTweenArgs args);
     }
     
     /// <summary>
@@ -34,10 +34,16 @@ namespace TweenTimeline
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
-        {
+        { 
             var binding = go.GetComponent<PlayableDirector>().GetGenericBinding(this);
+            var parameterHolder = go.GetComponent<TweenParameterHolder>();
+            var parameter = parameterHolder != null ? parameterHolder.GetParameter() : new TweenParameter();
 
-            var tween = CreateTween(binding);
+            var tween = CreateTween(new CreateTweenArgs
+            {
+                Binding = binding,
+                Parameter = parameter
+            });
             if (tween == null)
             {
                 // Tweenがなければ、空のビヘイビアを生成
@@ -62,16 +68,16 @@ namespace TweenTimeline
 #endif
         }
 
-        public sealed override Tween CreateTween(Object binding)
+        public sealed override Tween CreateTween(CreateTweenArgs args)
         {
-            var target = binding as TBinding;
+            var target = args.Binding as TBinding;
             if (target == null) return null;
             
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
             var tweenTrackInfo = new TweenTrackInfo<TBinding>
             {
                 Target = target,
-                Parameter = null
+                Parameter = args.Parameter
             };
 
             var duration = (float)timelineAsset.duration;
@@ -101,7 +107,7 @@ namespace TweenTimeline
                 {
                     Target = target,
                     Duration = (float)clip.duration,
-                    Parameter = null
+                    Parameter = args.Parameter
                 };
                 // start
                 var clipStartCallback = tweenClip.GetStartCallback(tweenClipInfo);
@@ -154,13 +160,23 @@ namespace TweenTimeline
     {
         public Tween Tween { get; set; }
 
+        /// <inheritdoc/>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
-            var trackTime = playable.GetTime() % duration;
+            var trackTime = playable.GetTime();
+
+            var graph = playable.GetGraph();
+            var director = (PlayableDirector)graph.GetResolver();
+            if (director.extrapolationMode == DirectorWrapMode.Loop)
+            {
+                var duration = graph.GetRootPlayable(0).GetDuration();
+                trackTime = playable.GetTime() % duration;
+            }
+
             Tween.GotoWithCallbacks((float)trackTime);
         }
 
+        /// <inheritdoc/>
         public override void OnPlayableDestroy(Playable playable)
         {
             Tween.Rewind();

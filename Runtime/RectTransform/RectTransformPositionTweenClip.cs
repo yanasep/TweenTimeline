@@ -16,7 +16,7 @@ namespace TweenTimeline
         public RectTransformTweenPositionType PositionType;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector2 EndValue = new TimelineExpressionVector2Constant();
+        public TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant();
 
         [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionBool IsRelative = new TimelineExpressionBoolConstant { Value = false };

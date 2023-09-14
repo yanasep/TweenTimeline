@@ -6,7 +6,7 @@ namespace TweenTimeline
     /// <summary>
     /// TweenTimelineのパラメータのデフォルト値を保持するコンポーネント
     /// </summary>
-    public class TweenParameterInjector : MonoBehaviour
+    public class TweenParameterHolder : MonoBehaviour
     {
         [SerializeField] private SerializableDictionary<string, float> floats;
         [SerializeField] private SerializableDictionary<string, int> ints;
@@ -15,27 +15,23 @@ namespace TweenTimeline
         [SerializeField] private SerializableDictionary<string, Vector2> vector2s;
         [SerializeField] private SerializableDictionary<string, Color> colors;
 
-        private TweenParameter _parameter;
-
         /// <summary>
         /// デフォルト値が入ったTimelineParameterContainerを生成して取得
         /// </summary>
         public TweenParameter GetParameter()
         {
-            if (_parameter != null) return _parameter;
-            
-            _parameter = new TweenParameter();
-            Set(floats, _parameter.Float);
-            Set(ints, _parameter.Int);
-            Set(bools, _parameter.Bool);
-            Set(vector3s, _parameter.Vector3);
-            Set(vector2s, _parameter.Vector2);
-            Set(colors, _parameter.Color);
+            var parameter = new TweenParameter();
+            Set(floats, parameter.Float);
+            Set(ints, parameter.Int);
+            Set(bools, parameter.Bool);
+            Set(vector3s, parameter.Vector3);
+            Set(vector2s, parameter.Vector2);
+            Set(colors, parameter.Color);
 
-            return _parameter;
+            return parameter;
         }
 
-        private void Set<T>(SerializableDictionary<string, T> source, TimelineParameterHolder<T> dest)
+        private void Set<T>(SerializableDictionary<string, T> source, TimelineParameterDictionary<T> dest)
         {
             foreach (var (key, val) in source)
             {

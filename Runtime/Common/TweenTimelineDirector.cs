@@ -24,9 +24,9 @@ namespace TweenTimeline
         [EditorPlayModeButton("Initialize")]
         public void Initialize()
         {
-            if (TryGetComponent<TweenParameterInjector>(out var injector))
+            if (TryGetComponent<TweenParameterHolder>(out var holder))
             {
-                Parameter = injector.GetParameter();
+                Parameter = holder.GetParameter();
             }
             else
             {
@@ -89,7 +89,11 @@ namespace TweenTimeline
                 if (track is not TweenTrack tweenTrack) continue;
 
                 var binding = _director.GetGenericBinding(track);
-                var tween = tweenTrack.CreateTween(binding);
+                var tween = tweenTrack.CreateTween(new CreateTweenArgs
+                {
+                    Binding = binding,
+                    Parameter = Parameter
+                });
                 if (tween != null) sequence.Join(tween);
             }
         

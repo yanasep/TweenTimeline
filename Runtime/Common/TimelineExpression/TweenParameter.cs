@@ -8,12 +8,12 @@ namespace TweenTimeline
     /// </summary>
     public class TweenParameter
     {   
-        public readonly TimelineParameterHolder<float> Float = new();
-        public readonly TimelineParameterHolder<int> Int = new();
-        public readonly TimelineParameterHolder<bool> Bool = new();
-        public readonly TimelineParameterHolder<Vector3> Vector3 = new();
-        public readonly TimelineParameterHolder<Vector2> Vector2 = new();
-        public readonly TimelineParameterHolder<Color> Color = new();
+        public readonly TimelineParameterDictionary<float> Float = new();
+        public readonly TimelineParameterDictionary<int> Int = new();
+        public readonly TimelineParameterDictionary<bool> Bool = new();
+        public readonly TimelineParameterDictionary<Vector3> Vector3 = new();
+        public readonly TimelineParameterDictionary<Vector2> Vector2 = new();
+        public readonly TimelineParameterDictionary<Color> Color = new();
 
         /// <summary>文字列をハッシュに</summary>
         public static int StringToHash(string str)
@@ -25,7 +25,7 @@ namespace TweenTimeline
     /// <summary>
     /// 型ごとのパラメータ保持
     /// </summary>
-    public class TimelineParameterHolder<T>
+    public class TimelineParameterDictionary<T>
     {
         private readonly Dictionary<int, T> valueDic = new();
 
