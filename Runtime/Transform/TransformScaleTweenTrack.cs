@@ -26,7 +26,7 @@ namespace TweenTimeline
         [SerializeReference, SelectableSerializeReference] 
         private TimelineExpressionVector3 startValue = new TimelineExpressionVector3Constant();
 
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
+        public override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
         {
             if (!setStartValue) return null;
             return () =>

@@ -26,7 +26,7 @@ namespace TweenTimeline
         public TimelineExpressionVector2 StartValue = new TimelineExpressionVector2Constant { Value = new Vector2(100, 100) };
 
         /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
+        public override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
         {
             if (!SetStartValue) return null;
             return () => { info.Target.sizeDelta = StartValue.GetValue(info.Parameter); };

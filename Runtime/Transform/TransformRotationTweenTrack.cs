@@ -26,7 +26,7 @@ namespace TweenTimeline
         private TimelineExpressionVector3 startValue = new TimelineExpressionVector3Constant();
 
         /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
+        public override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
         {
             if (!setStartValue) return null;
             return () =>

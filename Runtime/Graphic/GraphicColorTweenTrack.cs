@@ -28,7 +28,7 @@ namespace TweenTimeline
         public RGBAFlags Enable;
 
         /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<Graphic> info)
+        public override TweenCallback GetStartCallback(TweenTrackInfo<Graphic> info)
         {
             if (!SetStartValue) return null;
             return () => info.Target.color = Enable.Apply(info.Target.color, StartValue);;

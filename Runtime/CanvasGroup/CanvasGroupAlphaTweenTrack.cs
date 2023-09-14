@@ -23,7 +23,7 @@ namespace TweenTimeline
         [EnableIf(nameof(SetStartValue), true)]
         public float StartValue = 1f;
 
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<CanvasGroup> info)
+        public override TweenCallback GetStartCallback(TweenTrackInfo<CanvasGroup> info)
         {
             if (!SetStartValue) return null;
             return () => info.Target.alpha = StartValue;
