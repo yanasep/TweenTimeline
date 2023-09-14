@@ -1063,11 +1063,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2670462211779477071, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 1.127
       objectReference: {fileID: 0}
     - target: {fileID: 2670462211779477071, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 1.127
       objectReference: {fileID: 0}
     - target: {fileID: 2670462211779477071, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1099,11 +1099,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2670462211779477071, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -10.0000305
+      value: -459
       objectReference: {fileID: 0}
     - target: {fileID: 2670462211779477071, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 378.12643
+      value: -55
       objectReference: {fileID: 0}
     - target: {fileID: 2670462211779477071, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1125,6 +1125,10 @@ PrefabInstance:
       propertyPath: _director
       value: 
       objectReference: {fileID: 2547630930989272211}
+    - target: {fileID: 6304014811341932006, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_WrapMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6304014811341932006, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_SceneBindings.Array.size
       value: 4

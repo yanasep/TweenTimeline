@@ -34,6 +34,12 @@ namespace TweenTimeline
         protected virtual string GetStartLog(TweenTrackInfo<TBinding> info) => null;
         protected virtual string GetEndLog(TweenTrackInfo<TBinding> info) => null;
 
+        /// <summary>開始前(プレビュー前)の状態を保存</summary>
+        protected virtual void CacheOriginalState(TweenTrackInfo<TBinding> info) { }
+        
+        /// <summary>開始前(プレビュー前)の状態に戻す</summary>
+        protected virtual void ResetToOriginalState(TweenTrackInfo<TBinding> info) { }
+
         private readonly TweenMixerBehaviour template = new();
 
         /// <inheritdoc/>
@@ -63,6 +69,8 @@ namespace TweenTimeline
             };
             template.StartCallback = GetStartCallback(trackInfo);
             template.EndCallback = GetEndCallback(trackInfo);
+            template.OnEnterPreview = () => CacheOriginalState(trackInfo);
+            template.OnExitPreview = () => ResetToOriginalState(trackInfo);
             return ScriptPlayable<TweenMixerBehaviour>.Create(graph, template, inputCount);
         }
 
@@ -171,12 +179,14 @@ namespace TweenTimeline
     {
         public TweenCallback StartCallback { get; set; }
         public TweenCallback EndCallback { get; set; }
+        public Action OnEnterPreview;
+        public Action OnExitPreview;
         
         /// <inheritdoc/>
         public override void OnPlayableCreate(Playable playable)
         {
             base.OnPlayableCreate(playable);
-            CacheOriginalState();
+            OnEnterPreview?.Invoke();
         }
 
         /// <inheritdoc/>
@@ -185,7 +195,7 @@ namespace TweenTimeline
             base.OnGraphStop(playable);
             if (!Application.isPlaying)
             {
-                ResetToOriginalState();
+                OnEnterPreview?.Invoke();
             }
         }
 
@@ -214,7 +224,7 @@ namespace TweenTimeline
             
             // 時間がワープしている場合は、現在時刻の状態を再計算
 
-            ResetToOriginalState();
+            OnExitPreview?.Invoke();
             OnTrackStart();
             int inputCount = playable.GetInputCount();
             
@@ -248,15 +258,5 @@ namespace TweenTimeline
             var warped = prevTrackTime > trackTime;
             return (warped, trackTime);
         }
-
-        /// <summary>
-        /// 開始前(プレビュー前)の状態を保存
-        /// </summary>
-        protected virtual void CacheOriginalState() { }
-        
-        /// <summary>
-        /// 開始前(プレビュー前)の状態に戻す
-        /// </summary>
-        protected virtual void ResetToOriginalState() { }
     }
 }
