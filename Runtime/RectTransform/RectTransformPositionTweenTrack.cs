@@ -18,8 +18,6 @@ namespace TweenTimeline
     [TrackClipType(typeof(TransformPositionTweenClip))]
     public class RectTransformPositionTweenTrack : RectTransformTweenTrack
     {
-        public override TweenMixerBehaviour<RectTransform> Template { get; } = new RectPosMixer();
-
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
 #endif
@@ -56,10 +54,5 @@ namespace TweenTimeline
                 }
             };  
         }
-    }
-    
-    public class RectPosMixer : TweenMixerBehaviour<RectTransform>
-    {
-        
     }
 }
