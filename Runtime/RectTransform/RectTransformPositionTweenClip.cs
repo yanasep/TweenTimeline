@@ -41,8 +41,8 @@ namespace TweenTimeline
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
-            tween.SetEase(Ease).SetUpdate(UpdateType.Manual);
+
+            tween.SetEase(Ease);
             if (IsRelative.GetValue(info.Parameter)) tween.SetRelative(true);
 
             return tween;

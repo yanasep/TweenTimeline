@@ -227,6 +227,13 @@ namespace TweenTimeline
         public TweenCallback StartCallback { get; set; }
         public TweenCallback EndCallback { get; set; }
 
+        private PlayableDirector director;
+
+        public override void OnPlayableCreate(Playable playable)
+        {
+            director = (PlayableDirector)playable.GetGraph().GetResolver();
+        }
+
         /// <inheritdoc/>
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
@@ -281,12 +288,22 @@ namespace TweenTimeline
         {
             var time = playable.GetTime();
             if (info.seekOccurred) return (true, time);
-
+            
             var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
-            var prevTrackTime = playable.GetPreviousTime() % duration;
-            var trackTime = playable.GetTime() % duration;
+            var prevTrackTime = GetTrackTime(playable.GetPreviousTime(), duration);
+            var trackTime = GetTrackTime(playable.GetTime(), duration);
             var warped = prevTrackTime > trackTime;
+            
             return (warped, trackTime);
+        }
+        
+        private double GetTrackTime(double time, double duration)
+        {
+            return director.extrapolationMode switch
+            {
+                DirectorWrapMode.Hold => Math.Min(time, duration),
+                _ => time % duration
+            };
         }
     }
 }
