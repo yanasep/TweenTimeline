@@ -2,6 +2,7 @@ using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
 using Yanasep;
@@ -37,6 +38,18 @@ namespace TweenTimeline
         protected override string GetStartLog(TweenTrackInfo<Graphic> info)
         {
             return "Set Color: original color (" + Color.white + ") => start color " + Enable.Apply(Color.white, StartValue);
+        }
+
+        /// <inheritdoc/>
+        public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
+        {
+            base.GatherProperties(director, driver);
+
+#if UNITY_EDITOR
+            var binding = director.GetGenericBinding(this) as Graphic;
+            if (binding == null) return;
+            driver.AddFromName<Graphic>(binding.gameObject, "m_Color");
+#endif
         }
     }
 }

@@ -54,16 +54,5 @@ namespace TweenTimeline
                 }
             };  
         }
-
-        private Vector3 _originalValue;
-        protected override void CacheOriginalState(TweenTrackInfo<RectTransform> info)
-        {
-            _originalValue = info.Target.position;
-        }
-
-        protected override void ResetToOriginalState(TweenTrackInfo<RectTransform> info)
-        {
-            info.Target.position = _originalValue;
-        }
     }
 }

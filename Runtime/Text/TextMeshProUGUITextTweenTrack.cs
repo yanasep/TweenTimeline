@@ -16,7 +16,6 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public override TweenCallback GetStartCallback(TweenTrackInfo<TextMeshProUGUI> info)
         {
-            // TODO rewind で99999にしたい
             return () => info.Target.maxVisibleCharacters = 0;
         }
 

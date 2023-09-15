@@ -34,12 +34,6 @@ namespace TweenTimeline
         protected virtual string GetStartLog(TweenTrackInfo<TBinding> info) => null;
         protected virtual string GetEndLog(TweenTrackInfo<TBinding> info) => null;
 
-        /// <summary>開始前(プレビュー前)の状態を保存</summary>
-        protected virtual void CacheOriginalState(TweenTrackInfo<TBinding> info) { }
-        
-        /// <summary>開始前(プレビュー前)の状態に戻す</summary>
-        protected virtual void ResetToOriginalState(TweenTrackInfo<TBinding> info) { }
-
         private readonly TweenMixerBehaviour template = new();
 
         /// <inheritdoc/>
@@ -69,8 +63,6 @@ namespace TweenTimeline
             };
             template.StartCallback = GetStartCallback(trackInfo);
             template.EndCallback = GetEndCallback(trackInfo);
-            template.OnEnterPreview = () => CacheOriginalState(trackInfo);
-            template.OnExitPreview = () => ResetToOriginalState(trackInfo);
             return ScriptPlayable<TweenMixerBehaviour>.Create(graph, template, inputCount);
         }
 
@@ -179,31 +171,17 @@ namespace TweenTimeline
     {
         public TweenCallback StartCallback { get; set; }
         public TweenCallback EndCallback { get; set; }
-        public Action OnEnterPreview;
-        public Action OnExitPreview;
-        
-        /// <inheritdoc/>
-        public override void OnPlayableCreate(Playable playable)
-        {
-            base.OnPlayableCreate(playable);
-            OnEnterPreview?.Invoke();
-        }
-
-        /// <inheritdoc/>
-        public override void OnGraphStop(Playable playable)
-        {
-            base.OnGraphStop(playable);
-            if (!Application.isPlaying)
-            {
-                OnEnterPreview?.Invoke();
-            }
-        }
 
         /// <inheritdoc/>
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
-            base.OnBehaviourPlay(playable, info);
             OnTrackStart();
+        }
+
+        /// <inheritdoc/>
+        public override void OnBehaviourPause(Playable playable, FrameData info)
+        {
+            EndCallback?.Invoke();
         }
 
         /// <summary>
@@ -217,14 +195,11 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public override void PrepareFrame(Playable playable, FrameData info)
         {
-            base.PrepareFrame(playable, info);
-
             var (jumped, trackTime) = GetWarpedTime(playable, info);
             if (!jumped) return;
             
             // 時間がワープしている場合は、現在時刻の状態を再計算
 
-            OnExitPreview?.Invoke();
             OnTrackStart();
             int inputCount = playable.GetInputCount();
             
