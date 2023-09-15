@@ -47,5 +47,29 @@ namespace TweenTimeline
 
             return tween;
         }
+
+        /// <inheritdoc/>
+        public override string GetTweenLog(TweenClipInfo<RectTransform> info)
+        {
+            string log;
+            
+            switch (PositionType)
+            {
+                case RectTransformTweenPositionType.AnchoredPosition:
+                    log = $"DOAnchorPos({EndValue.GetValue(info.Parameter)}, {info.Duration})";
+                    break;
+                case RectTransformTweenPositionType.Position:
+                    log = $"DOMove({EndValue.GetValue(info.Parameter)}, {info.Duration})";
+                    break;
+                case RectTransformTweenPositionType.LocalPosition:
+                    log = $"DOLocalMove({EndValue.GetValue(info.Parameter)}, {info.Duration})";
+                    break;
+                default:
+                    return null;
+            }
+
+            if (IsRelative.GetValue(info.Parameter)) log += ".SetRelative(true)";
+            return log;
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace TweenTimeline
 #endif
 
         public abstract Tween CreateTween(CreateTweenArgs args);
+        public abstract string GetTweenString(CreateTweenArgs args);
     }
     
     /// <summary>
@@ -92,17 +93,11 @@ namespace TweenTimeline
             };
 
             var duration = (float)timelineAsset.duration;
-            
-            var sb = new StringBuilder();
-            sb.AppendLine("Sequence()");
-            string Indent = "    ";
 
             var startCallback = GetStartCallback(tweenTrackInfo);
             if (startCallback != null)
             {
                 sequence.AppendCallback(startCallback);
-                sb.Append(Indent);
-                sb.AppendLine(GetStartLog(tweenTrackInfo));
             }
 
             float currentTime = 0;
@@ -125,24 +120,18 @@ namespace TweenTimeline
                 if (clipStartCallback != null)
                 {
                     sequence.AppendCallback(clipStartCallback);
-                    sb.Append(Indent);
-                    sb.AppendLine(tweenClip.GetStartLog(tweenClipInfo));
                 }
                 // main
                 var tween = tweenClip.GetTween(tweenClipInfo);
                 if (tween != null)
                 {
                     sequence.Append(tween);
-                    sb.Append(Indent);
-                    sb.AppendLine(tweenClip.GetTweenLog(tweenClipInfo));
                 }
                 // end
                 var clipEndCallback = tweenClip.GetEndCallback(tweenClipInfo);
                 if (clipEndCallback != null)
                 {
                     sequence.AppendCallback(clipEndCallback);
-                    sb.Append(Indent);
-                    sb.AppendLine(tweenClip.GetEndLog(tweenClipInfo));
                 }
             }
 
@@ -152,15 +141,81 @@ namespace TweenTimeline
                 float interval = duration - currentTime;
                 if (interval > 0) sequence.AppendInterval(interval);
                 sequence.AppendCallback(endCallback);
-                sb.Append(Indent);
-                sb.AppendLine(GetEndLog(tweenTrackInfo));
             }
 
-            sb.Append(Indent);
+            return sequence;
+        }
+
+        public sealed override string GetTweenString(CreateTweenArgs args)
+        {
+            var target = args.Binding as TBinding;
+            if (target == null) return null;
+            
+            var tweenTrackInfo = new TweenTrackInfo<TBinding>
+            {
+                Target = target,
+                Parameter = args.Parameter
+            };
+
+            var duration = (float)timelineAsset.duration;
+            
+            var sb = new StringBuilder();
+            sb.Append("Sequence()");
+            string Prefix = $"{Environment.NewLine}    ";
+
+            void AppendIntervalLog(float interval)
+            {
+                if (interval > 0)
+                {
+                    sb.Append(Prefix);
+                    sb.Append($"Interval {interval}s");
+                }
+            }
+            
+            void AppendObjectLog(object obj, string log, string callbackName)
+            {
+                if (obj == null) return;
+                sb.Append(Prefix);
+                if (string.IsNullOrEmpty(log)) log = $"Log Not Implemented {callbackName}";
+                sb.Append(log);
+            }
+
+            AppendObjectLog(GetStartCallback(tweenTrackInfo), GetStartLog(tweenTrackInfo), "TrackStartCallback");
+
+            float currentTime = 0;
+            foreach (var clip in GetClips())
+            {
+                // interval
+                var tweenClip = (TweenClip<TBinding>)clip.asset;
+                float interval = (float)clip.start - currentTime;
+                currentTime = (float)(clip.start + clip.duration);
+                AppendIntervalLog(interval);
+
+                var tweenClipInfo = new TweenClipInfo<TBinding>
+                {
+                    Target = target,
+                    Duration = (float)clip.duration,
+                    Parameter = args.Parameter
+                };
+                // start
+                AppendObjectLog(tweenClip.GetStartCallback(tweenClipInfo), tweenClip.GetStartLog(tweenClipInfo), "ClipStartCallback");
+                // main
+                AppendObjectLog(tweenClip.GetTween(tweenClipInfo), tweenClip.GetTweenLog(tweenClipInfo), "ClipTween");
+                // end
+                AppendObjectLog(tweenClip.GetEndCallback(tweenClipInfo), tweenClip.GetEndLog(tweenClipInfo), "ClipEndCallback");
+            }
+
+            var endCallback = GetEndCallback(tweenTrackInfo);
+            if (endCallback != null)
+            {
+                float interval = duration - currentTime;
+                AppendIntervalLog(interval);
+                AppendObjectLog(endCallback, GetEndLog(tweenTrackInfo), "TrackEndCallback");
+            }
+
             sb.Append(";");
 
-            // Debug.Log($"CreateTween ({name}):\n{sb}");
-            return sequence;
+            return sb.ToString();
         }
     }
 
@@ -195,8 +250,8 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public override void PrepareFrame(Playable playable, FrameData info)
         {
-            var (jumped, trackTime) = GetWarpedTime(playable, info);
-            if (!jumped) return;
+            var (warped, trackTime) = GetWarpedTime(playable, info);
+            if (!warped) return;
             
             // 時間がワープしている場合は、現在時刻の状態を再計算
 

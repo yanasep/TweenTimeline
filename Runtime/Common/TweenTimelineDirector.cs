@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -98,6 +99,49 @@ namespace TweenTimeline
             }
         
             return sequence;
+        }
+
+        [EditorButton("LogTween")]
+        public void LogTween()
+        {
+            var asset = _director.playableAsset as TimelineAsset;
+            if (asset == null)
+            {
+                Debug.Log($"PlayableAsset is null");
+                return;
+            }
+
+            Debug.Log("Tween Log\n" + CreateTweenString(asset));
+        }
+
+        /// <summary>
+        /// PlayableAssetをTweenに変換
+        /// </summary>
+        private string CreateTweenString(TimelineAsset timelineAsset)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var track in timelineAsset.GetOutputTracks())
+            {
+                if (track is not TweenTrack tweenTrack) continue;
+
+                sb.AppendLine($"[{tweenTrack.name}]");
+
+                var binding = _director.GetGenericBinding(track);
+                var str = tweenTrack.GetTweenString(new CreateTweenArgs
+                {
+                    Binding = binding,
+                    Parameter = Parameter
+                });
+                if (!string.IsNullOrEmpty(str))
+                {
+                    sb.AppendLine(str);
+                }
+
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
 
         private void OnDestroy()

@@ -22,7 +22,10 @@ namespace TweenTimeline
     {
         public virtual ClipCaps clipCaps => ClipCaps.None;
 
+        // trackからセットされる
         public TBinding Binding { get; set; }
+        public double StartTime { get; set; }
+        public double Duration { get; set; }
 
         public abstract Tween GetTween(TweenClipInfo<TBinding> info);
         public virtual TweenCallback GetStartCallback(TweenClipInfo<TBinding> info) => null;
@@ -31,16 +34,10 @@ namespace TweenTimeline
         public virtual string GetTweenLog(TweenClipInfo<TBinding> info) => null;
         public virtual string GetEndLog(TweenClipInfo<TBinding> info) => null;
 
-        public double StartTime { get; set; }
-        public double Duration { get; set; }
-
         private readonly TweenBehaviour template = new();
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
-            // // クリップのビヘイビアは使わない
-            // return default;
-
             if (Binding == null) return default;
             
             var parameterHolder = owner.GetComponent<TweenParameterHolder>();
@@ -52,6 +49,7 @@ namespace TweenTimeline
                 Duration = (float)Duration,
                 Parameter = parameter
             };
+            // OnPlayableCreateでアクセスできるように予めtemplateにセット
             template.Tween = GetTween(info);
             template.StartCallback = GetStartCallback(info);
             template.EndCallback = GetEndCallback(info);
@@ -66,12 +64,36 @@ namespace TweenTimeline
     /// </summary>
     public class TweenBehaviour : PlayableBehaviour
     {
+        public double StartTime { get; set; }
+        public double Duration { get; set; }
         public Tween Tween { get; set; }
         public TweenCallback StartCallback { get; set; }
         public TweenCallback EndCallback { get; set; }
-        public double StartTime { get; set; }
-        public double Duration { get; set; }
-        
+
+        /// <inheritdoc/>
+        public override void OnBehaviourPlay(Playable playable, FrameData info)
+        {
+            base.OnBehaviourPlay(playable, info);
+            Start();
+        }
+
+        /// <inheritdoc/>
+        public override void ProcessFrame(Playable playable, FrameData info, object playerData)
+        {
+            base.ProcessFrame(playable, info, playerData);
+            Update(playable.GetTime());
+        }
+
+        /// <inheritdoc/>
+        public override void OnBehaviourPause(Playable playable, FrameData info)
+        {
+            base.OnBehaviourPause(playable, info);
+            if (info.evaluationType == FrameData.EvaluationType.Playback)
+            {
+                End();
+            }
+        }
+
         /// <summary>
         /// クリップ突入時
         /// </summary>
@@ -94,31 +116,6 @@ namespace TweenTimeline
         public void End()
         {
             EndCallback?.Invoke();
-        }
-
-        /// <inheritdoc/>
-        public override void OnBehaviourPlay(Playable playable, FrameData info)
-        {
-            base.OnBehaviourPlay(playable, info);
-            Start();
-        }
-
-        /// <inheritdoc/>
-        public override void ProcessFrame(Playable playable, FrameData info, object playerData)
-        {
-            base.ProcessFrame(playable, info, playerData);
-
-            float t = (float)playable.GetTime();
-            Update(t);
-        }
-
-        /// <inheritdoc/>
-        public override void OnBehaviourPause(Playable playable, FrameData info)
-        {
-            if (info.evaluationType == FrameData.EvaluationType.Playback)
-            {
-                End();
-            }
         }
     }
 }
