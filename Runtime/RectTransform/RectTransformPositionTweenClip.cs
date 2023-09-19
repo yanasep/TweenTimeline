@@ -14,15 +14,15 @@ namespace TweenTimeline
     public class RectTransformPositionTweenClip : TweenClip<RectTransform>
     {
         public RectTransformTweenPositionType PositionType;
-        
-        [SerializeReference, SelectableSerializeReference] 
+
+        [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant();
 
         [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionBool IsRelative = new TimelineExpressionBoolConstant { Value = false };
-        
+
         public Ease Ease;
-        
+
         /// <inheritdoc/>
         public override Tween GetTween(TweenClipInfo<RectTransform> info)
         {
@@ -52,17 +52,17 @@ namespace TweenTimeline
         public override string GetTweenLog(TweenClipInfo<RectTransform> info)
         {
             string log;
-            
+
             switch (PositionType)
             {
                 case RectTransformTweenPositionType.AnchoredPosition:
-                    log = $"DOAnchorPos({EndValue.GetValue(info.Parameter)}, {info.Duration})";
+                    log = $"DOAnchorPos({EndValue}, {info.Duration:F2}f)";
                     break;
                 case RectTransformTweenPositionType.Position:
-                    log = $"DOMove({EndValue.GetValue(info.Parameter)}, {info.Duration})";
+                    log = $"DOMove({EndValue}, {info.Duration:F2}f)";
                     break;
                 case RectTransformTweenPositionType.LocalPosition:
-                    log = $"DOLocalMove({EndValue.GetValue(info.Parameter)}, {info.Duration})";
+                    log = $"DOLocalMove({EndValue}, {info.Duration:F2}f)";
                     break;
                 default:
                     return null;

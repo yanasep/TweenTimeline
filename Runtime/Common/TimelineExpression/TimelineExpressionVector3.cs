@@ -28,6 +28,13 @@ namespace TweenTimeline
         {
             return Value;
         }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            if (Value == Vector3.zero) return "Vector3.zero";
+            return $"new Vector3{Value.ToString()}";
+        }
     }
 
     /// <summary>
@@ -55,6 +62,11 @@ namespace TweenTimeline
         {
             paramHash = TweenParameter.StringToHash(ParameterName);
         }
+
+        public override string ToString()
+        {
+            return ParameterName;
+        }
     }
 
     /// <summary>
@@ -64,12 +76,12 @@ namespace TweenTimeline
     [Name("Add")]
     public class TimelineExpressionVector3Add : TimelineExpressionVector3
     {
-        [SerializeReference, SelectableSerializeReference] 
+        [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionVector3 Left;
-        
-        [SerializeReference, SelectableSerializeReference] 
+
+        [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionVector3 Right;
-        
+
         /// <inheritdoc/>
         public override Vector3 GetValue(TweenParameter parameter)
         {
@@ -104,12 +116,12 @@ namespace TweenTimeline
     [Name("Multiply")]
     public class TimelineExpressionVector3Multiply : TimelineExpressionVector3
     {
-        [SerializeReference, SelectableSerializeReference] 
+        [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionVector3 Left;
-        
-        [SerializeReference, SelectableSerializeReference] 
+
+        [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionFloat Right;
-        
+
         /// <inheritdoc/>
         public override Vector3 GetValue(TweenParameter parameter)
         {

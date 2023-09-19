@@ -19,13 +19,13 @@ namespace TweenTimeline
     public class RectTransformPositionTweenTrack : RectTransformTweenTrack
     {
 #if UNITY_EDITOR
-        public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
+        public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;
 #endif
 
         public bool SetStartValue;
-        
+
         [EnableIf(nameof(SetStartValue), true)]
-        [SerializeReference, SelectableSerializeReference] 
+        [SerializeReference, SelectableSerializeReference]
         public TimelineExpressionVector3 StartValue = new TimelineExpressionVector3Constant();
 
         [EnableIf(nameof(SetStartValue), true)]
@@ -35,7 +35,7 @@ namespace TweenTimeline
         public override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
         {
             if (!SetStartValue) return null;
-            
+
             return () =>
             {
                 switch (PositionType)
@@ -52,7 +52,19 @@ namespace TweenTimeline
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            };  
+            };
+        }
+
+        /// <inheritdoc/>
+        protected override string GetStartLog(TweenTrackInfo<RectTransform> info)
+        {
+            return PositionType switch
+            {
+                RectTransformTweenPositionType.AnchoredPosition => $"Set AnchoredPosition to {StartValue}",
+                RectTransformTweenPositionType.Position => $"Set Position to {StartValue}",
+                RectTransformTweenPositionType.LocalPosition => $"Set LocalPosition to {StartValue}",
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }
