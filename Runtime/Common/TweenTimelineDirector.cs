@@ -76,34 +76,11 @@ namespace TweenTimeline
         {
             if (!_tweenCache.TryGetValue(timelineAsset, out var tween))
             {
-                tween = CreateTween(timelineAsset);
+                tween = TweenTimelineUtility.CreateTween(timelineAsset, Parameter, track => _director.GetGenericBinding(track));
                 _tweenCache.Add(timelineAsset, tween);
             }
 
             return tween;
-        }
-
-        /// <summary>
-        /// PlayableAssetをTweenに変換
-        /// </summary>
-        private Tween CreateTween(TimelineAsset timelineAsset)
-        {
-            var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
-
-            foreach (var track in timelineAsset.GetOutputTracks())
-            {
-                if (track is not TweenTrack tweenTrack) continue;
-
-                var binding = _director.GetGenericBinding(track);
-                var tween = tweenTrack.CreateTween(new CreateTweenArgs
-                {
-                    Binding = binding,
-                    Parameter = Parameter
-                });
-                if (tween != null) sequence.Join(tween);
-            }
-
-            return sequence;
         }
 
         [EditorButton("LogTween")]
