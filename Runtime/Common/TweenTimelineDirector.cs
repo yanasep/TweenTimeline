@@ -16,6 +16,7 @@ namespace TweenTimeline
     public class TweenTimelineDirector : MonoBehaviour
     {
         [SerializeField] private PlayableDirector _director;
+
         public TweenParameter Parameter { get; private set; }
         private Dictionary<TimelineAsset, Tween> _tweenCache;
 
@@ -45,7 +46,7 @@ namespace TweenTimeline
         {
             var asset = _director.playableAsset as TimelineAsset;
             if (asset == null) return;
-            Play(asset);
+            PlayCore(asset);
         }
 
         /// <summary>
@@ -53,8 +54,7 @@ namespace TweenTimeline
         /// </summary>
         public void Play(TimelineAsset timelineAsset)
         {
-            var tween = GetTween(timelineAsset);
-            tween.Play();
+            PlayCore(timelineAsset);
         }
 
         /// <summary>
@@ -62,9 +62,14 @@ namespace TweenTimeline
         /// </summary>
         public UniTask PlayAsync(TimelineAsset timelineAsset)
         {
+            return PlayCore(timelineAsset).ToUniTask();
+        }
+
+        private Tween PlayCore(TimelineAsset timelineAsset)
+        {
             var tween = GetTween(timelineAsset);
             tween.Play();
-            return tween.ToUniTask();
+            return tween;
         }
 
         private Tween GetTween(TimelineAsset timelineAsset)
@@ -77,14 +82,14 @@ namespace TweenTimeline
 
             return tween;
         }
-        
+
         /// <summary>
         /// PlayableAssetをTweenに変換
         /// </summary>
         private Tween CreateTween(TimelineAsset timelineAsset)
         {
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
-            
+
             foreach (var track in timelineAsset.GetOutputTracks())
             {
                 if (track is not TweenTrack tweenTrack) continue;
@@ -97,7 +102,7 @@ namespace TweenTimeline
                 });
                 if (tween != null) sequence.Join(tween);
             }
-        
+
             return sequence;
         }
 
