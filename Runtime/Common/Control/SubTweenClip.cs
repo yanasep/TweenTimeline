@@ -13,12 +13,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Nest")]
-    public class NestClip : TweenClip<TimelineAsset>
+    public class SubTweenClip : TweenClip<TimelineAsset>
     {
         /// <inheritdoc/>
         public override Tween GetTween(TweenClipInfo<TimelineAsset> info)
         {
-            return TweenTimelineUtility.CreateTween(info.Target, info.Parameter, 
+            throw new NotImplementedException();
+            // return TweenTimelineUtility.CreateTween(info.Target, info.Parameter, 
         }
 
         /// <inheritdoc/>
