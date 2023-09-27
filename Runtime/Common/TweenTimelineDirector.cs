@@ -1,4 +1,3 @@
-using System.Text;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -31,7 +30,7 @@ namespace TweenTimeline
             }
             else
             {
-                Parameter = new();
+                Parameter ??= new();
             }
         }
 
@@ -65,9 +64,19 @@ namespace TweenTimeline
         private Tween PlayCore(TimelineAsset timelineAsset)
         {
             _tween?.Kill();
-            _tween = TweenTimelineUtility.CreateTween(timelineAsset, Parameter, track => _director.GetGenericBinding(track));
+            _tween = CreateTween(timelineAsset);
             _tween.Play();
             return _tween;
+        }
+
+        public Tween CreateTween(TimelineAsset timelineAsset)
+        {
+            return TweenTimelineUtility.CreateTween(timelineAsset, Parameter, track => _director.GetGenericBinding(track));   
+        }
+
+        public string CreateTweenString(TimelineAsset timelineAsset)
+        {
+            return TweenTimelineUtility.CreateTweenString(timelineAsset, Parameter, track => _director.GetGenericBinding(track));
         }
 
         [EditorButton("LogTween")]
@@ -81,36 +90,6 @@ namespace TweenTimeline
             }
 
             Debug.Log("Tween Log\n" + CreateTweenString(asset));
-        }
-
-        /// <summary>
-        /// PlayableAssetをTweenに変換
-        /// </summary>
-        private string CreateTweenString(TimelineAsset timelineAsset)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var track in timelineAsset.GetOutputTracks())
-            {
-                if (track is not TweenTrack tweenTrack) continue;
-
-                sb.AppendLine($"[{tweenTrack.name}]");
-
-                var binding = _director.GetGenericBinding(track);
-                var str = tweenTrack.GetTweenString(new CreateTweenArgs
-                {
-                    Binding = binding,
-                    Parameter = Parameter
-                });
-                if (!string.IsNullOrEmpty(str))
-                {
-                    sb.AppendLine(str);
-                }
-
-                sb.AppendLine();
-            }
-
-            return sb.ToString();
         }
 
         private void OnDestroy()

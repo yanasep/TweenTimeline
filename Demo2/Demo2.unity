@@ -203,7 +203,13 @@ PlayableDirector:
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
-  m_SceneBindings: []
+  m_SceneBindings:
+  - key: {fileID: 8276550687216799278, guid: b03de3b562bc540dd8c3cef3c1bf4e0e, type: 2}
+    value: {fileID: 2547630930989272210}
+  - key: {fileID: 6433456177543461165, guid: b03de3b562bc540dd8c3cef3c1bf4e0e, type: 2}
+    value: {fileID: 1412426159}
+  - key: {fileID: -1078116794074365276, guid: b03de3b562bc540dd8c3cef3c1bf4e0e, type: 2}
+    value: {fileID: 651275602}
   m_ExposedReferences:
     m_References:
     - 15d8b08ca755b4fc387ab237969fb7b5: {fileID: 1412426159}
@@ -1070,6 +1076,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4938374244144352643, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5891937301698474444, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_text
       value: "\u30AB\u30FC\u30C93"
@@ -1355,6 +1365,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4938374244144352643, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5891937301698474444, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_text
       value: "\u30AB\u30FC\u30C92"
@@ -1570,6 +1584,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card
       objectReference: {fileID: 0}
+    - target: {fileID: 4938374244144352643, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5891937301698474444, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_text
       value: "\u30AB\u30FC\u30C91"
@@ -1582,6 +1600,26 @@ PrefabInstance:
       propertyPath: m_WrapMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6304014811341932006, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_SceneBindings.Array.size
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304014811341932006, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_SceneBindings.Array.data[9].key
+      value: 
+      objectReference: {fileID: 2933676633534268147, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
+    - target: {fileID: 6304014811341932006, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_SceneBindings.Array.data[10].key
+      value: 
+      objectReference: {fileID: -787299911412936961, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
+    - target: {fileID: 6304014811341932006, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_SceneBindings.Array.data[11].key
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304014811341932006, guid: 22502021e253347aeb90681f30a730e1, type: 3}
+      propertyPath: m_SceneBindings.Array.data[11].value
+      value: 
+      objectReference: {fileID: 1992680847}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

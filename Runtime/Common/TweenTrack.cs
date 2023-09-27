@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
 using System.Text;
+using Common;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -37,7 +37,7 @@ namespace TweenTimeline
         protected virtual string GetEndLog(TweenTrackInfo<TBinding> info) => null;
 
         // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
-        [SerializeField, Common.ReadOnly] private byte _;
+        [SerializeField, ReadOnly] private byte _;
         
         [Space]
         public TweenTimelineFieldOverride[] Overrides;
@@ -85,7 +85,7 @@ namespace TweenTimeline
         {
             base.OnCreateClip(clip);
 #if UNITY_EDITOR
-            var attr = clip.asset.GetType().GetCustomAttribute<DisplayNameAttribute>(inherit: true);
+            var attr = clip.asset.GetType().GetCustomAttribute<System.ComponentModel.DisplayNameAttribute>(inherit: true);
             if (attr != null)
             {
                 clip.displayName = attr.DisplayName;
@@ -93,7 +93,7 @@ namespace TweenTimeline
 #endif
         }
 
-        public sealed override Tween CreateTween(CreateTweenArgs args)
+        public override Tween CreateTween(CreateTweenArgs args)
         {
             var target = args.Binding as TBinding;
             if (target == null) return null;

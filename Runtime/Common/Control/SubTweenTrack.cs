@@ -1,36 +1,20 @@
-﻿using System;
-using System.ComponentModel;
-using DG.Tweening;
+﻿using System.ComponentModel;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
-using Yanasep;
 
 namespace TweenTimeline
 {
     /// <summary>
-    /// Nestトラック
+    /// サブTweenトラック
     /// </summary>
-    [DisplayName("Tween/Nest Track")]
-    [TrackBindingType(typeof(TimelineAsset))]
+    [DisplayName("Tween/Sub Tween Track")]
+    [TrackBindingType(typeof(TweenTimelineDirector))]
     [TrackClipType(typeof(SubTweenClip))]
-    public class SubTweenTrack : TweenTrack
+    public class SubTweenTrack : TweenTrack<TweenTimelineDirector>
     {
 #if UNITY_EDITOR
-        public override Texture2D Icon => EditorGUIUtility.IconContent("d_scenevis_visible_hover").image as Texture2D;
+        public override Texture2D Icon => EditorGUIUtility.IconContent("d_UnityEditor.Timeline.TimelineWindow").image as Texture2D;
 #endif
-
-        /// <inheritdoc/>
-        public override Tween CreateTween(CreateTweenArgs args)
-        {
-            throw new NotImplementedException();
-            // args.Binding
-        }
-
-        /// <inheritdoc/>
-        public override string GetTweenString(CreateTweenArgs args)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -6,23 +6,28 @@ using UnityEngine.Timeline;
 namespace TweenTimeline
 {
     /// <summary>
-    /// ネストクリップ
+    /// サブTweenクリップ
     /// </summary>
     [Serializable]
-    [DisplayName("Nest")]
-    public class SubTweenClip : TweenClip<TimelineAsset>
+    [DisplayName("SubTween")]
+    public class SubTweenClip : TweenClip<TweenTimelineDirector>
     {
+        public TimelineAsset timelineAsset;
+        
         /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<TimelineAsset> info)
+        protected override Tween GetTween(TweenClipInfo<TweenTimelineDirector> info)
         {
-            throw new NotImplementedException();
-            // return TweenTimelineUtility.CreateTween(info.Target, info.Parameter, 
+            if (timelineAsset == null) return null;
+            info.Target.Initialize();
+            return info.Target.CreateTween(timelineAsset);
         }
 
         /// <inheritdoc/>
-        public override string GetTweenLog(TweenClipInfo<TimelineAsset> info)
+        public override string GetTweenLog(TweenClipInfo<TweenTimelineDirector> info)
         {
-            return null;
+            if (timelineAsset == null) return null;
+            info.Target.Initialize();
+            return info.Target.CreateTweenString(timelineAsset);
         }
     }
 }
