@@ -14,13 +14,13 @@ namespace TweenTimeline
     public class TextMeshProUGUITextTweenTrack : TextMeshProUGUITweenTrack
     {
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(TweenTrackInfo<TextMeshProUGUI> info)
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<TextMeshProUGUI> info)
         {
             return () => info.Target.maxVisibleCharacters = 0;
         }
 
         /// <inheritdoc/>
-        public override TweenCallback GetEndCallback(TweenTrackInfo<TextMeshProUGUI> info)
+        protected override TweenCallback GetEndCallback(TweenTrackInfo<TextMeshProUGUI> info)
         {
             return () => info.Target.maxVisibleCharacters = 99999;
         }

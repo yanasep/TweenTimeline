@@ -25,7 +25,7 @@ namespace TweenTimeline
         public TweenTimelineField<Vector2> StartValue;
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
         {
             if (!SetStartValue) return null;
             return () => { info.Target.sizeDelta = StartValue.Value; };

@@ -25,7 +25,7 @@ namespace TweenTimeline
         [SerializeField] private TweenTimelineField<Vector3> startValue;
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
         {
             if (!setStartValue) return null;
             return () =>

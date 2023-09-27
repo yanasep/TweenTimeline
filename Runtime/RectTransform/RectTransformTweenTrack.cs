@@ -9,7 +9,7 @@ namespace TweenTimeline
     /// </summary>
     [TrackColor(0.851f, 0.843f, 0.945f)]
     public abstract class RectTransformTweenTrack : TweenTrack<RectTransform>
-    {
+    {   
         public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
         {
 #if UNITY_EDITOR

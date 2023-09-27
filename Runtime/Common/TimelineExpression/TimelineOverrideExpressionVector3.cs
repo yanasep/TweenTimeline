@@ -16,7 +16,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("Constant")]
+    [Name("Vector3/Constant")]
     public class TimelineOverrideExpressionVector3Constant : TimelineOverrideExpressionVector3
     {
         [NoPropertyLabel] public Vector3 Value;
@@ -39,7 +39,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("Parameter")]
+    [Name("Vector3/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TimelineOverrideExpressionVector3Parameter : TimelineOverrideExpressionVector3, ISerializationCallbackReceiver
     {
@@ -71,7 +71,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Add)
     /// </summary>
     [Serializable]
-    [Name("Add")]
+    [Name("Vector3/Add")]
     public class TimelineOverrideExpressionVector3Add : TimelineOverrideExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -91,7 +91,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Subtract)
     /// </summary>
     [Serializable]
-    [Name("Subtract")]
+    [Name("Vector3/Subtract")]
     public class TimelineOverrideExpressionVector3Subtract : TimelineOverrideExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -111,7 +111,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Multiply)
     /// </summary>
     [Serializable]
-    [Name("Multiply")]
+    [Name("Vector3/Multiply")]
     public class TimelineOverrideExpressionVector3Multiply : TimelineOverrideExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -131,7 +131,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Divide)
     /// </summary>
     [Serializable]
-    [Name("Divide")]
+    [Name("Vector3/Divide")]
     public class TimelineOverrideExpressionVector3Divide : TimelineOverrideExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -151,7 +151,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Scale)
     /// </summary>
     [Serializable]
-    [Name("Scale")]
+    [Name("Vector3/Scale")]
     public class TimelineOverrideExpressionVector3Scale : TimelineOverrideExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]

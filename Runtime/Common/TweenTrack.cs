@@ -31,29 +31,19 @@ namespace TweenTimeline
     /// </summary>
     public abstract class TweenTrack<TBinding> : TweenTrack where TBinding : Object
     {
-        public virtual TweenCallback GetStartCallback(TweenTrackInfo<TBinding> info) => null;
-        public virtual TweenCallback GetEndCallback(TweenTrackInfo<TBinding> info) => null;
+        protected virtual TweenCallback GetStartCallback(TweenTrackInfo<TBinding> info) => null;
+        protected virtual TweenCallback GetEndCallback(TweenTrackInfo<TBinding> info) => null;
         protected virtual string GetStartLog(TweenTrackInfo<TBinding> info) => null;
         protected virtual string GetEndLog(TweenTrackInfo<TBinding> info) => null;
 
+        // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
+        [SerializeField, Common.ReadOnly] private byte _;
+        
+        [Space]
         public TweenTimelineFieldOverride[] Overrides;
         public Dictionary<string, TweenTimelineField> Fields { get; set; }
 
         private readonly TweenMixerBehaviour template = new();
-
-        /// <summary>
-        /// TimelineFieldをDictionaryに入れる
-        /// </summary>
-        private void GatherFields()
-        {
-            // TODO: SourceGeneratorでやる
-            var fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var field in fields)
-            {
-                if (!field.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
-                Fields.Add(field.Name, (TweenTimelineField)field.GetValue(this));
-            }
-        }
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
@@ -80,6 +70,11 @@ namespace TweenTimeline
                 Target = binding,
                 Parameter = parameter
             };
+            template.Tween = CreateTween(new CreateTweenArgs
+            {
+                Binding = binding,
+                Parameter = parameter
+            });
             template.StartCallback = GetStartCallback(trackInfo);
             template.EndCallback = GetEndCallback(trackInfo);
             return ScriptPlayable<TweenMixerBehaviour>.Create(graph, template, inputCount);
@@ -102,10 +97,9 @@ namespace TweenTimeline
         {
             var target = args.Binding as TBinding;
             if (target == null) return null;
-            
-            Fields ??= new();
-            Fields.Clear();
+
             GatherFields();
+            ApplyOverrides(args.Parameter);
             
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
             var tweenTrackInfo = new TweenTrackInfo<TBinding>
@@ -239,6 +233,39 @@ namespace TweenTimeline
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// TimelineFieldをDictionaryに入れる
+        /// </summary>
+        private void GatherFields()
+        {
+            Fields ??= new();
+            Fields.Clear();
+
+            // TODO: SourceGeneratorでやる
+            var fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var field in fields)
+            {
+                if (!field.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
+                Fields.Add(field.Name, (TweenTimelineField)field.GetValue(this));
+            }
+        }
+
+        private void ApplyOverrides(TweenParameter parameter)
+        {
+            if (Overrides == null) return;
+            foreach (var fieldOverride in Overrides)
+            {
+                if (Fields.TryGetValue(fieldOverride.Name, out var field))
+                {
+                    fieldOverride.Expression.Override(field, parameter);
+                }
+                else
+                {
+                    Debug.LogWarning($"{name}: field {fieldOverride.Name} is not found.");
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -246,6 +273,7 @@ namespace TweenTimeline
     /// </summary>
     public class TweenMixerBehaviour : PlayableBehaviour
     {
+        public Tween Tween { get; set; }
         public TweenCallback StartCallback { get; set; }
         public TweenCallback EndCallback { get; set; }
 
@@ -279,44 +307,8 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public override void PrepareFrame(Playable playable, FrameData info)
         {
-            var (warped, trackTime) = GetWarpedTime(playable, info);
-            if (!warped) return;
-            
-            // 時間がワープしている場合は、現在時刻の状態を再計算
-
-            OnTrackStart();
-            int inputCount = playable.GetInputCount();
-            
-            for (int i = 0; i < inputCount; i++)
-            {
-                var input = playable.GetInput(i);
-                var inputPlayable = (ScriptPlayable<TweenBehaviour>)input;
-                var clipBehaviour = inputPlayable.GetBehaviour();
-                var clipTime = trackTime - clipBehaviour.StartTime;
-                if (clipTime < 0) break;
-                clipBehaviour.Start();
-                clipBehaviour.Update(Math.Min(clipTime, clipBehaviour.Duration));
-                if (clipTime >= clipBehaviour.Duration)
-                {
-                    clipBehaviour.End();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 時刻がワープしたかどうかと、トラックの現在時刻を取得
-        /// </summary>
-        private (bool warped, double trackTime) GetWarpedTime(Playable playable, FrameData info)
-        {
-            var time = playable.GetTime();
-            if (info.seekOccurred) return (true, time);
-            
-            var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
-            var prevTrackTime = GetTrackTime(playable.GetPreviousTime(), duration);
-            var trackTime = GetTrackTime(playable.GetTime(), duration);
-            var warped = prevTrackTime > trackTime;
-            
-            return (warped, trackTime);
+            var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration()); 
+            Tween.GotoWithCallbacks(trackTime);
         }
         
         private double GetTrackTime(double time, double duration)

@@ -29,7 +29,7 @@ namespace TweenTimeline
         public TweenTimelineField<TransformTweenPositionType> positionType;
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
         {
             if (!SetStartValue) return null;
             return () =>

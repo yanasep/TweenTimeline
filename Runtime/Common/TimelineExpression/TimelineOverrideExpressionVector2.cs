@@ -32,7 +32,7 @@ namespace TweenTimeline
     /// Vector2の値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("Parameter")]
+    [Name("Vector2/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TimelineOverrideExpressionVector2Parameter : TimelineOverrideExpressionVector2, ISerializationCallbackReceiver
     {
@@ -59,7 +59,7 @@ namespace TweenTimeline
     /// Vector2の値表現 (Add)
     /// </summary>
     [Serializable]
-    [Name("Add")]
+    [Name("Vector2/Add")]
     public class TimelineOverrideExpressionVector2Add : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -79,7 +79,7 @@ namespace TweenTimeline
     /// Vector2の値表現 (Subtract)
     /// </summary>
     [Serializable]
-    [Name("Subtract")]
+    [Name("Vector2/Subtract")]
     public class TimelineOverrideExpressionVector2Subtract : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference]
@@ -99,7 +99,7 @@ namespace TweenTimeline
     /// Vector2の値表現 (Multiply)
     /// </summary>
     [Serializable]
-    [Name("Multiply")]
+    [Name("Vector2/Multiply")]
     public class TimelineOverrideExpressionVector2Multiply : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -119,7 +119,7 @@ namespace TweenTimeline
     /// Vector2の値表現 (Divide)
     /// </summary>
     [Serializable]
-    [Name("Divide")]
+    [Name("Vector2/Divide")]
     public class TimelineOverrideExpressionVector2Divide : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference]
@@ -139,7 +139,7 @@ namespace TweenTimeline
     /// Vector2の値表現 (Scale)
     /// </summary>
     [Serializable]
-    [Name("Scale")]
+    [Name("Vector2/Scale")]
     public class TimelineOverrideExpressionVector2Scale : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference]

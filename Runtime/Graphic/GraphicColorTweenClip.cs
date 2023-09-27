@@ -3,7 +3,6 @@ using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -14,7 +13,6 @@ namespace TweenTimeline
     [DisplayName("Color Tween")]
     public class GraphicColorTweenClip : TweenClip<Graphic>
     {
-        [SerializeReference, SelectableSerializeReference]
         public TweenTimelineField<Color> EndValue = new(Color.white);
         public RGBAFlags Enable;
         public TweenTimelineField<Ease> Ease;

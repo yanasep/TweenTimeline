@@ -20,7 +20,7 @@ namespace TweenTimeline
     {
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;
-#endif
+#endif  
 
         public bool SetStartValue;
 
@@ -31,7 +31,7 @@ namespace TweenTimeline
         public TweenTimelineField<RectTransformTweenPositionType> PositionType = new();
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
         {
             if (!SetStartValue) return null;
 
