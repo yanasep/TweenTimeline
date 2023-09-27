@@ -266,6 +266,58 @@ namespace TweenTimeline
                 }
             }
         }
+        
+        public readonly struct ClipInputs
+        {
+            public readonly List<(float start, float end)> ClipIntervals;
+
+            public ClipInputs(List<(float start, float end)> clipIntervals)
+            {
+                ClipIntervals = clipIntervals;
+            }
+        }
+
+        public ClipInputs GetClipInputs()
+        {
+            var inputs = new ClipInputs(new());
+
+            foreach (var clip in GetClips())
+            {
+                inputs.ClipIntervals.Add(((float)clip.start, (float)(clip.start + clip.duration)));
+            }
+
+            return inputs;
+        }
+
+        public bool IsAnyClipPlaying(ClipInputs inputs, float trackTime)
+        {
+            bool active = false;
+            for (int i = 0; i < inputs.ClipIntervals.Count; i++)
+            {
+                if (inputs.ClipIntervals[i].start <= trackTime && trackTime <= inputs.ClipIntervals[i].end)
+                {
+                    active = true;
+                    break;
+                }
+            }
+
+            return active;
+        }
+
+        public bool HasAnyClipStarted(ClipInputs inputs, float trackTime)
+        {
+            bool active = false;
+            for (int i = 0; i < inputs.ClipIntervals.Count; i++)
+            {
+                if (inputs.ClipIntervals[i].start <= trackTime)
+                {
+                    active = true;
+                    break;
+                }
+            }
+
+            return active;
+        }
     }
 
     /// <summary>
@@ -307,6 +359,8 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public override void PrepareFrame(Playable playable, FrameData info)
         {
+            if (Tween == null) return;
+            
             var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration()); 
             Tween.GotoWithCallbacks(trackTime);
         }

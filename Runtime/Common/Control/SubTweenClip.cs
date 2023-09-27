@@ -12,22 +12,22 @@ namespace TweenTimeline
     [DisplayName("SubTween")]
     public class SubTweenClip : TweenClip<TweenTimelineDirector>
     {
-        public TimelineAsset timelineAsset;
-        
+        public TweenTimelineField<TimelineAsset> timelineAsset;
+
         /// <inheritdoc/>
         protected override Tween GetTween(TweenClipInfo<TweenTimelineDirector> info)
         {
             if (timelineAsset == null) return null;
             info.Target.Initialize();
-            return info.Target.CreateTween(timelineAsset);
+            return info.Target.CreateTween(timelineAsset.Value);
         }
-
+        
         /// <inheritdoc/>
         public override string GetTweenLog(TweenClipInfo<TweenTimelineDirector> info)
         {
             if (timelineAsset == null) return null;
             info.Target.Initialize();
-            return info.Target.CreateTweenString(timelineAsset);
+            return info.Target.CreateTweenString(timelineAsset.Value);
         }
     }
 }

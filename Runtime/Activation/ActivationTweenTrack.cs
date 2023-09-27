@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
@@ -48,29 +47,14 @@ namespace TweenTimeline
 
         public override Tween CreateTween(CreateTweenArgs args)
         {
-            var intervals = new List<(float start, float end)>();
-
-            foreach (var clip in GetClips())
-            {
-                intervals.Add(((float)clip.start, (float)(clip.start + clip.duration)));
-            }
-
+            var inputs = GetClipInputs();
+            
             var go = (GameObject)args.Binding;
             return DOTweenEx.EveryUpdate((float)timelineAsset.duration, t =>
             {
                 if (go == null) return;
                 
-                bool active = false;
-                for (int i = 0; i < intervals.Count; i++)
-                {
-                    if (intervals[i].start <= t && t <= intervals[i].end)
-                    {
-                        active = true;
-                        break;
-                    }
-                }
-                
-                go.SetActive(active);
+                go.SetActive(IsAnyClipPlaying(inputs, t));
             });
         }
     }
