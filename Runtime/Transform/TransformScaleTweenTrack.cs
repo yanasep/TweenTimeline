@@ -21,17 +21,17 @@ namespace TweenTimeline
 #endif
      
         [SerializeField] private bool setStartValue;
-        
+
         [EnableIf(nameof(setStartValue), true)]
-        [SerializeReference, SelectableSerializeReference] 
-        private TimelineExpressionVector3 startValue = new TimelineExpressionVector3Constant();
+        [SerializeField]
+        private TweenTimelineField<Vector3> startValue;
 
         public override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
         {
             if (!setStartValue) return null;
             return () =>
             {
-                info.Target.localScale = startValue.GetValue(info.Parameter);
+                info.Target.localScale = startValue.Value;
             };   
         }
     }

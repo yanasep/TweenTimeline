@@ -8,23 +8,21 @@ namespace TweenTimeline
     /// Vector2の値表現
     /// </summary>
     [Serializable]
-    public abstract class TimelineExpressionVector2
+    public abstract class TimelineOverrideExpressionVector2 : TimelineOverrideExpression<Vector2>
     {
-        /// <summary>値取得</summary>
-        public abstract Vector2 GetValue(TweenParameter parameter);
     }
 
     /// <summary>
     /// Vector2の値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("Constant")]
-    public class TimelineExpressionVector2Constant : TimelineExpressionVector2
+    [Name("Vector2/Constant")]
+    public class TimelineOverrideExpressionVector2Constant : TimelineOverrideExpressionVector2
     {
         [NoPropertyLabel] public Vector2 Value;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TweenParameter parameter)
+        public override Vector2 GetValue(TweenParameter parameter, TweenTimelineField field)
         {
             return Value;
         }
@@ -36,13 +34,13 @@ namespace TweenTimeline
     [Serializable]
     [Name("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TimelineExpressionVector2Parameter : TimelineExpressionVector2, ISerializationCallbackReceiver
+    public class TimelineOverrideExpressionVector2Parameter : TimelineOverrideExpressionVector2, ISerializationCallbackReceiver
     {
         public string ParameterName;
         private int paramHash;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TweenParameter parameter)
+        public override Vector2 GetValue(TweenParameter parameter, TweenTimelineField field)
         {
             return parameter.Vector2.GetOrDefault(paramHash);
         }
@@ -62,18 +60,18 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("Add")]
-    public class TimelineExpressionVector2Add : TimelineExpressionVector2
+    public class TimelineOverrideExpressionVector2Add : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector2 Left;
+        public TimelineOverrideExpressionVector2 Left;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector2 Right;
+        public TimelineOverrideExpressionVector2 Right;
         
         /// <inheritdoc/>
-        public override Vector2 GetValue(TweenParameter parameter)
+        public override Vector2 GetValue(TweenParameter parameter, TweenTimelineField field)
         {
-            return Left.GetValue(parameter) + Right.GetValue(parameter);
+            return Left.GetValue(parameter, field) + Right.GetValue(parameter, field);
         }
     }
 
@@ -82,18 +80,18 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("Subtract")]
-    public class TimelineExpressionVector2Subtract : TimelineExpressionVector2
+    public class TimelineOverrideExpressionVector2Subtract : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector2 Left;
+        public TimelineOverrideExpressionVector2 Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector2 Right;
+        public TimelineOverrideExpressionVector2 Right;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TweenParameter parameter)
+        public override Vector2 GetValue(TweenParameter parameter, TweenTimelineField field)
         {
-            return Left.GetValue(parameter) - Right.GetValue(parameter);
+            return Left.GetValue(parameter, field) - Right.GetValue(parameter, field);
         }
     }
 
@@ -102,18 +100,18 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("Multiply")]
-    public class TimelineExpressionVector2Multiply : TimelineExpressionVector2
+    public class TimelineOverrideExpressionVector2Multiply : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector2 Left;
+        public TimelineOverrideExpressionVector2 Left;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionFloat Right;
+        public TimelineOverrideExpressionFloat Right;
         
         /// <inheritdoc/>
-        public override Vector2 GetValue(TweenParameter parameter)
+        public override Vector2 GetValue(TweenParameter parameter, TweenTimelineField field)
         {
-            return Left.GetValue(parameter) * Right.GetValue(parameter);
+            return Left.GetValue(parameter, field) * Right.GetValue(parameter, field);
         }
     }
 
@@ -122,18 +120,18 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("Divide")]
-    public class TimelineExpressionVector2Divide : TimelineExpressionVector2
+    public class TimelineOverrideExpressionVector2Divide : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector2 Left;
+        public TimelineOverrideExpressionVector2 Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionFloat Right;
+        public TimelineOverrideExpressionFloat Right;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TweenParameter parameter)
+        public override Vector2 GetValue(TweenParameter parameter, TweenTimelineField field)
         {
-            return Left.GetValue(parameter) / Right.GetValue(parameter);
+            return Left.GetValue(parameter, field) / Right.GetValue(parameter, field);
         }
     }
 
@@ -142,18 +140,18 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("Scale")]
-    public class TimelineExpressionVector2Scale : TimelineExpressionVector2
+    public class TimelineOverrideExpressionVector2Scale : TimelineOverrideExpressionVector2
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector2 Left;
+        public TimelineOverrideExpressionVector2 Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector2 Right;
+        public TimelineOverrideExpressionVector2 Right;
 
         /// <inheritdoc/>
-        public override Vector2 GetValue(TweenParameter parameter)
+        public override Vector2 GetValue(TweenParameter parameter, TweenTimelineField field)
         {
-            return Vector2.Scale(Left.GetValue(parameter), Right.GetValue(parameter));
+            return Vector2.Scale(Left.GetValue(parameter, field), Right.GetValue(parameter, field));
         }
     }
 }

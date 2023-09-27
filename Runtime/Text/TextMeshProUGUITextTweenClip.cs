@@ -15,7 +15,7 @@ namespace TweenTimeline
         public Ease ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
+        protected override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
         {
             return DOTween.To(() => info.Target.text.Length, x => info.Target.maxVisibleCharacters = x, 0, info.Duration)
                 .From().SetEase(ease);   

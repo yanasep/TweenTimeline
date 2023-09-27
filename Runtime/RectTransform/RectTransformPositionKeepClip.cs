@@ -16,10 +16,9 @@ namespace TweenTimeline
         public RectTransformTweenPositionType PositionType;
 
         public bool SpecifyValue;
-        
+
         [EnableIf(nameof(SpecifyValue), true)]
-        [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector3 Value = new TimelineExpressionVector3Constant();
+        public TweenTimelineField<Vector3> Value;
 
         public override TweenCallback GetStartCallback(TweenClipInfo<RectTransform> info)
         {
@@ -27,15 +26,15 @@ namespace TweenTimeline
 
             return PositionType switch
             {
-                RectTransformTweenPositionType.AnchoredPosition => () => info.Target.anchoredPosition = Value.GetValue(info.Parameter),
-                RectTransformTweenPositionType.Position => () => info.Target.position = Value.GetValue(info.Parameter),
-                RectTransformTweenPositionType.LocalPosition => () => info.Target.localPosition = Value.GetValue(info.Parameter),
+                RectTransformTweenPositionType.AnchoredPosition => () => info.Target.anchoredPosition = Value.Value,
+                RectTransformTweenPositionType.Position => () => info.Target.position = Value.Value,
+                RectTransformTweenPositionType.LocalPosition => () => info.Target.localPosition = Value.Value,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
         
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<RectTransform> info)
+        protected override Tween GetTween(TweenClipInfo<RectTransform> info)
         {
             Tween tween = PositionType switch
             {

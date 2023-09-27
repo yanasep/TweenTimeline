@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using DG.Tweening;
-using TriInspector;
 using UnityEngine;
 
 namespace TweenTimeline
@@ -13,15 +12,13 @@ namespace TweenTimeline
     [DisplayName("Canvas Group Alpha Tween")]
     public class CanvasGroupAlphaTweenClip : TweenClip<CanvasGroup>
     {
-        [Title("Title")]
-        public float EndValue = 1f;
-        public Ease Ease;
+        // public float EndValue = 1f;
+        public TweenTimelineField<float> EndValue;
+        public TweenTimelineField<Ease> Ease;
 
-        public TweenTimelineFieldFloat Val;
-        
-        public override Tween GetTween(TweenClipInfo<CanvasGroup> info)
+        protected override Tween GetTween(TweenClipInfo<CanvasGroup> info)
         {
-            return info.Target.DOFade(EndValue, info.Duration).SetEase(Ease);
+            return info.Target.DOFade(EndValue.Value, info.Duration).SetEase(Ease.Value);
         }
 
         public override string GetTweenLog(TweenClipInfo<CanvasGroup> info)

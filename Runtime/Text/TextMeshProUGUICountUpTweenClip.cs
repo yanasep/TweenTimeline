@@ -3,7 +3,6 @@ using System.ComponentModel;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -14,16 +13,15 @@ namespace TweenTimeline
     [DisplayName("Text Count Up Tween")]
     public class TextMeshProUGUICountUpTweenClip : TweenClip<TextMeshProUGUI>
     {
-        [SerializeReference, SelectableSerializeReference]
-        private TimelineExpressionInt EndValue = new TimelineExpressionIntConstant { Value = 0 };
+        [SerializeField] private TweenTimelineField<int> EndValue;
         
-        [SerializeField] private Ease ease;
+        [SerializeField] private TweenTimelineField<Ease> ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
+        protected override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
         {
-            return DOTween.To(() => int.TryParse(info.Target.text, out var val) ?  val : 0, x => info.Target.SetText("{0}", x), EndValue.GetValue(info.Parameter), info.Duration)
-                .SetEase(ease);
+            return DOTween.To(() => int.TryParse(info.Target.text, out var val) ?  val : 0, x => info.Target.SetText("{0}", x), EndValue.Value, info.Duration)
+                .SetEase(ease.Value);
         }
     }
 }

@@ -20,10 +20,9 @@ namespace TweenTimeline
 #endif
      
         [SerializeField] private bool setStartValue;
-        
+
         [EnableIf(nameof(setStartValue), true)]
-        [SerializeReference, SelectableSerializeReference] 
-        private TimelineExpressionVector3 startValue = new TimelineExpressionVector3Constant();
+        [SerializeField] private TweenTimelineField<Vector3> startValue;
 
         /// <inheritdoc/>
         public override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
@@ -31,7 +30,7 @@ namespace TweenTimeline
             if (!setStartValue) return null;
             return () =>
             {
-                info.Target.localRotation = Quaternion.Euler(startValue.GetValue(info.Parameter));
+                info.Target.localRotation = Quaternion.Euler(startValue.Value);
             };   
         }
     }

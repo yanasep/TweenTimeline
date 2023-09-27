@@ -15,19 +15,19 @@ namespace TweenTimeline
     public class GraphicColorTweenClip : TweenClip<Graphic>
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionColor EndValue = new TimelineExpressionColorConstant { Value = Color.white };
+        public TweenTimelineField<Color> EndValue = new(Color.white);
         public RGBAFlags Enable;
-        public Ease Ease;
+        public TweenTimelineField<Ease> Ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<Graphic> info)
+        protected override Tween GetTween(TweenClipInfo<Graphic> info)
         {
-            return DOTween.To(() => info.Target.color, x => info.Target.color = Enable.Apply(info.Target.color, x), EndValue.GetValue(info.Parameter), info.Duration).SetEase(Ease);
+            return DOTween.To(() => info.Target.color, x => info.Target.color = Enable.Apply(info.Target.color, x), EndValue.Value, info.Duration).SetEase(Ease.Value);
         }
 
         public override string GetTweenLog(TweenClipInfo<Graphic> info)
         {
-            return $"DOColor({Enable.GetString(EndValue.GetValue(info.Parameter))}, {info.Duration})";
+            return $"DOColor({Enable.GetString(EndValue.Value)}, {info.Duration})";
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -18,7 +17,7 @@ namespace TweenTimeline
         [SerializeField] private PlayableDirector _director;
 
         public TweenParameter Parameter { get; private set; }
-        private Dictionary<TimelineAsset, Tween> _tweenCache;
+        private Tween _tween;
 
         /// <summary>
         /// 初期化
@@ -34,8 +33,6 @@ namespace TweenTimeline
             {
                 Parameter = new();
             }
-
-            _tweenCache = new Dictionary<TimelineAsset, Tween>();
         }
 
         /// <summary>
@@ -67,20 +64,10 @@ namespace TweenTimeline
 
         private Tween PlayCore(TimelineAsset timelineAsset)
         {
-            var tween = GetTween(timelineAsset);
-            tween.Play();
-            return tween;
-        }
-
-        private Tween GetTween(TimelineAsset timelineAsset)
-        {
-            if (!_tweenCache.TryGetValue(timelineAsset, out var tween))
-            {
-                tween = TweenTimelineUtility.CreateTween(timelineAsset, Parameter, track => _director.GetGenericBinding(track));
-                _tweenCache.Add(timelineAsset, tween);
-            }
-
-            return tween;
+            _tween?.Kill();
+            _tween = TweenTimelineUtility.CreateTween(timelineAsset, Parameter, track => _director.GetGenericBinding(track));
+            _tween.Play();
+            return _tween;
         }
 
         [EditorButton("LogTween")]
@@ -128,12 +115,7 @@ namespace TweenTimeline
 
         private void OnDestroy()
         {
-            if (_tweenCache == null) return;
-            foreach (var tween in _tweenCache.Values)
-            {
-                tween.Kill();
-            }
-            _tweenCache.Clear();
+            _tween?.Kill();
         }
     }
 }

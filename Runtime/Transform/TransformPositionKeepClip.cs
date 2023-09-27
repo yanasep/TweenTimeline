@@ -13,13 +13,12 @@ namespace TweenTimeline
     [DisplayName("Position Keep")]
     public class TransformPositionKeepClip : TweenClip<Transform>
     {
-        public TransformTweenPositionType PositionType;
+        public TweenTimelineField<TransformTweenPositionType> PositionType;
 
         public bool SpecifyValue;
-        
+
         [EnableIf(nameof(SpecifyValue), true)]
-        [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector3 Value = new TimelineExpressionVector3Constant();
+        public TweenTimelineField<Vector3> Value;
 
         private Vector3 _startValue;
 
@@ -30,11 +29,11 @@ namespace TweenTimeline
             {
                 if (SpecifyValue)
                 {
-                    _startValue = Value.GetValue(info.Parameter);
+                    _startValue = Value.Value;
                 }
                 else
                 {
-                    _startValue = PositionType switch
+                    _startValue = PositionType.Value switch
                     {
                         TransformTweenPositionType.Position => info.Target.position,
                         TransformTweenPositionType.LocalPosition => info.Target.localPosition,
@@ -45,9 +44,9 @@ namespace TweenTimeline
         }
 
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<Transform> info)
+        protected override Tween GetTween(TweenClipInfo<Transform> info)
         {
-            Tween tween = PositionType switch
+            Tween tween = PositionType.Value switch
             {
                 TransformTweenPositionType.Position => info.Target.DOMove(SpecifyValue ? _startValue : info.Target.position, info.Duration),
                 TransformTweenPositionType.LocalPosition =>  info.Target.DOLocalMove(SpecifyValue ? _startValue : info.Target.localPosition, info.Duration),

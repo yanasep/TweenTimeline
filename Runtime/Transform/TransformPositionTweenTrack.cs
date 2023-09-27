@@ -21,13 +21,12 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
 #endif
         public bool SetStartValue;
-        
-        [EnableIf(nameof(SetStartValue), true)]
-        [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector3 StartValue = new TimelineExpressionVector3Constant();
 
         [EnableIf(nameof(SetStartValue), true)]
-        public TransformTweenPositionType positionType;
+        public TweenTimelineField<Vector3> StartValue;
+
+        [EnableIf(nameof(SetStartValue), true)]
+        public TweenTimelineField<TransformTweenPositionType> positionType;
 
         /// <inheritdoc/>
         public override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
@@ -35,13 +34,13 @@ namespace TweenTimeline
             if (!SetStartValue) return null;
             return () =>
             {
-                switch (positionType)
+                switch (positionType.Value)
                 {
                     case TransformTweenPositionType.Position:
-                        info.Target.position = StartValue.GetValue(info.Parameter);
+                        info.Target.position = StartValue.Value;
                         break;
                     case TransformTweenPositionType.LocalPosition:
-                        info.Target.localPosition = StartValue.GetValue(info.Parameter);
+                        info.Target.localPosition = StartValue.Value;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

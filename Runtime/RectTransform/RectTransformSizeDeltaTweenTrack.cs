@@ -22,14 +22,13 @@ namespace TweenTimeline
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
-        [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector2 StartValue = new TimelineExpressionVector2Constant { Value = new Vector2(100, 100) };
+        public TweenTimelineField<Vector2> StartValue;
 
         /// <inheritdoc/>
         public override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
         {
             if (!SetStartValue) return null;
-            return () => { info.Target.sizeDelta = StartValue.GetValue(info.Parameter); };
+            return () => { info.Target.sizeDelta = StartValue.Value; };
         }
     }
 }

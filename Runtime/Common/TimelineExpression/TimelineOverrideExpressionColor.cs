@@ -8,24 +8,22 @@ namespace TweenTimeline
     /// Colorの値表現
     /// </summary>
     [Serializable]
-    public abstract class TimelineExpressionColor
+    public abstract class TimelineOverrideExpressionColor : TimelineOverrideExpression<Color>
     {
-        /// <summary>値取得</summary>
-        public abstract Color GetValue(TweenParameter parameter);
     }
 
     /// <summary>
     /// Colorの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("Constant")]
+    [Name("Color/Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
-    public class TimelineExpressionColorConstant : TimelineExpressionColor
+    public class TimelineOverrideExpressionColorConstant : TimelineOverrideExpressionColor
     {
         public Color Value;
 
         /// <inheritdoc/>
-        public override Color GetValue(TweenParameter parameter)
+        public override Color GetValue(TweenParameter parameter, TweenTimelineField field)
         {
             return Value;
         }
@@ -35,15 +33,15 @@ namespace TweenTimeline
     /// Colorの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("Parameter")]
+    [Name("Color/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TimelineExpressionColorParameter : TimelineExpressionColor, ISerializationCallbackReceiver
+    public class TimelineOverrideExpressionColorParameter : TimelineOverrideExpressionColor, ISerializationCallbackReceiver
     {
         public string ParameterName;
         private int paramHash;
 
         /// <inheritdoc/>
-        public override Color GetValue(TweenParameter parameter)
+        public override Color GetValue(TweenParameter parameter, TweenTimelineField field)
         {
             return parameter.Color.GetOrDefault(paramHash);
         }

@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -13,14 +12,13 @@ namespace TweenTimeline
     [DisplayName("Size Tween")]
     public class RectTransformSizeDeltaTweenClip : TweenClip<RectTransform>
     {
-        [SerializeReference, SelectableSerializeReference]
-        private TimelineExpressionVector2 endValue = new TimelineExpressionVector2Constant { Value = new Vector2(100, 100) };
-        [SerializeField] private Ease ease;
+        [SerializeField] private TweenTimelineField<Vector2> endValue = new(new Vector2(100, 100));
+        [SerializeField] private TweenTimelineField<Ease> ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<RectTransform> info)
+        protected override Tween GetTween(TweenClipInfo<RectTransform> info)
         {
-            return info.Target.DOSizeDelta(endValue.GetValue(info.Parameter), info.Duration).SetEase(ease);
+            return info.Target.DOSizeDelta(endValue.Value, info.Duration).SetEase(ease.Value);
         }
     }
 }

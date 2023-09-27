@@ -25,11 +25,10 @@ namespace TweenTimeline
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
-        [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector3 StartValue = new TimelineExpressionVector3Constant();
+        public TweenTimelineField<Vector3> StartValue = new();
 
         [EnableIf(nameof(SetStartValue), true)]
-        public RectTransformTweenPositionType PositionType;
+        public TweenTimelineField<RectTransformTweenPositionType> PositionType = new();
 
         /// <inheritdoc/>
         public override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
@@ -38,16 +37,16 @@ namespace TweenTimeline
 
             return () =>
             {
-                switch (PositionType)
+                switch (PositionType.Value)
                 {
                     case RectTransformTweenPositionType.AnchoredPosition:
-                        info.Target.anchoredPosition = StartValue.GetValue(info.Parameter);
+                        info.Target.anchoredPosition = StartValue.Value;
                         break;
                     case RectTransformTweenPositionType.Position:
-                        info.Target.position = StartValue.GetValue(info.Parameter);
+                        info.Target.position = StartValue.Value;
                         break;
                     case RectTransformTweenPositionType.LocalPosition:
-                        info.Target.localPosition = StartValue.GetValue(info.Parameter);
+                        info.Target.localPosition = StartValue.Value;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -58,7 +57,7 @@ namespace TweenTimeline
         /// <inheritdoc/>
         protected override string GetStartLog(TweenTrackInfo<RectTransform> info)
         {
-            return PositionType switch
+            return PositionType.Value switch
             {
                 RectTransformTweenPositionType.AnchoredPosition => $"Set AnchoredPosition to {StartValue}",
                 RectTransformTweenPositionType.Position => $"Set Position to {StartValue}",

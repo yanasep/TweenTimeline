@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -27,7 +29,10 @@ namespace TweenTimeline
         public double StartTime { get; set; }
         public double Duration { get; set; }
 
-        public abstract Tween GetTween(TweenClipInfo<TBinding> info);
+        public TweenTimelineFieldOverride[] Overrides;
+        public Dictionary<string, TweenTimelineField> Fields { get; set; }
+
+        protected abstract Tween GetTween(TweenClipInfo<TBinding> info);
         public virtual TweenCallback GetStartCallback(TweenClipInfo<TBinding> info) => null;
         public virtual TweenCallback GetEndCallback(TweenClipInfo<TBinding> info) => null;
         public virtual string GetStartLog(TweenClipInfo<TBinding> info) => null;
@@ -36,6 +41,45 @@ namespace TweenTimeline
 
         private readonly TweenBehaviour template = new();
 
+        /// <summary>
+        /// Tweenを作成
+        /// </summary>
+        public Tween CreateTween(TweenClipInfo<TBinding> info)
+        {
+            Fields ??= new();
+            Fields.Clear();
+            GatherFields();
+
+            foreach (var fieldOverride in Overrides)
+            {
+                if (Fields.TryGetValue(fieldOverride.Name, out var field))
+                {
+                    fieldOverride.Expression.Override(field, info.Parameter);
+                }
+                else
+                {
+                    Debug.LogWarning($"{name}: field {fieldOverride.Name} is not found.");
+                }
+            }
+
+            return GetTween(info);
+        }
+
+        /// <summary>
+        /// TimelineFieldをDictionaryに入れる
+        /// </summary>
+        private void GatherFields()
+        {
+            // TODO: SourceGeneratorでやる
+            var fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var field in fields)
+            {
+                if (!field.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
+                Fields.Add(field.Name, (TweenTimelineField)field.GetValue(this));
+            }
+        }
+
+        /// <inheritdoc/>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             if (Binding == null) return default;
@@ -49,8 +93,9 @@ namespace TweenTimeline
                 Duration = (float)Duration,
                 Parameter = parameter
             };
+            
             // OnPlayableCreateでアクセスできるように予めtemplateにセット
-            template.Tween = GetTween(info);
+            template.Tween = CreateTween(info);
             template.StartCallback = GetStartCallback(info);
             template.EndCallback = GetEndCallback(info);
             template.StartTime = StartTime;

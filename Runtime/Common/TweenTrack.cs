@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text;
@@ -35,7 +36,24 @@ namespace TweenTimeline
         protected virtual string GetStartLog(TweenTrackInfo<TBinding> info) => null;
         protected virtual string GetEndLog(TweenTrackInfo<TBinding> info) => null;
 
+        public TweenTimelineFieldOverride[] Overrides;
+        public Dictionary<string, TweenTimelineField> Fields { get; set; }
+
         private readonly TweenMixerBehaviour template = new();
+
+        /// <summary>
+        /// TimelineFieldをDictionaryに入れる
+        /// </summary>
+        private void GatherFields()
+        {
+            // TODO: SourceGeneratorでやる
+            var fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var field in fields)
+            {
+                if (!field.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
+                Fields.Add(field.Name, (TweenTimelineField)field.GetValue(this));
+            }
+        }
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
@@ -85,6 +103,10 @@ namespace TweenTimeline
             var target = args.Binding as TBinding;
             if (target == null) return null;
             
+            Fields ??= new();
+            Fields.Clear();
+            GatherFields();
+            
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
             var tweenTrackInfo = new TweenTrackInfo<TBinding>
             {
@@ -122,7 +144,7 @@ namespace TweenTimeline
                     sequence.AppendCallback(clipStartCallback);
                 }
                 // main
-                var tween = tweenClip.GetTween(tweenClipInfo);
+                var tween = tweenClip.CreateTween(tweenClipInfo);
                 if (tween != null)
                 {
                     sequence.Append(tween);
@@ -200,7 +222,7 @@ namespace TweenTimeline
                 // start
                 AppendObjectLog(tweenClip.GetStartCallback(tweenClipInfo), tweenClip.GetStartLog(tweenClipInfo), "ClipStartCallback");
                 // main
-                AppendObjectLog(tweenClip.GetTween(tweenClipInfo), tweenClip.GetTweenLog(tweenClipInfo), "ClipTween");
+                AppendObjectLog(tweenClip.CreateTween(tweenClipInfo), tweenClip.GetTweenLog(tweenClipInfo), "ClipTween");
                 // end
                 AppendObjectLog(tweenClip.GetEndCallback(tweenClipInfo), tweenClip.GetEndLog(tweenClipInfo), "ClipEndCallback");
             }

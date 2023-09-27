@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -13,28 +12,26 @@ namespace TweenTimeline
     [DisplayName("Position Tween")]
     public class TransformPositionTweenClip : TweenClip<Transform>
     {
-        public TransformTweenPositionType PositionType;
-        
-        [SerializeReference, SelectableSerializeReference] 
-        public TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant();
+        public TweenTimelineField<TransformTweenPositionType> PositionType;
 
-        [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionBool IsRelative = new TimelineExpressionBoolConstant { Value = false };
+        public TweenTimelineField<Vector3> EndValue;
+
+        public TweenTimelineField<bool> IsRelative;
         
-        public Ease Ease;
+        public TweenTimelineField<Ease> Ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<Transform> info)
+        protected override Tween GetTween(TweenClipInfo<Transform> info)
         {
-            Tween tween = PositionType switch
+            Tween tween = PositionType.Value switch
             {
-                TransformTweenPositionType.Position => info.Target.DOMove(EndValue.GetValue(info.Parameter), info.Duration),
-                TransformTweenPositionType.LocalPosition => info.Target.DOLocalMove(EndValue.GetValue(info.Parameter), info.Duration),
+                TransformTweenPositionType.Position => info.Target.DOMove(EndValue.Value, info.Duration),
+                TransformTweenPositionType.LocalPosition => info.Target.DOLocalMove(EndValue.Value, info.Duration),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            tween.SetEase(Ease);
-            if (IsRelative.GetValue(info.Parameter)) tween.SetRelative(true);
+            tween.SetEase(Ease.Value);
+            if (IsRelative.Value) tween.SetRelative(true);
 
             return tween;   
         }

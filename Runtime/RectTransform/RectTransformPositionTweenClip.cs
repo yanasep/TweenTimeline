@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -15,35 +14,33 @@ namespace TweenTimeline
     {
         public RectTransformTweenPositionType PositionType;
 
-        [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionVector3 EndValue = new TimelineExpressionVector3Constant();
+        public TweenTimelineField<Vector3> EndValue;
 
-        [SerializeReference, SelectableSerializeReference]
-        public TimelineExpressionBool IsRelative = new TimelineExpressionBoolConstant { Value = false };
+        public TweenTimelineField<bool> IsRelative;
 
         public Ease Ease;
 
         /// <inheritdoc/>
-        public override Tween GetTween(TweenClipInfo<RectTransform> info)
+        protected override Tween GetTween(TweenClipInfo<RectTransform> info)
         {
             Tween tween;
             switch (PositionType)
             {
                 case RectTransformTweenPositionType.AnchoredPosition:
-                    tween = info.Target.DOAnchorPos(EndValue.GetValue(info.Parameter), info.Duration);
+                    tween = info.Target.DOAnchorPos(EndValue.Value, info.Duration);
                     break;
                 case RectTransformTweenPositionType.Position:
-                    tween = info.Target.DOMove(EndValue.GetValue(info.Parameter), info.Duration);
+                    tween = info.Target.DOMove(EndValue.Value, info.Duration);
                     break;
                 case RectTransformTweenPositionType.LocalPosition:
-                    tween = info.Target.DOLocalMove(EndValue.GetValue(info.Parameter), info.Duration);
+                    tween = info.Target.DOLocalMove(EndValue.Value, info.Duration);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
             tween.SetEase(Ease);
-            if (IsRelative.GetValue(info.Parameter)) tween.SetRelative(true);
+            if (IsRelative.Value) tween.SetRelative(true);
 
             return tween;
         }
@@ -68,7 +65,7 @@ namespace TweenTimeline
                     return null;
             }
 
-            if (IsRelative.GetValue(info.Parameter)) log += ".SetRelative(true)";
+            if (IsRelative.Value) log += ".SetRelative(true)";
             return log;
         }
     }
