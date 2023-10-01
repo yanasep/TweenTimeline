@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using DG.Tweening;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace TweenTimeline
@@ -10,24 +11,22 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("SubTween")]
-    public class SubTweenClip : TweenClip<TweenTimelineDirector>
+    public class SubTweenClip : TweenClip<PlayableDirector>
     {
-        public TweenTimelineField<TimelineAsset> timelineAsset;
-
+        public TimelineAsset timelineAsset;
+        
         /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<TweenTimelineDirector> info)
+        protected override Tween GetTween(TweenClipInfo<PlayableDirector> info)
         {
             if (timelineAsset == null) return null;
-            info.Target.Initialize();
-            return info.Target.CreateTween(timelineAsset.Value);
+            return TweenTimelineUtility.CreateTween(timelineAsset, info.Parameter, info.Target);
         }
         
         /// <inheritdoc/>
-        public override string GetTweenLog(TweenClipInfo<TweenTimelineDirector> info)
+        public override string GetTweenLog(TweenClipInfo<PlayableDirector> info)
         {
             if (timelineAsset == null) return null;
-            info.Target.Initialize();
-            return info.Target.CreateTweenString(timelineAsset.Value);
+            return TweenTimelineUtility.CreateTweenString(timelineAsset, info.Parameter, info.Target);
         }
     }
 }

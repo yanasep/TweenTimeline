@@ -1,7 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace TweenTimeline
@@ -10,9 +12,9 @@ namespace TweenTimeline
     /// サブTweenトラック
     /// </summary>
     [DisplayName("Tween/Sub Tween Track")]
-    [TrackBindingType(typeof(TweenTimelineDirector))]
+    [TrackBindingType(typeof(PlayableDirector))]
     [TrackClipType(typeof(SubTweenClip))]
-    public class SubTweenTrack : TweenTrack<TweenTimelineDirector>
+    public class SubTweenTrack : TweenTrack<PlayableDirector>
     {
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("d_UnityEditor.Timeline.TimelineWindow").image as Texture2D;
@@ -25,7 +27,7 @@ namespace TweenTimeline
             DoNothing, ActiveWhilePlaying, ActiveOnStart
         }
 
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<TweenTimelineDirector> info)
+        protected override TweenCallback GetStartCallback(TweenTrackInfo<PlayableDirector> info)
         {
             if (activationType.Value is ActivationType.ActiveOnStart or ActivationType.ActiveWhilePlaying)
             {
@@ -35,7 +37,7 @@ namespace TweenTimeline
             return null;
         }
 
-        protected override TweenCallback GetEndCallback(TweenTrackInfo<TweenTimelineDirector> info)
+        protected override TweenCallback GetEndCallback(TweenTrackInfo<PlayableDirector> info)
         {
             if (activationType.Value is ActivationType.ActiveWhilePlaying)
             {
@@ -45,33 +47,37 @@ namespace TweenTimeline
             return null;
         }
 
-        public override Tween CreateTween(CreateTweenArgs args)
+        protected override Action<float> GetUpdateCallback(TweenTrackInfo<PlayableDirector> info)
         {
-            var tween = base.CreateTween(args);
-
             if (activationType.Value == ActivationType.DoNothing)
             {
-                return tween;
+                return null;
             }
-
-            var go = ((TweenTimelineDirector)args.Binding).gameObject;
-
-            var sequence = DOTween.Sequence();
-            sequence.Append(tween);
 
             var inputs = GetClipInputs();
 
-            sequence.Join(DOTweenEx.EveryUpdate((float)timelineAsset.duration, t =>
+            return t =>
             {
-                if (go == null) return;
+                var go = info.Target.gameObject;
 
                 bool active = activationType.Value == ActivationType.ActiveOnStart && HasAnyClipStarted(inputs, t)
-                    || activationType.Value == ActivationType.ActiveWhilePlaying && IsAnyClipPlaying(inputs, t);
+                              || activationType.Value == ActivationType.ActiveWhilePlaying && IsAnyClipPlaying(inputs, t);
 
                 go.SetActive(active);
-            }));
+            };
+        }
+        
+        /// <inheritdoc/>
+        public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
+        {
+            base.GatherProperties(director, driver);
 
-            return sequence;
+#if UNITY_EDITOR
+            var comp = director.GetGenericBinding(this) as PlayableDirector;
+            if (comp == null) return;
+            var go = comp.gameObject;
+            driver.AddFromName(go, "m_IsActive");
+#endif
         }
     }
 }

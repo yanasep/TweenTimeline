@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using DG.Tweening;
-using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace TweenTimeline
@@ -10,7 +10,7 @@ namespace TweenTimeline
         /// <summary>
         /// PlayableAssetをTweenに変換
         /// </summary>
-        public static Tween CreateTween(TimelineAsset timelineAsset, TweenParameter parameter, System.Func<TweenTrack, Object> getTrackBinding)
+        public static Tween CreateTween(TimelineAsset timelineAsset, TweenParameter parameter, PlayableDirector director)
         {
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
@@ -18,7 +18,7 @@ namespace TweenTimeline
             {
                 if (track is not TweenTrack tweenTrack) continue;
 
-                var binding = getTrackBinding(tweenTrack);
+                var binding = director.GetGenericBinding(tweenTrack);
                 var tween = tweenTrack.CreateTween(new CreateTweenArgs
                 {
                     Binding = binding,
@@ -33,7 +33,7 @@ namespace TweenTimeline
         /// <summary>
         /// PlayableAssetをTweenに変換
         /// </summary>
-        public static string CreateTweenString(TimelineAsset timelineAsset, TweenParameter parameter, System.Func<TweenTrack, Object> getTrackBinding)
+        public static string CreateTweenString(TimelineAsset timelineAsset, TweenParameter parameter, PlayableDirector director)
         {
             var sb = new StringBuilder();
 
@@ -43,7 +43,7 @@ namespace TweenTimeline
 
                 sb.AppendLine($"[{tweenTrack.name}]");
 
-                var binding = getTrackBinding(tweenTrack);
+                var binding = director.GetGenericBinding(tweenTrack);
                 var str = tweenTrack.GetTweenString(new CreateTweenArgs
                 {
                     Binding = binding,

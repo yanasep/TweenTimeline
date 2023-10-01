@@ -71,12 +71,12 @@ namespace TweenTimeline
 
         public Tween CreateTween(TimelineAsset timelineAsset)
         {
-            return TweenTimelineUtility.CreateTween(timelineAsset, Parameter, track => _director.GetGenericBinding(track));   
+            return TweenTimelineUtility.CreateTween(timelineAsset, Parameter, _director);   
         }
 
         public string CreateTweenString(TimelineAsset timelineAsset)
         {
-            return TweenTimelineUtility.CreateTweenString(timelineAsset, Parameter, track => _director.GetGenericBinding(track));
+            return TweenTimelineUtility.CreateTweenString(timelineAsset, Parameter, _director);
         }
 
         [EditorButton("LogTween")]

@@ -33,6 +33,7 @@ namespace TweenTimeline
     {
         protected virtual TweenCallback GetStartCallback(TweenTrackInfo<TBinding> info) => null;
         protected virtual TweenCallback GetEndCallback(TweenTrackInfo<TBinding> info) => null;
+        protected virtual Action<float> GetUpdateCallback(TweenTrackInfo<TBinding> info) => null;
         protected virtual string GetStartLog(TweenTrackInfo<TBinding> info) => null;
         protected virtual string GetEndLog(TweenTrackInfo<TBinding> info) => null;
 
@@ -47,8 +48,9 @@ namespace TweenTimeline
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
-        { 
-            var binding = go.GetComponent<PlayableDirector>().GetGenericBinding(this) as TBinding;
+        {
+            var director = go.GetComponent<PlayableDirector>();
+            var binding = director.GetGenericBinding(this) as TBinding;
             if (binding == null) return base.CreateTrackMixer(graph, go, inputCount);
             
             var parameterHolder = go.GetComponent<TweenParameterHolder>();
@@ -93,7 +95,7 @@ namespace TweenTimeline
 #endif
         }
 
-        public override Tween CreateTween(CreateTweenArgs args)
+        public sealed override Tween CreateTween(CreateTweenArgs args)
         {
             var target = args.Binding as TBinding;
             if (target == null) return null;
@@ -157,6 +159,15 @@ namespace TweenTimeline
                 float interval = duration - currentTime;
                 if (interval > 0) sequence.AppendInterval(interval);
                 sequence.AppendCallback(endCallback);
+            }
+
+            var updateCallback = GetUpdateCallback(tweenTrackInfo);
+            if (updateCallback != null)
+            {
+                sequence.Join(DOTweenEx.EveryUpdate((float)timelineAsset.duration, t =>
+                {
+                    updateCallback(t);
+                }));
             }
 
             return sequence;
@@ -260,10 +271,10 @@ namespace TweenTimeline
                 {
                     fieldOverride.Expression.Override(field, parameter);
                 }
-                else
-                {
-                    Debug.LogWarning($"{name}: field {fieldOverride.Name} is not found.");
-                }
+                // else
+                // {
+                //     Debug.LogWarning($"{name}: field {fieldOverride.Name} is not found.");
+                // }
             }
         }
         
@@ -357,14 +368,14 @@ namespace TweenTimeline
         }
 
         /// <inheritdoc/>
-        public override void PrepareFrame(Playable playable, FrameData info)
+        public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             if (Tween == null) return;
             
-            var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration()); 
+            var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration());
             Tween.GotoWithCallbacks(trackTime);
         }
-        
+
         private double GetTrackTime(double time, double duration)
         {
             return director.extrapolationMode switch

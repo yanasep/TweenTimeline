@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
@@ -27,6 +28,20 @@ namespace TweenTimeline
             return () => info.Target.SetActive(false);
         }
 
+        protected override Action<float> GetUpdateCallback(TweenTrackInfo<GameObject> info)
+        {
+            var inputs = GetClipInputs();
+            var go = info.Target;
+            
+            return t =>
+            {
+                if (go == null) return;
+
+                Debug.Log($"update : {t}");
+                go.SetActive(IsAnyClipPlaying(inputs, t));
+            };
+        }
+
         /// <inheritdoc/>
         protected override string GetStartLog(TweenTrackInfo<GameObject> info)
         {
@@ -43,19 +58,6 @@ namespace TweenTimeline
             if (binding == null) return;
             driver.AddFromName(binding, "m_IsActive");
 #endif
-        }
-
-        public override Tween CreateTween(CreateTweenArgs args)
-        {
-            var inputs = GetClipInputs();
-            
-            var go = (GameObject)args.Binding;
-            return DOTweenEx.EveryUpdate((float)timelineAsset.duration, t =>
-            {
-                if (go == null) return;
-                
-                go.SetActive(IsAnyClipPlaying(inputs, t));
-            });
         }
     }
 }
