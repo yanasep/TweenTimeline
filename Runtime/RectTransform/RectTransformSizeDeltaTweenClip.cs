@@ -10,15 +10,27 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Size Tween")]
-    public class RectTransformSizeDeltaTweenClip : TweenClip<RectTransform>
+    public class RectTransformSizeDeltaTweenClip : TweenClip<RectTransform, RectTransformSizeDeltaTweenBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class RectTransformSizeDeltaTweenBehaviour : TweenBehaviour<RectTransform>
     {
         [SerializeField] private TweenTimelineField<Vector2> endValue = new(new Vector2(100, 100));
         [SerializeField] private TweenTimelineField<Ease> ease;
 
-        /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<RectTransform> info)
+        private Vector2 _start;
+
+        public override void Start()
         {
-            return info.Target.DOSizeDelta(endValue.Value, info.Duration).SetEase(ease.Value);
+            _start = Target.sizeDelta;
+        }
+
+        /// <inheritdoc/>
+        public override void Update(double localTime)
+        {
+            Target.sizeDelta = DOVirtual.EasedValue(_start, endValue.Value, (float)(localTime / Duration), ease.Value);
         }
     }
 }

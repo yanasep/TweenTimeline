@@ -8,7 +8,8 @@ namespace TweenTimeline
     /// TransformTweenトラックのベース
     /// </summary>
     [TrackColor(0.851f, 0.843f, 0.945f)]
-    public abstract class TransformTweenTrack : TweenTrack<Transform>
+    public abstract class TransformTweenTrack<TMixerBehaviour> : TweenTrack<Transform, TMixerBehaviour>
+        where TMixerBehaviour : TweenMixerBehaviour<Transform>
     {
         public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
         {

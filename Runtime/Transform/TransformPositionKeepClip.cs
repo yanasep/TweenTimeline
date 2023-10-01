@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using DG.Tweening;
 using UnityEngine;
 using Yanasep;
 
@@ -11,7 +10,12 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Position Keep")]
-    public class TransformPositionKeepClip : TweenClip<Transform>
+    public class TransformPositionKeepClip : TweenClip<Transform, TransformPositionKeepBehaviour>
+    {
+    }
+    
+    [Serializable]
+    public class TransformPositionKeepBehaviour : TweenBehaviour<Transform>
     {
         public TweenTimelineField<TransformTweenPositionType> PositionType;
 
@@ -23,38 +27,19 @@ namespace TweenTimeline
         private Vector3 _startValue;
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(TweenClipInfo<Transform> info)
+        public override void Start()
         {
-            return () =>
+            _startValue = SpecifyValue switch
             {
-                if (SpecifyValue)
-                {
-                    _startValue = Value.Value;
-                }
-                else
-                {
-                    _startValue = PositionType.Value switch
-                    {
-                        TransformTweenPositionType.Position => info.Target.position,
-                        TransformTweenPositionType.LocalPosition => info.Target.localPosition,
-                        _ => throw new ArgumentOutOfRangeException()
-                    };
-                }
+                true => Value.Value,
+                false => Target.GetPosition(PositionType.Value)
             };
         }
 
         /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<Transform> info)
+        public override void Update(double localTime)
         {
-            Tween tween = PositionType.Value switch
-            {
-                TransformTweenPositionType.Position => info.Target.DOMove(SpecifyValue ? _startValue : info.Target.position, info.Duration),
-                TransformTweenPositionType.LocalPosition =>  info.Target.DOLocalMove(SpecifyValue ? _startValue : info.Target.localPosition, info.Duration),
-                _ => throw new ArgumentOutOfRangeException()
-            };
-
-            tween.SetEase(Ease.Linear);
-            return tween;   
+            Target.SetPosition(PositionType.Value, _startValue);
         }
     }
 }

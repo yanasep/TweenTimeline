@@ -10,16 +10,28 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Scale Tween")]
-    public class TransformScaleTweenClip : TweenClip<Transform>
+    public class TransformScaleTweenClip : TweenClip<Transform, TransformScaleTweenBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class TransformScaleTweenBehaviour : TweenBehaviour<Transform>
     {
         [SerializeField] private TweenTimelineField<Vector3> endValue = new(Vector3.one);
         
         [SerializeField] private TweenTimelineField<Ease> ease;
 
+        private Vector3 _start;
+
         /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<Transform> info)
+        public override void Start()
         {
-            return info.Target.DOScale(endValue.Value, info.Duration).SetEase(ease.Value);
+            _start = Target.localScale;
+        }
+
+        public override void Update(double localTime)
+        {
+            Target.localScale = DOVirtual.EasedValue(_start, endValue.Value, (float)(localTime / Duration), ease.Value);
         }
     }
 }

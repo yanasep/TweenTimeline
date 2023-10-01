@@ -11,17 +11,28 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Text Count Up Tween")]
-    public class TextMeshProUGUICountUpTweenClip : TweenClip<TextMeshProUGUI>
+    public class TextMeshProUGUICountUpTweenClip : TweenClip<TextMeshProUGUI, TextMeshProUGUICountUpTweenBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class TextMeshProUGUICountUpTweenBehaviour : TweenBehaviour<TextMeshProUGUI>
     {
         [SerializeField] private TweenTimelineField<int> EndValue;
         
         [SerializeField] private TweenTimelineField<Ease> ease;
 
-        /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
+        private int _start;
+
+        public override void Start()
         {
-            return DOTween.To(() => int.TryParse(info.Target.text, out var val) ?  val : 0, x => info.Target.SetText("{0}", x), EndValue.Value, info.Duration)
-                .SetEase(ease.Value);
+            _start = int.TryParse(Target.text, out var val) ? val : 0;
         }
+
+        /// <inheritdoc/>
+        public override void Update(double localTime)
+        {
+            Target.SetText("{0}", DOVirtual.EasedValue(_start, EndValue.Value, (float)(localTime / Duration), ease.Value));
+        }   
     }
 }

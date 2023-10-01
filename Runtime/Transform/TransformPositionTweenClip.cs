@@ -10,7 +10,12 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Position Tween")]
-    public class TransformPositionTweenClip : TweenClip<Transform>
+    public class TransformPositionTweenClip : TweenClip<Transform, TransformPositionTweenBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class TransformPositionTweenBehaviour : TweenBehaviour<Transform>
     {
         public TweenTimelineField<TransformTweenPositionType> PositionType;
 
@@ -20,20 +25,19 @@ namespace TweenTimeline
         
         public TweenTimelineField<Ease> Ease;
 
-        /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<Transform> info)
+        private Vector3 _startValue;
+
+        public override void Start()
         {
-            Tween tween = PositionType.Value switch
-            {
-                TransformTweenPositionType.Position => info.Target.DOMove(EndValue.Value, info.Duration),
-                TransformTweenPositionType.LocalPosition => info.Target.DOLocalMove(EndValue.Value, info.Duration),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            _startValue = Target.GetPosition(PositionType.Value);
+        }
 
-            tween.SetEase(Ease.Value);
-            if (IsRelative.Value) tween.SetRelative(true);
-
-            return tween;   
+        /// <inheritdoc/>
+        public override void Update(double localTime)
+        {
+            var val = DOVirtual.EasedValue(_startValue, EndValue.Value, (float)(localTime / Duration), Ease.Value);
+            if (IsRelative.Value) val += _startValue;
+            Target.SetPosition(PositionType.Value, val);
         }
     }
 }

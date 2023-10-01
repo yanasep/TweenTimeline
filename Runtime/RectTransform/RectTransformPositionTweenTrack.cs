@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
-using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using Yanasep;
 
@@ -16,12 +16,16 @@ namespace TweenTimeline
     [TrackClipType(typeof(RectTransformPositionTweenClip))]
     [TrackClipType(typeof(RectTransformPositionKeepClip))]
     [TrackClipType(typeof(TransformPositionTweenClip))]
-    public class RectTransformPositionTweenTrack : RectTransformTweenTrack
+    public class RectTransformPositionTweenTrack : RectTransformTweenTrack<RectTransformPositionTweenMixerBehaviour>
     {
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;
 #endif  
-
+    }
+    
+    [Serializable]
+    public class RectTransformPositionTweenMixerBehaviour : TweenMixerBehaviour<RectTransform>
+    {
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
@@ -29,41 +33,13 @@ namespace TweenTimeline
 
         [EnableIf(nameof(SetStartValue), true)]
         public TweenTimelineField<RectTransformTweenPositionType> PositionType = new();
-
-        /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<RectTransform> info)
+        
+        protected override void OnStart(Playable playable)
         {
-            if (!SetStartValue) return null;
+            base.OnStart(playable);
+            if (!SetStartValue) return;
 
-            return () =>
-            {
-                switch (PositionType.Value)
-                {
-                    case RectTransformTweenPositionType.AnchoredPosition:
-                        info.Target.anchoredPosition = StartValue.Value;
-                        break;
-                    case RectTransformTweenPositionType.Position:
-                        info.Target.position = StartValue.Value;
-                        break;
-                    case RectTransformTweenPositionType.LocalPosition:
-                        info.Target.localPosition = StartValue.Value;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            };
-        }
-
-        /// <inheritdoc/>
-        protected override string GetStartLog(TweenTrackInfo<RectTransform> info)
-        {
-            return PositionType.Value switch
-            {
-                RectTransformTweenPositionType.AnchoredPosition => $"Set AnchoredPosition to {StartValue}",
-                RectTransformTweenPositionType.Position => $"Set Position to {StartValue}",
-                RectTransformTweenPositionType.LocalPosition => $"Set LocalPosition to {StartValue}",
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            Target.SetPosition(PositionType.Value, StartValue.Value);
         }
     }
 }

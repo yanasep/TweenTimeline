@@ -10,7 +10,12 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Position Tween")]
-    public class RectTransformPositionTweenClip : TweenClip<RectTransform>
+    public class RectTransformPositionTweenClip : TweenClip<RectTransform, RectTransformPositionTweenBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class RectTransformPositionTweenBehaviour : TweenBehaviour<RectTransform>
     {
         public RectTransformTweenPositionType PositionType;
 
@@ -20,53 +25,18 @@ namespace TweenTimeline
 
         public Ease Ease;
 
-        /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<RectTransform> info)
+        private Vector3 _startValue;
+
+        public override void Start()
         {
-            Tween tween;
-            switch (PositionType)
-            {
-                case RectTransformTweenPositionType.AnchoredPosition:
-                    tween = info.Target.DOAnchorPos(EndValue.Value, info.Duration);
-                    break;
-                case RectTransformTweenPositionType.Position:
-                    tween = info.Target.DOMove(EndValue.Value, info.Duration);
-                    break;
-                case RectTransformTweenPositionType.LocalPosition:
-                    tween = info.Target.DOLocalMove(EndValue.Value, info.Duration);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            tween.SetEase(Ease);
-            if (IsRelative.Value) tween.SetRelative(true);
-
-            return tween;
+            _startValue = Target.GetPosition(PositionType);
         }
 
-        /// <inheritdoc/>
-        public override string GetTweenLog(TweenClipInfo<RectTransform> info)
+        public override void Update(double localTime)
         {
-            string log;
-
-            switch (PositionType)
-            {
-                case RectTransformTweenPositionType.AnchoredPosition:
-                    log = $"DOAnchorPos({EndValue}, {info.Duration:F2}f)";
-                    break;
-                case RectTransformTweenPositionType.Position:
-                    log = $"DOMove({EndValue}, {info.Duration:F2}f)";
-                    break;
-                case RectTransformTweenPositionType.LocalPosition:
-                    log = $"DOLocalMove({EndValue}, {info.Duration:F2}f)";
-                    break;
-                default:
-                    return null;
-            }
-
-            if (IsRelative.Value) log += ".SetRelative(true)";
-            return log;
-        }
+            var val = DOVirtual.EasedValue(_startValue, EndValue.Value, (float)(localTime / Duration), Ease);
+            if (IsRelative.Value) val += _startValue;
+            Target.SetPosition(PositionType, val);
+        } 
     }
 }

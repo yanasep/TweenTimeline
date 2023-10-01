@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -16,7 +15,6 @@ namespace TweenTimeline
         [SerializeField] private PlayableDirector _director;
 
         public TweenParameter Parameter { get; private set; }
-        private Tween _tween;
 
         /// <summary>
         /// 初期化
@@ -42,7 +40,7 @@ namespace TweenTimeline
         {
             var asset = _director.playableAsset as TimelineAsset;
             if (asset == null) return;
-            PlayCore(asset);
+            Play(asset);
         }
 
         /// <summary>
@@ -50,7 +48,7 @@ namespace TweenTimeline
         /// </summary>
         public void Play(TimelineAsset timelineAsset)
         {
-            PlayCore(timelineAsset);
+            _director.Play(timelineAsset);
         }
 
         /// <summary>
@@ -58,43 +56,8 @@ namespace TweenTimeline
         /// </summary>
         public UniTask PlayAsync(TimelineAsset timelineAsset)
         {
-            return PlayCore(timelineAsset).ToUniTask();
-        }
-
-        private Tween PlayCore(TimelineAsset timelineAsset)
-        {
-            _tween?.Kill();
-            _tween = CreateTween(timelineAsset);
-            _tween.Play();
-            return _tween;
-        }
-
-        public Tween CreateTween(TimelineAsset timelineAsset)
-        {
-            return TweenTimelineUtility.CreateTween(timelineAsset, Parameter, _director);   
-        }
-
-        public string CreateTweenString(TimelineAsset timelineAsset)
-        {
-            return TweenTimelineUtility.CreateTweenString(timelineAsset, Parameter, _director);
-        }
-
-        [EditorButton("LogTween")]
-        public void LogTween()
-        {
-            var asset = _director.playableAsset as TimelineAsset;
-            if (asset == null)
-            {
-                Debug.Log($"PlayableAsset is null");
-                return;
-            }
-
-            Debug.Log("Tween Log\n" + CreateTweenString(asset));
-        }
-
-        private void OnDestroy()
-        {
-            _tween?.Kill();
+            Play(timelineAsset);
+            return UniTask.WaitWhile(() => _director.state == PlayState.Playing);
         }
     }
 }

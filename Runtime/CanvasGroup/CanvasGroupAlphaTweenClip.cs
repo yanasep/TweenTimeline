@@ -10,20 +10,26 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Canvas Group Alpha Tween")]
-    public class CanvasGroupAlphaTweenClip : TweenClip<CanvasGroup>
+    public class CanvasGroupAlphaTweenClip : TweenClip<CanvasGroup, CanvasGroupAlphaTweenBehaviour>
     {
-        // public float EndValue = 1f;
+    }
+
+    [Serializable]
+    public class CanvasGroupAlphaTweenBehaviour : TweenBehaviour<CanvasGroup>
+    {
         public TweenTimelineField<float> EndValue;
         public TweenTimelineField<Ease> Ease;
 
-        protected override Tween GetTween(TweenClipInfo<CanvasGroup> info)
+        private float _start;
+
+        public override void Start()
         {
-            return info.Target.DOFade(EndValue.Value, info.Duration).SetEase(Ease.Value);
+            _start = Target.alpha;
         }
 
-        public override string GetTweenLog(TweenClipInfo<CanvasGroup> info)
+        public override void Update(double localTime)
         {
-            return $"DOFade({EndValue}, {info.Duration})";
+            Target.alpha = DOVirtual.EasedValue(_start, EndValue.Value, (float)(localTime / Duration), Ease.Value);
         }
     }
 }

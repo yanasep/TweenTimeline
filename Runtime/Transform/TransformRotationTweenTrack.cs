@@ -1,7 +1,8 @@
+using System;
 using System.ComponentModel;
-using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using Yanasep;
 
@@ -13,25 +14,27 @@ namespace TweenTimeline
     [DisplayName("Tween/Rotation Tween Track")]
     [TrackBindingType(typeof(RectTransform))]
     [TrackClipType(typeof(TransformRotationTweenClip))]
-    public class TransformRotationTweenTrack : TransformTweenTrack
+    public class TransformRotationTweenTrack : TransformTweenTrack<TransformRotationMixerBehaviour>
     {   
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("RotateTool").image as Texture2D;  
 #endif
-     
+    }
+    
+    [Serializable]
+    public class TransformRotationMixerBehaviour : TweenMixerBehaviour<Transform>
+    {
         [SerializeField] private bool setStartValue;
 
         [EnableIf(nameof(setStartValue), true)]
         [SerializeField] private TweenTimelineField<Vector3> startValue;
-
+        
         /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
+        protected override void OnStart(Playable playable)
         {
-            if (!setStartValue) return null;
-            return () =>
-            {
-                info.Target.localRotation = Quaternion.Euler(startValue.Value);
-            };   
+            base.OnStart(playable);
+            if (!setStartValue) return;
+            Target.localRotation = Quaternion.Euler(startValue.Value);
         }
     }
 }

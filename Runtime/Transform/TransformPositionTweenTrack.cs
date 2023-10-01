@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
-using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using Yanasep;
 
@@ -15,11 +15,16 @@ namespace TweenTimeline
     [TrackBindingType(typeof(Transform))]
     [TrackClipType(typeof(TransformPositionTweenClip))]
     [TrackClipType(typeof(TransformPositionKeepClip))]
-    public class TransformPositionTweenTrack : TransformTweenTrack
+    public class TransformPositionTweenTrack : TransformTweenTrack<TransformPositionTweenMixerBehaviour>
     {
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;  
 #endif
+    }
+    
+    [Serializable]
+    public class TransformPositionTweenMixerBehaviour : TweenMixerBehaviour<Transform>
+    {
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
@@ -28,24 +33,11 @@ namespace TweenTimeline
         [EnableIf(nameof(SetStartValue), true)]
         public TweenTimelineField<TransformTweenPositionType> positionType;
 
-        /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<Transform> info)
+        protected override void OnStart(Playable playable)
         {
-            if (!SetStartValue) return null;
-            return () =>
-            {
-                switch (positionType.Value)
-                {
-                    case TransformTweenPositionType.Position:
-                        info.Target.position = StartValue.Value;
-                        break;
-                    case TransformTweenPositionType.LocalPosition:
-                        info.Target.localPosition = StartValue.Value;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            };   
-        }
+            if (!SetStartValue) return;
+
+            Target.SetPosition(positionType.Value, StartValue.Value);
+        }   
     }
 }

@@ -1,5 +1,5 @@
+using System;
 using System.ComponentModel;
-using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -15,30 +15,11 @@ namespace TweenTimeline
     [DisplayName("Tween/Color Tween Track")]
     [TrackBindingType(typeof(Graphic))]
     [TrackClipType(typeof(GraphicColorTweenClip))]
-    public class GraphicColorTweenTrack : GraphicTweenTrack
+    public class GraphicColorTweenTrack : GraphicTweenTrack<GraphicColorTweenMixerBehaviour>
     {
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("Grid.FillTool").image as Texture2D;
 #endif
-
-        public bool SetStartValue;
-
-        [EnableIf(nameof(SetStartValue), true)]
-        public Color StartValue = Color.white;
-
-        public RGBAFlags Enable;
-
-        /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<Graphic> info)
-        {
-            if (!SetStartValue) return null;
-            return () => info.Target.color = Enable.Apply(info.Target.color, StartValue);;
-        }
-
-        protected override string GetStartLog(TweenTrackInfo<Graphic> info)
-        {
-            return "Set Color: original color (" + Color.white + ") => start color " + Enable.Apply(Color.white, StartValue);
-        }
 
         /// <inheritdoc/>
         public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
@@ -50,6 +31,24 @@ namespace TweenTimeline
             if (binding == null) return;
             driver.AddFromName<Graphic>(binding.gameObject, "m_Color");
 #endif
+        }
+    }
+
+    [Serializable]
+    public class GraphicColorTweenMixerBehaviour : TweenMixerBehaviour<Graphic>
+    {
+        public bool SetStartValue;
+
+        [EnableIf(nameof(SetStartValue), true)]
+        public Color StartValue = Color.white;
+
+        public RGBAFlags Enable;
+
+        /// <inheritdoc/>
+        protected override void OnStart(Playable playable)
+        {
+            if (!SetStartValue) return;
+            Target.color = Enable.Apply(Target.color, StartValue);
         }
     }
 }

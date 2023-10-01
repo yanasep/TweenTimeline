@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace TweenTimeline
 {
@@ -10,7 +11,12 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Punch Scale Tween")]
-    public class TransformPunchScaleTweenClip : TweenClip<Transform>
+    public class TransformPunchScaleTweenClip : TweenClip<Transform, TransformPunchScaleTweenBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class TransformPunchScaleTweenBehaviour : TweenBehaviour<Transform>
     {
         [SerializeField] public TweenTimelineField<Vector3> Punch;
         
@@ -18,10 +24,25 @@ namespace TweenTimeline
         public TweenTimelineField<int> Vibrato = new(10);
         public TweenTimelineField<float> Elasticity = new(1f);
 
+        private Tween _tween;
+
         /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<Transform> info)
+        public override void Start()
         {
-            return info.Target.DOPunchScale(Punch.Value, info.Duration, Vibrato.Value, Elasticity.Value).SetEase(Ease.Value);
+            _tween = Target.DOPunchScale(Punch.Value, (float)Duration, Vibrato.Value, Elasticity.Value).SetEase(Ease.Value)
+                .Pause().SetAutoKill(false);
+        }
+
+        /// <inheritdoc/>
+        public override void Update(double localTime)
+        {
+            _tween.Goto((float)localTime);
+        }
+
+        /// <inheritdoc/>
+        public override void OnPlayableDestroy(Playable playable)
+        {
+            _tween.Kill();
         }
     }
 }

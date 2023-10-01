@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using Common;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
+using Yanasep;
 using Object = UnityEngine.Object;
 
 namespace TweenTimeline
@@ -21,9 +20,6 @@ namespace TweenTimeline
         /// <remarks>ビルトインアイコン： https://github.com/halak/unity-editor-icons</remarks>
         public virtual Texture2D Icon => null;  
 #endif
-
-        public abstract Tween CreateTween(CreateTweenArgs args);
-        public abstract string GetTweenString(CreateTweenArgs args);
     }
     
     /// <summary>
@@ -31,12 +27,6 @@ namespace TweenTimeline
     /// </summary>
     public abstract class TweenTrack<TBinding> : TweenTrack where TBinding : Object
     {
-        protected virtual TweenCallback GetStartCallback(TweenTrackInfo<TBinding> info) => null;
-        protected virtual TweenCallback GetEndCallback(TweenTrackInfo<TBinding> info) => null;
-        protected virtual Action<float> GetUpdateCallback(TweenTrackInfo<TBinding> info) => null;
-        protected virtual string GetStartLog(TweenTrackInfo<TBinding> info) => null;
-        protected virtual string GetEndLog(TweenTrackInfo<TBinding> info) => null;
-
         // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
         [SerializeField, ReadOnly] private byte _;
         
@@ -44,16 +34,16 @@ namespace TweenTimeline
         public TweenTimelineFieldOverride[] Overrides;
         public Dictionary<string, TweenTimelineField> Fields { get; set; }
 
-        private readonly TweenMixerBehaviour template = new();
+        protected abstract TweenMixerBehaviour<TBinding> Template { get; }
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
-            var director = go.GetComponent<PlayableDirector>();
+            var director = (PlayableDirector)graph.GetResolver();
             var binding = director.GetGenericBinding(this) as TBinding;
             if (binding == null) return base.CreateTrackMixer(graph, go, inputCount);
             
-            var parameterHolder = go.GetComponent<TweenParameterHolder>();
+            var parameterHolder = director.GetComponent<TweenParameterHolder>();
             var parameter = parameterHolder != null ? parameterHolder.GetParameter() : new TweenParameter();
             
             foreach (var clip in GetClips())
@@ -64,22 +54,14 @@ namespace TweenTimeline
                     tweenClip.StartTime = clip.start;
                     tweenClip.Duration = clip.duration;
                     tweenClip.Binding = binding;
+                    tweenClip.Parameter = parameter;
                 }
             }
 
-            var trackInfo = new TweenTrackInfo<TBinding>
-            {
-                Target = binding,
-                Parameter = parameter
-            };
-            template.Tween = CreateTween(new CreateTweenArgs
-            {
-                Binding = binding,
-                Parameter = parameter
-            });
-            template.StartCallback = GetStartCallback(trackInfo);
-            template.EndCallback = GetEndCallback(trackInfo);
-            return ScriptPlayable<TweenMixerBehaviour>.Create(graph, template, inputCount);
+            GatherFields();
+            ApplyOverrides(parameter);
+            Template.Target = binding;
+            return ScriptPlayable<TweenMixerBehaviour>.Create(graph, Template, inputCount);
         }
 
         /// <inheritdoc/>
@@ -95,156 +77,6 @@ namespace TweenTimeline
 #endif
         }
 
-        public sealed override Tween CreateTween(CreateTweenArgs args)
-        {
-            var target = args.Binding as TBinding;
-            if (target == null) return null;
-
-            GatherFields();
-            ApplyOverrides(args.Parameter);
-            
-            var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
-            var tweenTrackInfo = new TweenTrackInfo<TBinding>
-            {
-                Target = target,
-                Parameter = args.Parameter
-            };
-
-            var duration = (float)timelineAsset.duration;
-
-            var startCallback = GetStartCallback(tweenTrackInfo);
-            if (startCallback != null)
-            {
-                sequence.AppendCallback(startCallback);
-            }
-
-            float currentTime = 0;
-            foreach (var clip in GetClips())
-            {
-                // interval
-                var tweenClip = (TweenClip<TBinding>)clip.asset;
-                float interval = (float)clip.start - currentTime;
-                currentTime = (float)(clip.start + clip.duration);
-                if (interval > 0) sequence.AppendInterval(interval);
-
-                var tweenClipInfo = new TweenClipInfo<TBinding>
-                {
-                    Target = target,
-                    Duration = (float)clip.duration,
-                    Parameter = args.Parameter
-                };
-                // start
-                var clipStartCallback = tweenClip.GetStartCallback(tweenClipInfo);
-                if (clipStartCallback != null)
-                {
-                    sequence.AppendCallback(clipStartCallback);
-                }
-                // main
-                var tween = tweenClip.CreateTween(tweenClipInfo);
-                if (tween != null)
-                {
-                    sequence.Append(tween);
-                }
-                // end
-                var clipEndCallback = tweenClip.GetEndCallback(tweenClipInfo);
-                if (clipEndCallback != null)
-                {
-                    sequence.AppendCallback(clipEndCallback);
-                }
-            }
-
-            var endCallback = GetEndCallback(tweenTrackInfo);
-            if (endCallback != null)
-            {
-                float interval = duration - currentTime;
-                if (interval > 0) sequence.AppendInterval(interval);
-                sequence.AppendCallback(endCallback);
-            }
-
-            var updateCallback = GetUpdateCallback(tweenTrackInfo);
-            if (updateCallback != null)
-            {
-                sequence.Join(DOTweenEx.EveryUpdate((float)timelineAsset.duration, t =>
-                {
-                    updateCallback(t);
-                }));
-            }
-
-            return sequence;
-        }
-
-        public sealed override string GetTweenString(CreateTweenArgs args)
-        {
-            var target = args.Binding as TBinding;
-            if (target == null) return null;
-            
-            var tweenTrackInfo = new TweenTrackInfo<TBinding>
-            {
-                Target = target,
-                Parameter = args.Parameter
-            };
-
-            var duration = (float)timelineAsset.duration;
-            
-            var sb = new StringBuilder();
-            sb.Append("Sequence()");
-            string Prefix = $"{Environment.NewLine}    ";
-
-            void AppendIntervalLog(float interval)
-            {
-                if (interval > 0)
-                {
-                    sb.Append(Prefix);
-                    sb.Append($"Interval {interval}s");
-                }
-            }
-            
-            void AppendObjectLog(object obj, string log, string callbackName)
-            {
-                if (obj == null) return;
-                sb.Append(Prefix);
-                if (string.IsNullOrEmpty(log)) log = $"Log Not Implemented {callbackName}";
-                sb.Append(log);
-            }
-
-            AppendObjectLog(GetStartCallback(tweenTrackInfo), GetStartLog(tweenTrackInfo), "TrackStartCallback");
-
-            float currentTime = 0;
-            foreach (var clip in GetClips())
-            {
-                // interval
-                var tweenClip = (TweenClip<TBinding>)clip.asset;
-                float interval = (float)clip.start - currentTime;
-                currentTime = (float)(clip.start + clip.duration);
-                AppendIntervalLog(interval);
-
-                var tweenClipInfo = new TweenClipInfo<TBinding>
-                {
-                    Target = target,
-                    Duration = (float)clip.duration,
-                    Parameter = args.Parameter
-                };
-                // start
-                AppendObjectLog(tweenClip.GetStartCallback(tweenClipInfo), tweenClip.GetStartLog(tweenClipInfo), "ClipStartCallback");
-                // main
-                AppendObjectLog(tweenClip.CreateTween(tweenClipInfo), tweenClip.GetTweenLog(tweenClipInfo), "ClipTween");
-                // end
-                AppendObjectLog(tweenClip.GetEndCallback(tweenClipInfo), tweenClip.GetEndLog(tweenClipInfo), "ClipEndCallback");
-            }
-
-            var endCallback = GetEndCallback(tweenTrackInfo);
-            if (endCallback != null)
-            {
-                float interval = duration - currentTime;
-                AppendIntervalLog(interval);
-                AppendObjectLog(endCallback, GetEndLog(tweenTrackInfo), "TrackEndCallback");
-            }
-
-            sb.Append(";");
-
-            return sb.ToString();
-        }
-
         /// <summary>
         /// TimelineFieldをDictionaryに入れる
         /// </summary>
@@ -254,11 +86,11 @@ namespace TweenTimeline
             Fields.Clear();
 
             // TODO: SourceGeneratorでやる
-            var fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var fields = Template.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var field in fields)
             {
                 if (!field.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
-                Fields.Add(field.Name, (TweenTimelineField)field.GetValue(this));
+                Fields.Add(field.Name, (TweenTimelineField)field.GetValue(Template));
             }
         }
 
@@ -277,58 +109,17 @@ namespace TweenTimeline
                 // }
             }
         }
-        
-        public readonly struct ClipInputs
-        {
-            public readonly List<(float start, float end)> ClipIntervals;
+    }
 
-            public ClipInputs(List<(float start, float end)> clipIntervals)
-            {
-                ClipIntervals = clipIntervals;
-            }
-        }
-
-        public ClipInputs GetClipInputs()
-        {
-            var inputs = new ClipInputs(new());
-
-            foreach (var clip in GetClips())
-            {
-                inputs.ClipIntervals.Add(((float)clip.start, (float)(clip.start + clip.duration)));
-            }
-
-            return inputs;
-        }
-
-        public bool IsAnyClipPlaying(ClipInputs inputs, float trackTime)
-        {
-            bool active = false;
-            for (int i = 0; i < inputs.ClipIntervals.Count; i++)
-            {
-                if (inputs.ClipIntervals[i].start <= trackTime && trackTime <= inputs.ClipIntervals[i].end)
-                {
-                    active = true;
-                    break;
-                }
-            }
-
-            return active;
-        }
-
-        public bool HasAnyClipStarted(ClipInputs inputs, float trackTime)
-        {
-            bool active = false;
-            for (int i = 0; i < inputs.ClipIntervals.Count; i++)
-            {
-                if (inputs.ClipIntervals[i].start <= trackTime)
-                {
-                    active = true;
-                    break;
-                }
-            }
-
-            return active;
-        }
+    /// <summary>
+    /// TweenTimelineのMixerBehaviour
+    /// </summary>
+    public class TweenTrack<TBinding, TMixerBehaviour> : TweenTrack<TBinding> 
+        where TBinding : Object
+        where TMixerBehaviour : TweenMixerBehaviour<TBinding>
+    {
+        [SerializeField, ExtractContent] private TMixerBehaviour template;
+        protected sealed override TweenMixerBehaviour<TBinding> Template => template;
     }
 
     /// <summary>
@@ -336,10 +127,16 @@ namespace TweenTimeline
     /// </summary>
     public class TweenMixerBehaviour : PlayableBehaviour
     {
-        public Tween Tween { get; set; }
-        public TweenCallback StartCallback { get; set; }
-        public TweenCallback EndCallback { get; set; }
+        
+    }
 
+    /// <summary>
+    /// TweenTimelineのMixerBehaviour
+    /// </summary>
+    public class TweenMixerBehaviour<TBinding> : TweenMixerBehaviour where TBinding : Object
+    {
+        public TBinding Target { get; set; }
+        
         private PlayableDirector director;
 
         public override void OnPlayableCreate(Playable playable)
@@ -350,30 +147,73 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
-            OnTrackStart();
+            OnStart(playable);
         }
 
         /// <inheritdoc/>
         public override void OnBehaviourPause(Playable playable, FrameData info)
         {
-            EndCallback?.Invoke();
+            OnEnd(playable);
         }
 
         /// <summary>
         /// Track開始時 (ループ時も呼ばれる)
         /// </summary>
-        private void OnTrackStart()
+        protected virtual void OnStart(Playable playable) { }
+        protected virtual void OnEnd(Playable playable) { }
+        protected virtual void OnUpdate(Playable playable, double trackTime) { }
+        
+        /// <inheritdoc/>
+        public override void PrepareFrame(Playable playable, FrameData info)
         {
-            StartCallback?.Invoke();
+            base.PrepareFrame(playable, info);
+        
+            var (jumped, trackTime) = GetWarpedTime(playable, info);
+            if (!jumped) return;
+            
+            // 時間がワープしている場合は、現在時刻の状態を再計算
+        
+            ResetToOriginalState();
+            OnStart(playable);
+            int inputCount = playable.GetInputCount();
+            
+            for (int i = 0; i < inputCount; i++)
+            {
+                var input = playable.GetInput(i);
+                var inputPlayable = (ScriptPlayable<TweenBehaviour>)input;
+                var clipBehaviour = inputPlayable.GetBehaviour();
+                var clipTime = trackTime - clipBehaviour.StartTime;
+                if (clipTime < 0) break;
+                clipBehaviour.Start();
+                clipBehaviour.Update(Math.Min(clipTime, clipBehaviour.Duration));
+                if (clipTime >= clipBehaviour.Duration)
+                {
+                    clipBehaviour.End();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 時刻がワープしたかどうかと、トラックの現在時刻を取得
+        /// </summary>
+        private (bool warped, float trackTime) GetWarpedTime(Playable playable, FrameData info)
+        {
+            var time = (float)playable.GetTime();
+            if (info.seekOccurred) return (true, time);
+        
+            var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
+            var prevTrackTime = GetTrackTime(playable.GetPreviousTime(), duration);
+            var trackTime = GetTrackTime(playable.GetTime(), duration);
+            var warped = prevTrackTime > trackTime;
+            // var warped = info.evaluationType == FrameData.EvaluationType.Evaluate;
+            return (warped, (float)trackTime);
         }
 
         /// <inheritdoc/>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
-        {
-            if (Tween == null) return;
-            
+        {   
             var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration());
-            Tween.GotoWithCallbacks(trackTime);
+            OnUpdate(playable, trackTime);
         }
 
         private double GetTrackTime(double time, double duration)
@@ -383,6 +223,42 @@ namespace TweenTimeline
                 DirectorWrapMode.Hold => Math.Min(time, duration),
                 _ => time % duration
             };
+        }
+        
+        private void ResetToOriginalState() { }
+
+        public bool IsAnyClipPlaying(Playable playable)
+        {
+            int inputCount = playable.GetInputCount();
+            bool hasInput = false;
+            for (int i = 0; i < inputCount; i++)
+            {
+                if (playable.GetInputWeight(i) > 0)
+                {
+                    hasInput = true;
+                    break;
+                }
+            }
+
+            return hasInput;
+        }
+
+        public bool HasAnyClipStarted(Playable playable)
+        {   
+            int inputCount = playable.GetInputCount();
+            bool hasInput = false;
+            for (int i = 0; i < inputCount; i++)
+            {
+                var time = playable.GetInput(i).GetTime();
+                Debug.Log($"input time {time}, index {i}");
+                if (playable.GetInputWeight(i) > 0)
+                {
+                    hasInput = true;
+                    break;
+                }
+            }
+
+            return hasInput;
         }
     }
 }

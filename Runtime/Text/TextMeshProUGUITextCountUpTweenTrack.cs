@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using TMPro;
 using UnityEngine.Timeline;
@@ -10,7 +11,13 @@ namespace TweenTimeline
     [DisplayName("Tween/Text Count Up Tween Track")]
     [TrackBindingType(typeof(TextMeshProUGUI))]
     [TrackClipType(typeof(TextMeshProUGUICountUpTweenClip))]
-    public class TextMeshProUGUICountUpTweenTrack : TextMeshProUGUITweenTrack
+    public class TextMeshProUGUICountUpTweenTrack : TextMeshProUGUITweenTrack<TextMeshProUGUICountUpTweenMixerBehaviour>
     {
+    }
+
+    [Serializable]
+    public class TextMeshProUGUICountUpTweenMixerBehaviour : TweenMixerBehaviour<TextMeshProUGUI>
+    {
+        
     }
 }

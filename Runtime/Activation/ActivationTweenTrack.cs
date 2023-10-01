@@ -1,11 +1,11 @@
 using System;
 using System.ComponentModel;
-using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
+using Yanasep;
 
 namespace TweenTimeline
 {
@@ -22,31 +22,8 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("d_Toggle Icon").image as Texture2D;
 #endif
 
-        /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<GameObject> info)
-        {
-            return () => info.Target.SetActive(false);
-        }
-
-        protected override Action<float> GetUpdateCallback(TweenTrackInfo<GameObject> info)
-        {
-            var inputs = GetClipInputs();
-            var go = info.Target;
-            
-            return t =>
-            {
-                if (go == null) return;
-
-                Debug.Log($"update : {t}");
-                go.SetActive(IsAnyClipPlaying(inputs, t));
-            };
-        }
-
-        /// <inheritdoc/>
-        protected override string GetStartLog(TweenTrackInfo<GameObject> info)
-        {
-            return "GameObject.SetActive(false)";
-        }
+        [SerializeField, ExtractContent] private ActivationTweenMixerBehaviour template;
+        protected override TweenMixerBehaviour<GameObject> Template => template;
 
         /// <inheritdoc/>
         public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
@@ -60,4 +37,18 @@ namespace TweenTimeline
 #endif
         }
     }
+
+    [Serializable]
+    public class ActivationTweenMixerBehaviour : TweenMixerBehaviour<GameObject>
+    {
+        protected override void OnStart(Playable playable)
+        {
+            Target.SetActive(false);
+        }
+
+        protected override void OnUpdate(Playable playable, double trackTime)
+        {
+            Target.SetActive(IsAnyClipPlaying(playable));
+        }
+    } 
 }

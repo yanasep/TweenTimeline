@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using DG.Tweening;
 using UnityEngine;
 using Yanasep;
 
@@ -11,7 +10,12 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Position Keep")]
-    public class RectTransformPositionKeepClip : TweenClip<RectTransform>
+    public class RectTransformPositionKeepClip : TweenClip<RectTransform, RectTransformPositionKeepBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class RectTransformPositionKeepBehaviour : TweenBehaviour<RectTransform>
     {
         public RectTransformTweenPositionType PositionType;
 
@@ -19,45 +23,23 @@ namespace TweenTimeline
 
         [EnableIf(nameof(SpecifyValue), true)]
         public TweenTimelineField<Vector3> Value;
-
-        public override TweenCallback GetStartCallback(TweenClipInfo<RectTransform> info)
-        {
-            if (!SpecifyValue) return null;
-
-            return PositionType switch
-            {
-                RectTransformTweenPositionType.AnchoredPosition => () => info.Target.anchoredPosition = Value.Value,
-                RectTransformTweenPositionType.Position => () => info.Target.position = Value.Value,
-                RectTransformTweenPositionType.LocalPosition => () => info.Target.localPosition = Value.Value,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
         
-        /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<RectTransform> info)
-        {
-            Tween tween = PositionType switch
-            {
-                RectTransformTweenPositionType.AnchoredPosition => info.Target.DOAnchorPos(Vector3.zero, info.Duration).SetRelative(true),
-                RectTransformTweenPositionType.Position => info.Target.DOMove(Vector3.zero, info.Duration).SetRelative(true),
-                RectTransformTweenPositionType.LocalPosition => info.Target.DOLocalMove(Vector3.zero, info.Duration).SetRelative(true),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+        private Vector3 _start;
 
-            tween.SetEase(Ease.Linear);
-            return tween;
+        /// <inheritdoc/>
+        public override void Start()
+        {
+            _start = SpecifyValue switch
+            {
+                true => Value.Value,
+                false => Target.GetPosition(PositionType)
+            };
         }
 
         /// <inheritdoc/>
-        public override string GetTweenLog(TweenClipInfo<RectTransform> info)
+        public override void Update(double localTime)
         {
-            return PositionType switch
-            {
-                RectTransformTweenPositionType.AnchoredPosition => $"DOAnchorPos(Vector3.zero, {info.Duration}).SetRelative(true)",
-                RectTransformTweenPositionType.Position => $"DOMove(Vector3.zero, {info.Duration}).SetRelative(true)",
-                RectTransformTweenPositionType.LocalPosition => $"DOLocalMove(Vector3.zero, {info.Duration}).SetRelative(true)",
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            Target.SetPosition(PositionType, _start);
         }
     }
 }

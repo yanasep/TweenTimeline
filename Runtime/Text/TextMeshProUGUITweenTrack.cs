@@ -10,7 +10,8 @@ namespace TweenTimeline
     /// CanvasGroupTweenトラックのベース
     /// </summary>
     [TrackColor(0.2f, 0.2f, 0.2f)]
-    public abstract class TextMeshProUGUITweenTrack : TweenTrack<TextMeshProUGUI>
+    public abstract class TextMeshProUGUITweenTrack<TTweenMixerBehaviour> : TweenTrack<TextMeshProUGUI, TTweenMixerBehaviour>
+        where TTweenMixerBehaviour : TweenMixerBehaviour<TextMeshProUGUI>
     {
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("TextMesh Icon").image as Texture2D;

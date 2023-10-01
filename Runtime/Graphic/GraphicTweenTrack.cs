@@ -7,7 +7,8 @@ namespace TweenTimeline
     /// GraphicTweenトラックのベース
     /// </summary>
     [TrackColor(1f, 1f, 1f)]
-    public abstract class GraphicTweenTrack : TweenTrack<Graphic>
+    public abstract class GraphicTweenTrack<TTweenMixerBehaviour> : TweenTrack<Graphic, TTweenMixerBehaviour>
+        where TTweenMixerBehaviour : TweenMixerBehaviour<Graphic>
     {
     }
 }

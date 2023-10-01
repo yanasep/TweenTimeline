@@ -10,15 +10,24 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Text Tween")]
-    public class TextMeshProUGUITextTweenClip : TweenClip<TextMeshProUGUI>
+    public class TextMeshProUGUITextTweenClip : TweenClip<TextMeshProUGUI, TextMeshProUGUITextTweenBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class TextMeshProUGUITextTweenBehaviour : TweenBehaviour<TextMeshProUGUI>
     {
         public Ease ease;
 
         /// <inheritdoc/>
-        protected override Tween GetTween(TweenClipInfo<TextMeshProUGUI> info)
+        public override void Update(double localTime)
         {
-            return DOTween.To(() => info.Target.text.Length, x => info.Target.maxVisibleCharacters = x, 0, info.Duration)
-                .From().SetEase(ease);   
+            Target.maxVisibleCharacters = (int)DOVirtual.EasedValue(0, Target.text.Length, (float)(localTime / Duration), ease);
+        }
+
+        public override void End()
+        {
+            Target.maxVisibleCharacters = 99999;
         }
     }
 }

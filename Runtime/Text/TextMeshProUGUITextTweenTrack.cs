@@ -1,6 +1,7 @@
+using System;
 using System.ComponentModel;
-using DG.Tweening;
 using TMPro;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace TweenTimeline
@@ -11,18 +12,22 @@ namespace TweenTimeline
     [TrackClipType(typeof(TextMeshProUGUITextTweenClip))]
     [TrackBindingType(typeof(TextMeshProUGUI))]
     [DisplayName("Tween/Text Tween Track")]
-    public class TextMeshProUGUITextTweenTrack : TextMeshProUGUITweenTrack
+    public class TextMeshProUGUITextTweenTrack : TextMeshProUGUITweenTrack<TextMeshProUGUITextTweenMixerBehaviour>
+    {
+    }
+
+    [Serializable]
+    public class TextMeshProUGUITextTweenMixerBehaviour : TweenMixerBehaviour<TextMeshProUGUI>
     {
         /// <inheritdoc/>
-        protected override TweenCallback GetStartCallback(TweenTrackInfo<TextMeshProUGUI> info)
+        protected override void OnStart(Playable playable)
         {
-            return () => info.Target.maxVisibleCharacters = 0;
+            Target.maxVisibleCharacters = 0;
         }
 
-        /// <inheritdoc/>
-        protected override TweenCallback GetEndCallback(TweenTrackInfo<TextMeshProUGUI> info)
+        public override void OnPlayableDestroy(Playable playable)
         {
-            return () => info.Target.maxVisibleCharacters = 99999;
+            Target.maxVisibleCharacters = 99999;
         }
     }
 }
