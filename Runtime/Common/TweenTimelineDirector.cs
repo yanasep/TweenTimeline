@@ -10,11 +10,32 @@ namespace TweenTimeline
     /// TweenTimelineのDirector
     /// TimelineParameterを渡したい場合に使う
     /// </summary>
+    [ExecuteInEditMode]
     public class TweenTimelineDirector : MonoBehaviour
     {
         [SerializeField] private PlayableDirector _director;
 
         public TweenParameter Parameter { get; private set; }
+
+        private void OnEnable()
+        {
+            if (_director == null) return;
+            Debug.Log($"onenable");
+            
+            _director.played += OnPlayed;
+        }
+
+        private void OnPlayed(PlayableDirector obj)
+        {
+            Debug.Log($"{obj.name} played");
+        }
+
+        private void OnDisable()
+        {
+            if (_director == null) return;
+            
+            _director.played -= OnPlayed;
+        }
 
         /// <summary>
         /// 初期化

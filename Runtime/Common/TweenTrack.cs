@@ -220,12 +220,15 @@ namespace TweenTimeline
         {
             return director.extrapolationMode switch
             {
-                DirectorWrapMode.Hold => Math.Min(time, duration),
-                _ => time % duration
+                DirectorWrapMode.Loop => time % duration,
+                _ => Math.Min(time, duration)
             };
         }
-        
-        private void ResetToOriginalState() { }
+
+        private void ResetToOriginalState()
+        {
+            // TODO
+        }
 
         public bool IsAnyClipPlaying(Playable playable)
         {
