@@ -11,12 +11,12 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Rotation Tween")]
-    public class TransformRotationTweenClip : TweenClip<Transform, TransformRotationTweenMixerBehaviour>
+    public class TransformRotationTweenClip : TweenClip<Transform, TransformRotationTweenBehaviour>
     {
     }
 
     [Serializable]
-    public class TransformRotationTweenMixerBehaviour : TweenBehaviour<Transform>
+    public class TransformRotationTweenBehaviour : TweenBehaviour<Transform>
     {
         [SerializeField] private TweenTimelineField<Vector3> EndValue;
         

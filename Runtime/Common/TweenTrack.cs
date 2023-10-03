@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Common;
 using UnityEngine;
@@ -29,10 +28,6 @@ namespace TweenTimeline
     {
         // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
         [SerializeField, ReadOnly] private byte _;
-        
-        [Space]
-        public TweenTimelineFieldOverride[] Overrides;
-        public Dictionary<string, TweenTimelineField> Fields { get; set; }
 
         protected abstract TweenMixerBehaviour<TBinding> Template { get; }
 
@@ -58,8 +53,6 @@ namespace TweenTimeline
                 }
             }
 
-            GatherFields();
-            ApplyOverrides(parameter);
             Template.Target = binding;
             return ScriptPlayable<TweenMixerBehaviour>.Create(graph, Template, inputCount);
         }
@@ -76,45 +69,12 @@ namespace TweenTimeline
             }      
 #endif
         }
-
-        /// <summary>
-        /// TimelineFieldをDictionaryに入れる
-        /// </summary>
-        private void GatherFields()
-        {
-            Fields ??= new();
-            Fields.Clear();
-
-            // TODO: SourceGeneratorでやる
-            var fields = Template.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var field in fields)
-            {
-                if (!field.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
-                Fields.Add(field.Name, (TweenTimelineField)field.GetValue(Template));
-            }
-        }
-
-        private void ApplyOverrides(TweenParameter parameter)
-        {
-            if (Overrides == null) return;
-            foreach (var fieldOverride in Overrides)
-            {
-                if (Fields.TryGetValue(fieldOverride.Name, out var field))
-                {
-                    fieldOverride.Expression.Override(field, parameter);
-                }
-                // else
-                // {
-                //     Debug.LogWarning($"{name}: field {fieldOverride.Name} is not found.");
-                // }
-            }
-        }
     }
 
     /// <summary>
     /// TweenTimelineのMixerBehaviour
     /// </summary>
-    public class TweenTrack<TBinding, TMixerBehaviour> : TweenTrack<TBinding> 
+    public abstract class TweenTrack<TBinding, TMixerBehaviour> : TweenTrack<TBinding> 
         where TBinding : Object
         where TMixerBehaviour : TweenMixerBehaviour<TBinding>
     {
@@ -125,7 +85,7 @@ namespace TweenTimeline
     /// <summary>
     /// TweenTimelineのMixerBehaviour
     /// </summary>
-    public class TweenMixerBehaviour : PlayableBehaviour
+    public class TweenMixerBehaviour : TweenPlayableBehaviour
     {
         
     }
@@ -136,16 +96,9 @@ namespace TweenTimeline
     public class TweenMixerBehaviour<TBinding> : TweenMixerBehaviour where TBinding : Object
     {
         public TBinding Target { get; set; }
-        
-        private PlayableDirector director;
-
-        public override void OnPlayableCreate(Playable playable)
-        {
-            director = (PlayableDirector)playable.GetGraph().GetResolver();
-        }
 
         /// <inheritdoc/>
-        public override void OnBehaviourPlay(Playable playable, FrameData info)
+        public sealed override void OnBehaviourPlay(Playable playable, FrameData info)
         {
             OnStart(playable);
         }
@@ -218,7 +171,7 @@ namespace TweenTimeline
 
         private double GetTrackTime(double time, double duration)
         {
-            return director.extrapolationMode switch
+            return _director.extrapolationMode switch
             {
                 DirectorWrapMode.Loop => time % duration,
                 _ => Math.Min(time, duration)

@@ -15,24 +15,28 @@ namespace TweenTimeline
         [SerializeField] private SerializableDictionary<string, Vector2> vector2s;
         [SerializeField] private SerializableDictionary<string, Color> colors;
 
+        private TweenParameter _parameter;
+
         /// <summary>
-        /// デフォルト値が入ったTimelineParameterContainerを生成して取得
+        /// TimelineParameterContainerを取得
         /// </summary>
         public TweenParameter GetParameter()
         {
-            var parameter = new TweenParameter();
-            Set(floats, parameter.Float);
-            Set(ints, parameter.Int);
-            Set(bools, parameter.Bool);
-            Set(vector3s, parameter.Vector3);
-            Set(vector2s, parameter.Vector2);
-            Set(colors, parameter.Color);
+            _parameter ??= new TweenParameter();
+            Set(floats, _parameter.Float);
+            Set(ints, _parameter.Int);
+            Set(bools, _parameter.Bool);
+            Set(vector3s, _parameter.Vector3);
+            Set(vector2s, _parameter.Vector2);
+            Set(colors, _parameter.Color);
 
-            return parameter;
+            return _parameter;
         }
 
         private void Set<T>(SerializableDictionary<string, T> source, TimelineParameterDictionary<T> dest)
         {
+            dest.Clear();
+            
             foreach (var (key, val) in source)
             {
                 if (string.IsNullOrEmpty(key)) continue;

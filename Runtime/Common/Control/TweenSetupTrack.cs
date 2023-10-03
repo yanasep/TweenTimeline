@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using UnityEngine.UI;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -14,118 +10,90 @@ namespace TweenTimeline
     /// Tweenセットアップトラック
     /// </summary>
     [DisplayName("Tween/Tween Setup Track")]
-    // [TrackBindingType(typeof(Graphic))]
     [TrackClipType(typeof(TweenSetupClip))]
     public class TweenSetupTrack : TrackAsset
     {
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
-            var director = (PlayableDirector)graph.GetResolver();
-
-            var parameterHolder = director.GetComponent<TweenParameterHolder>();
-            var parameter = parameterHolder != null ? parameterHolder.GetParameter() : new TweenParameter();
-
             return ScriptPlayable<TweenSetupMixerBehaviour>.Create(graph, inputCount);
         }
     }
 
-    [Serializable]
     public class TweenSetupMixerBehaviour : PlayableBehaviour
     {
-        private bool initialized;
+        private bool _initialized;
+        private List<TweenPlayableBehaviour> _tweenBehaviours = new();
+        private List<TweenSetupMixerBehaviour> _childSetups = new();
+
+        private void Initialize(PlayableGraph graph)
+        {
+            if (_initialized) return;
+            _initialized = true;
+            
+            // キャッシュしつつ初期化
+            var director = (PlayableDirector)graph.GetResolver();
+            var parameterHolder = director.GetComponent<TweenParameterHolder>();
+            var parameter = parameterHolder != null ? parameterHolder.GetParameter() : null;
+            
+            var playables = new List<Playable>();
+            TweenTimelineUtility.GetAllPlayables(graph, playables, includeChildDirector: false);
+
+            for (int i = 0; i < playables.Count; i++)
+            {
+                var playable = playables[i];
+                if (TweenTimelineUtility.TryGetBehaviour<TweenPlayableBehaviour>(playable, out var tweenBehaviour))
+                {
+                    _tweenBehaviours.Add(tweenBehaviour);
+                    tweenBehaviour.ApplyOverrides(parameter);
+                }
+                else if (TweenTimelineUtility.TryGetBehaviour<DirectorControlPlayable>(playable, out var control))
+                {
+                    var childGraph = control.director.playableGraph;
+                    var childSetup = TweenTimelineUtility.FindBehaviour<TweenSetupMixerBehaviour>(childGraph);
+                    if (childSetup != null)
+                    {
+                        // 子のSetupビヘイビアがあれば、配下のPlayableは子が管理
+                        _childSetups.Add(childSetup);
+                        childSetup.Initialize(childGraph);
+                    }
+                    else
+                    {
+                        // 子にSetupビヘイビアがなければ、このビヘイビアが管理
+                        TweenTimelineUtility.GetAllPlayables(childGraph, playables, includeChildDirector: false);
+                    }
+                }
+            }
+        }
         
-        public override void OnPlayableCreate(Playable playable)
+        public override void OnGraphStart(Playable playable)
         {
-            // TODO : TweenMixerBehaviourでもよさそう
-            if (initialized) return;
-            if (!playable.IsValid())
-            {
-                return;
-            }
+            if (_initialized) return;
+            Initialize(playable.GetGraph());
+            
+            var director = (PlayableDirector)playable.GetGraph().GetResolver();
+            
+            var parameterHolder = director.GetComponent<TweenParameterHolder>();
+            var parameter = parameterHolder != null ? parameterHolder.GetParameter() : null;
 
-            var inputs = new List<Playable>();
-            GetAllPlayables(playable.GetGraph(), inputs);
-
-            for (int i = 0; i < inputs.Count; i++)
+            foreach (var setup in _childSetups)
             {
-                Playable input = inputs[i];
-                if (TryGetBehaviour<TweenBehaviour>(input, out var tweenBehaviour))
-                {
-                    // TODO: Parameter反映
-                    Debug.Log($"tweenBehaviour : {tweenBehaviour}");
-                }
-                else if (TryGetBehaviour<DirectorControlPlayable>(input, out var controlPlayable))
-                {
-                    var graph = controlPlayable.director.playableGraph;
-                    if (graph.IsValid())
-                    {
-                        GetAllPlayables(graph, inputs);
-                    }
-                }
+                setup.ApplyRootParameter(parameter);
             }
         }
+        
+        // TODO: 中間層のparameterは反映されない？
 
-        private bool TryGetBehaviour<T>(Playable playable, out T behaviour) where T : PlayableBehaviour, new()
+        private void ApplyRootParameter(TweenParameter parameter)
         {
-            Debug.Log($"playable.GetPlayableType() : {playable.GetPlayableType()}");
-            if (playable.GetPlayableType() == typeof(T))
+            foreach (var behaviour in _tweenBehaviours)
             {
-                behaviour = ((ScriptPlayable<T>)playable).GetBehaviour();
-                return true;
+                behaviour.ApplyOverrides(parameter);
             }
 
-            behaviour = null;
-            return false;
-        }
-
-        public static void GetAllPlayables(PlayableGraph playableGraph, List<Playable> results)
-        {
-            if (!playableGraph.IsValid())
+            foreach (var child in _childSetups)
             {
-                return;
-            }
-
-            int outputCount = playableGraph.GetOutputCount();
-            for (int i = 0; i < outputCount; i++)
-            {
-                PlayableOutput output = playableGraph.GetOutput(i);
-
-                if (!output.IsOutputValid() || !output.IsPlayableOutputOfType<ScriptPlayableOutput>())
-                {
-                    continue;
-                }
-
-                int sourceOutputPort = output.GetSourceOutputPort();
-                Playable playable = output.GetSourcePlayable().GetInput(sourceOutputPort);
-
-                GetAllPlayables(playable, results);
-            }
-        }
-
-        public static void GetAllPlayables(Playable playable, List<Playable> results)
-        {
-            if (!playable.IsValid())
-            {
-                return;
-            }
-
-            int inputCount = playable.GetInputCount();
-            for (int i = 0; i < inputCount; i++)
-            {
-                Playable input = playable.GetInput(i);
-
-                if (input.GetInputCount() > 0)
-                {
-                    GetAllPlayables(input, results);
-                }
-                else
-                {
-                    if (!results.Contains(input))
-                    {
-                        results.Add(input);
-                    }
-                }
+                child.ApplyRootParameter(parameter);
             }
         }
     }

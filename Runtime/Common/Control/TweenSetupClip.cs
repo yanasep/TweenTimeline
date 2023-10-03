@@ -1,17 +1,17 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Timeline;
 
 namespace TweenTimeline
 {
+    /// <summary>
+    /// Tweenセットアップクリップ
+    /// </summary>
     [Serializable]
-    [DisplayName("Setup")]
-    public class TweenSetupClip : PlayableAsset, ITimelineClipAsset
+    [DisplayName("Tween Setup")]
+    public class TweenSetupClip : PlayableAsset
     {
-        public ClipCaps clipCaps => ClipCaps.None;
-        
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             return default;

@@ -57,5 +57,10 @@ namespace TweenTimeline
         {
             return GetOrDefault(TweenParameter.StringToHash(key));
         }
+
+        public void Clear()
+        {
+            valueDic.Clear();
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace TweenTimeline
     [DisplayName("Tween/Rotation Tween Track")]
     [TrackBindingType(typeof(RectTransform))]
     [TrackClipType(typeof(TransformRotationTweenClip))]
-    public class TransformRotationTweenTrack : TransformTweenTrack<TransformRotationMixerBehaviour>
+    public class TransformRotationTweenTrack : TransformTweenTrack<TransformRotationTweenMixerBehaviour>
     {   
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("RotateTool").image as Texture2D;  
@@ -22,7 +22,7 @@ namespace TweenTimeline
     }
     
     [Serializable]
-    public class TransformRotationMixerBehaviour : TweenMixerBehaviour<Transform>
+    public class TransformRotationTweenMixerBehaviour : TweenMixerBehaviour<Transform>
     {
         [SerializeField] private bool setStartValue;
 
