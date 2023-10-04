@@ -20,6 +20,16 @@ namespace TweenTimeline
         {
             return str.GetHashCode();
         }
+
+        public void OverwriteFrom(TweenParameter source)
+        {
+            Float.OverwriteFrom(source.Float);
+            Int.OverwriteFrom(source.Int);
+            Bool.OverwriteFrom(source.Bool);
+            Vector3.OverwriteFrom(source.Vector3);
+            Vector2.OverwriteFrom(source.Vector2);
+            Color.OverwriteFrom(source.Color);
+        }
     }
 
     /// <summary>
@@ -61,6 +71,20 @@ namespace TweenTimeline
         public void Clear()
         {
             valueDic.Clear();
+        }
+
+        public void OverwriteFrom(TimelineParameterDictionary<T> source)
+        {
+            if (source == this)
+            {
+                Debug.LogWarning($"Trying to overwrite the same instance");
+                return;
+            }
+            
+            foreach (var (key, val) in source.valueDic)
+            {
+                valueDic[key] = val;
+            }
         }
     }
 }

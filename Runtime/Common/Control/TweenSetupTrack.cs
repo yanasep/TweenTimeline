@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using Common;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -22,88 +23,72 @@ namespace TweenTimeline
 
     public class TweenSetupMixerBehaviour : PlayableBehaviour
     {
-        private bool _initialized;
-        private readonly List<TweenPlayableBehaviour> _tweenBehaviours = new();
-        private readonly List<TweenSetupMixerBehaviour> _childSetups = new();
-        
-        /*
-         * TODO: DirectorControlはOnGraphStartでPlayableが生成される
-         * 親のInitializeより後に子が生成されるので、どうにかする必要あり
-         */
+        private readonly List<RuntimeTweenParameterHolder> _parameterHolders = new();
 
-        public override void OnPlayableCreate(Playable playable)
-        {
-            Debug.Log($"Create: {playable.GetGraph().GetEditorName()}");
-        }
-
-        public override void OnPlayableDestroy(Playable playable)
-        {
-            Debug.Log($"Destroy: {playable.GetGraph().GetEditorName()}");
-        }
-
-        // public override void PrepareFrame(Playable playable, FrameData info)
+        // TweenBehaviourのOnGraphStartが先に呼ばれると、その時点ではParameterが反映されていないので注意
         public override void OnGraphStart(Playable playable)
         {
-            Debug.Log($"Start: {playable.GetGraph().GetEditorName()}");
-            Initialize(playable.GetGraph());
-        }
-
-        private void Initialize(PlayableGraph graph)
-        {
-            if (_initialized) return;
-            _initialized = true;
-
+            var graph = playable.GetGraph();
             var ps = new List<Playable>();
             TweenTimelineUtility.GetAllPlayables(graph, ps, includeChildDirector: true);
-            Debug.Log($"{ps.Count}");
+            // Debug.Log($"{ps.Count}");
             
             // キャッシュしつつ初期化
             var director = (PlayableDirector)graph.GetResolver();
             var parameterHolder = director.GetComponent<TweenParameterHolder>();
-            var parameter = parameterHolder != null ? parameterHolder.GetParameter() : null;
-
+            var parameter = parameterHolder == null ? new TweenParameter() : parameterHolder.GetParameter();
+            // 親から受け継いだParameterを反映
+            if (director.TryGetComponent<RuntimeTweenParameterHolder>(out var runtimeHolder))
+            {
+                if (parameter != runtimeHolder.Parameter)
+                {
+                    parameter.OverwriteFrom(runtimeHolder.Parameter);
+                    runtimeHolder.Parameter = parameter;
+                }
+            }
+            
             var playables = new List<Playable>();
             TweenTimelineUtility.GetAllPlayables(graph, playables, includeChildDirector: false);
 
             for (int i = 0; i < playables.Count; i++)
             {
-                var playable = playables[i];
-                if (TweenTimelineUtility.TryGetBehaviour<TweenPlayableBehaviour>(playable, out var tweenBehaviour))
+                var p = playables[i];
+                if (TweenTimelineUtility.TryGetBehaviour<TweenPlayableBehaviour>(p, out var tweenBehaviour))
                 {
-                    _tweenBehaviours.Add(tweenBehaviour);
                     tweenBehaviour.ApplyOverrides(parameter);
                 }
-                else if (TweenTimelineUtility.TryGetBehaviour<DirectorControlPlayable>(playable, out var control))
+                else if (TweenTimelineUtility.TryGetBehaviour<DirectorControlPlayable>(p, out var control))
                 {
-                    var childGraph = control.director.playableGraph;
-                    var childSetup = TweenTimelineUtility.FindBehaviour<TweenSetupMixerBehaviour>(childGraph);
-                    if (childSetup != null)
-                    {
-                        // 子のSetupビヘイビアがあれば、配下のPlayableは子が管理
-                        _childSetups.Add(childSetup);
-                        childSetup.Initialize(childGraph);
-                        childSetup.ApplyParameter(parameter);
-                    }
-                    else
-                    {
-                        // 子にSetupビヘイビアがなければ、このビヘイビアが管理
-                        TweenTimelineUtility.GetAllPlayables(childGraph, playables, includeChildDirector: false);
-                    }
+                    var holder = control.director.gameObject.GetOrAddComponent<RuntimeTweenParameterHolder>();
+                    holder.Parameter = parameter;
+                    _parameterHolders.Add(holder);
                 }
             }
         }
 
-        private void ApplyParameter(TweenParameter parameter)
+        // public override void OnGraphStop(Playable playable)
+        // {
+        //     DestroyRuntimeParameters();
+        // }
+
+        public override void OnPlayableDestroy(Playable playable)
         {
-            foreach (var behaviour in _tweenBehaviours)
+            DestroyRuntimeParameters();
+            Debug.Log($"destroy");
+        }
+
+        private void DestroyRuntimeParameters()
+        {
+            foreach (var holder in _parameterHolders)
             {
-                behaviour.ApplyOverrides(parameter);
+                if (holder != null)
+                {
+                    if (Application.isPlaying) Object.Destroy(holder);
+                    else Object.DestroyImmediate(holder);
+                }
             }
 
-            foreach (var child in _childSetups)
-            {
-                child.ApplyParameter(parameter);
-            }
+            _parameterHolders.Clear();   
         }
     }
 }
