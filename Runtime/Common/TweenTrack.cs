@@ -100,12 +100,14 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public sealed override void OnBehaviourPlay(Playable playable, FrameData info)
         {
+            base.OnBehaviourPlay(playable, info);
             OnStart(playable);
         }
 
         /// <inheritdoc/>
         public override void OnBehaviourPause(Playable playable, FrameData info)
         {
+            base.OnBehaviourPause(playable, info);
             OnEnd(playable);
         }
 

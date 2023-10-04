@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Playables;
-using UnityEngine.Timeline;
 
 namespace TweenTimeline
 {
@@ -27,7 +26,7 @@ namespace TweenTimeline
         /// <summary>
         /// グラフのPlayableをすべて取得
         /// </summary>
-        public static void GetAllPlayables(PlayableGraph playableGraph, List<Playable> results, bool includeChildDirector)
+        public static void GetAllPlayables(PlayableGraph playableGraph, List<Playable> results)
         {
             if (!playableGraph.IsValid()) return;
 
@@ -35,14 +34,14 @@ namespace TweenTimeline
             for (int i = 0; i < playableCount; i++)
             {
                 var playable = playableGraph.GetRootPlayable(i);
-                GetAllPlayables(playable, results, includeChildDirector);
+                GetAllPlayables(playable, results);
             }
         }
 
         /// <summary>
         /// 配下のPlayableをすべて取得
         /// </summary>
-        public static void GetAllPlayables(Playable playable, List<Playable> results, bool includeChildDirector)
+        public static void GetAllPlayables(Playable playable, List<Playable> results)
         {
             if (!playable.IsValid()) return;
 
@@ -56,19 +55,10 @@ namespace TweenTimeline
                 {
                     results.Add(input);
                 }
-                
-                if (includeChildDirector && TryGetBehaviour<DirectorControlPlayable>(input, out var controlPlayable))
-                {
-                    var childGraph = controlPlayable.director.playableGraph;
-                    if (childGraph.IsValid())
-                    {
-                        GetAllPlayables(childGraph, results, true);
-                    }
-                }
 
                 if (input.GetInputCount() > 0)
                 {
-                    GetAllPlayables(input, results, includeChildDirector);
+                    GetAllPlayables(input, results);
                 }
             }
         }

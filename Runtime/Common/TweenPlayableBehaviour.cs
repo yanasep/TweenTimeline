@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 using UnityEngine.Playables;
 
 namespace TweenTimeline
@@ -11,10 +12,21 @@ namespace TweenTimeline
         public TweenTimelineFieldOverride[] overrides;
         
         protected PlayableDirector _director { get; private set; }
-        
-        public override void OnPlayableCreate(Playable playable)
+
+        public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
+            base.OnBehaviourPlay(playable, info);
+            
             _director = (PlayableDirector)playable.GetGraph().GetResolver();
+            var paramHolder = _director.gameObject.GetComponent<RuntimeTweenParameterHolder>();
+            if (paramHolder == null)
+            {
+                Debug.LogWarning($"Please Add Tween Setup Track");
+            }
+            else
+            {
+                ApplyOverrides(paramHolder.Parameter);
+            }
         }
 
         /// <summary>
