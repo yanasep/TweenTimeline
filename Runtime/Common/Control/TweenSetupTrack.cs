@@ -23,19 +23,45 @@ namespace TweenTimeline
     public class TweenSetupMixerBehaviour : PlayableBehaviour
     {
         private bool _initialized;
-        private List<TweenPlayableBehaviour> _tweenBehaviours = new();
-        private List<TweenSetupMixerBehaviour> _childSetups = new();
+        private readonly List<TweenPlayableBehaviour> _tweenBehaviours = new();
+        private readonly List<TweenSetupMixerBehaviour> _childSetups = new();
+        
+        /*
+         * TODO: DirectorControlはOnGraphStartでPlayableが生成される
+         * 親のInitializeより後に子が生成されるので、どうにかする必要あり
+         */
+
+        public override void OnPlayableCreate(Playable playable)
+        {
+            Debug.Log($"Create: {playable.GetGraph().GetEditorName()}");
+        }
+
+        public override void OnPlayableDestroy(Playable playable)
+        {
+            Debug.Log($"Destroy: {playable.GetGraph().GetEditorName()}");
+        }
+
+        // public override void PrepareFrame(Playable playable, FrameData info)
+        public override void OnGraphStart(Playable playable)
+        {
+            Debug.Log($"Start: {playable.GetGraph().GetEditorName()}");
+            Initialize(playable.GetGraph());
+        }
 
         private void Initialize(PlayableGraph graph)
         {
             if (_initialized) return;
             _initialized = true;
+
+            var ps = new List<Playable>();
+            TweenTimelineUtility.GetAllPlayables(graph, ps, includeChildDirector: true);
+            Debug.Log($"{ps.Count}");
             
             // キャッシュしつつ初期化
             var director = (PlayableDirector)graph.GetResolver();
             var parameterHolder = director.GetComponent<TweenParameterHolder>();
             var parameter = parameterHolder != null ? parameterHolder.GetParameter() : null;
-            
+
             var playables = new List<Playable>();
             TweenTimelineUtility.GetAllPlayables(graph, playables, includeChildDirector: false);
 
@@ -56,6 +82,7 @@ namespace TweenTimeline
                         // 子のSetupビヘイビアがあれば、配下のPlayableは子が管理
                         _childSetups.Add(childSetup);
                         childSetup.Initialize(childGraph);
+                        childSetup.ApplyParameter(parameter);
                     }
                     else
                     {
@@ -65,26 +92,8 @@ namespace TweenTimeline
                 }
             }
         }
-        
-        public override void OnGraphStart(Playable playable)
-        {
-            if (_initialized) return;
-            Initialize(playable.GetGraph());
-            
-            var director = (PlayableDirector)playable.GetGraph().GetResolver();
-            
-            var parameterHolder = director.GetComponent<TweenParameterHolder>();
-            var parameter = parameterHolder != null ? parameterHolder.GetParameter() : null;
 
-            foreach (var setup in _childSetups)
-            {
-                setup.ApplyRootParameter(parameter);
-            }
-        }
-        
-        // TODO: 中間層のparameterは反映されない？
-
-        private void ApplyRootParameter(TweenParameter parameter)
+        private void ApplyParameter(TweenParameter parameter)
         {
             foreach (var behaviour in _tweenBehaviours)
             {
@@ -93,7 +102,7 @@ namespace TweenTimeline
 
             foreach (var child in _childSetups)
             {
-                child.ApplyRootParameter(parameter);
+                child.ApplyParameter(parameter);
             }
         }
     }
