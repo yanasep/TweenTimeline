@@ -1,5 +1,4 @@
 ﻿using System;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -31,13 +30,6 @@ namespace TweenTimeline
 
         // WARNING: Template内で参照型フィールドをシリアライズする場合、Behaviour作成時にディーブコピーされないので注意
         protected abstract TweenBehaviour<TBinding> Template { get; }
-
-        protected virtual Tween GetTween(TweenClipInfo<TBinding> info) => null;
-        public virtual TweenCallback GetStartCallback(TweenClipInfo<TBinding> info) => null;
-        public virtual TweenCallback GetEndCallback(TweenClipInfo<TBinding> info) => null;
-        public virtual string GetStartLog(TweenClipInfo<TBinding> info) => null;
-        public virtual string GetTweenLog(TweenClipInfo<TBinding> info) => null;
-        public virtual string GetEndLog(TweenClipInfo<TBinding> info) => null;
 
         /// <inheritdoc/>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
