@@ -5,16 +5,16 @@ using Yanasep;
 namespace TweenTimeline
 {
     /// <summary>
-    /// TweenTimelineFieldのオーバーライド設定
+    /// TweenTimelineFieldの上書き設定
     /// </summary>
     [Serializable]
-    public class TweenTimelineFieldOverride
+    public class TweenTimelineFieldOverwrite
     {
         /// <summary>フィールド名</summary>
         public string Name;
 
         /// <summary>オーバーライド</summary>
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpression Expression;
+        public TimelineOverwriteExpression Expression;
     }
 }

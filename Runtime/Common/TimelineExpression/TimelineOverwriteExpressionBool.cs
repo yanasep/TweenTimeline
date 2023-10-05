@@ -8,7 +8,7 @@ namespace TweenTimeline
     /// boolの値表現
     /// </summary>
     [Serializable]
-    public abstract class TimelineOverrideExpressionBool : TimelineOverrideExpression<bool>
+    public abstract class TimelineOverwriteExpressionBool : TimelineOverwriteExpression<bool>
     {
     }
 
@@ -18,7 +18,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("bool/Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
-    public class TimelineOverrideExpressionBoolConstant : TimelineOverrideExpressionBool
+    public class TimelineOverwriteExpressionBoolConstant : TimelineOverwriteExpressionBool
     {
         public bool Value;
 
@@ -35,7 +35,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("bool/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TimelineOverrideExpressionBoolParameter : TimelineOverrideExpressionBool, ISerializationCallbackReceiver
+    public class TimelineOverwriteExpressionBoolParameter : TimelineOverwriteExpressionBool, ISerializationCallbackReceiver
     {
         public string ParameterName;
         private int paramHash;
@@ -62,13 +62,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("bool/And")]
-    public class TimelineOverrideExpressionBoolAnd : TimelineOverrideExpressionBool
+    public class TimelineOverwriteExpressionBoolAnd : TimelineOverwriteExpressionBool
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionBool Left;
+        public TimelineOverwriteExpressionBool Left;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionBool Right;
+        public TimelineOverwriteExpressionBool Right;
         
         /// <inheritdoc/>
         public override bool GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -82,13 +82,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("bool/Or")]
-    public class TimelineOverrideExpressionBoolOr : TimelineOverrideExpressionBool
+    public class TimelineOverwriteExpressionBoolOr : TimelineOverwriteExpressionBool
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionBool Left;
+        public TimelineOverwriteExpressionBool Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionBool Right;
+        public TimelineOverwriteExpressionBool Right;
 
         /// <inheritdoc/>
         public override bool GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -102,10 +102,10 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("bool/Not")]
-    public class TimelineOverrideExpressionBoolNot : TimelineOverrideExpressionBool
+    public class TimelineOverwriteExpressionBoolNot : TimelineOverwriteExpressionBool
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionBool Value;
+        public TimelineOverwriteExpressionBool Value;
         
         /// <inheritdoc/>
         public override bool GetValue(TweenParameter parameter, TweenTimelineField field)

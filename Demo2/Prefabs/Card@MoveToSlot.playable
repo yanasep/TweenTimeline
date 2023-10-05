@@ -25,7 +25,7 @@ MonoBehaviour:
     m_Objects: []
   _: 0
   template:
-    overrides: []
+    overwrites: []
     SetStartValue: 0
     StartValue: 1
   references:
@@ -184,7 +184,7 @@ MonoBehaviour:
     m_Objects: []
   _: 0
   template:
-    overrides: []
+    overwrites: []
     SetStartValue: 0
     StartValue:
       predefinedValue: {x: 0, y: 0, z: 0}
@@ -287,7 +287,7 @@ MonoBehaviour:
     m_Objects: []
   _: 0
   template:
-    overrides: []
+    overwrites: []
     setStartValue: 0
     startValue:
       predefinedValue: {x: 0, y: 0, z: 0}
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Name: TransformPunchScaleTweenClip
   m_EditorClassIdentifier: 
   template:
-    overrides: []
+    overwrites: []
     Punch:
       predefinedValue: {x: 0, y: 0, z: 0}
     Ease:
@@ -332,7 +332,7 @@ MonoBehaviour:
   m_Name: RectTransformPositionTweenClip
   m_EditorClassIdentifier: 
   template:
-    overrides: []
+    overwrites: []
     PositionType: 0
     EndValue:
       predefinedValue: {x: 0, y: 0, z: 0}
@@ -436,7 +436,7 @@ MonoBehaviour:
     m_Objects: []
   _: 0
   template:
-    overrides: []
+    overwrites: []
     setStartValue: 0
     startValue:
       predefinedValue: {x: 0, y: 0, z: 0}
@@ -549,10 +549,10 @@ MonoBehaviour:
     m_Objects: []
   _: 0
   template:
-    overrides:
+    overwrites:
     - Name: StartValue
       Expression:
-        rid: 819790455160176640
+        rid: 819790500534419457
     SetStartValue: 1
     StartValue:
       predefinedValue: {x: 0, y: 0, z: 0}
@@ -561,8 +561,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 819790455160176640
-      type: {class: TimelineOverrideExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
+    - rid: 819790500534419457
+      type: {class: TimelineOverwriteExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
       data:
         ParameterName: StartPosition
 --- !u!114 &8263562875954340283
@@ -578,7 +578,7 @@ MonoBehaviour:
   m_Name: TransformRotationTweenClip
   m_EditorClassIdentifier: 
   template:
-    overrides: []
+    overwrites: []
     EndValue:
       predefinedValue: {x: 0, y: 0, z: 0}
     Ease:

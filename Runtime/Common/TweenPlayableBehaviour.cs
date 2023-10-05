@@ -9,7 +9,7 @@ namespace TweenTimeline
     [Serializable]
     public class TweenPlayableBehaviour : PlayableBehaviour
     {
-        public TweenTimelineFieldOverride[] overrides;
+        public TweenTimelineFieldOverwrite[] overwrites;
         
         protected PlayableDirector _director { get; private set; }
 
@@ -34,15 +34,15 @@ namespace TweenTimeline
         /// </summary>
         public void ApplyOverrides(TweenParameter parameter)
         {
-            if (overrides == null) return;
+            if (overwrites == null) return;
             
             var fields = GatherFields(this);
             
-            foreach (var fieldOverride in overrides)
+            foreach (var fieldOverride in overwrites)
             {
                 if (fields.TryGetValue(fieldOverride.Name, out var field))
                 {
-                    fieldOverride.Expression?.Override(field, parameter);
+                    fieldOverride.Expression?.Overwrite(field, parameter);
                 }
                 // else
                 // {

@@ -8,7 +8,7 @@ namespace TweenTimeline
     /// floatの値表現
     /// </summary>
     [Serializable]
-    public abstract class TimelineOverrideExpressionFloat : TimelineOverrideExpression<float>
+    public abstract class TimelineOverwriteExpressionFloat : TimelineOverwriteExpression<float>
     {
     }
 
@@ -18,7 +18,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("float/Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
-    public class TimelineOverrideExpressionFloatConstant : TimelineOverrideExpressionFloat
+    public class TimelineOverwriteExpressionFloatConstant : TimelineOverwriteExpressionFloat
     {
         public float Value;
 
@@ -34,7 +34,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("float/Value")]
-    public class TimelineOverrideExpressionFloatValue : TimelineOverrideExpressionFloat
+    public class TimelineOverwriteExpressionFloatValue : TimelineOverwriteExpressionFloat
     {
         /// <inheritdoc/>
         public override float GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -48,7 +48,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("float/Predefined Value")]
-    public class TimelineOverrideExpressionFloatPredefinedValue : TimelineOverrideExpressionFloat
+    public class TimelineOverwriteExpressionFloatPredefinedValue : TimelineOverwriteExpressionFloat
     {
         /// <inheritdoc/>
         public override float GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -63,7 +63,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("float/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TimelineOverrideExpressionFloatParameter : TimelineOverrideExpressionFloat, ISerializationCallbackReceiver
+    public class TimelineOverwriteExpressionFloatParameter : TimelineOverwriteExpressionFloat, ISerializationCallbackReceiver
     {
         public string ParameterName;
         private int paramHash;
@@ -90,13 +90,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("float/Add")]
-    public class TimelineOverrideExpressionFloatAdd : TimelineOverrideExpressionFloat
+    public class TimelineOverwriteExpressionFloatAdd : TimelineOverwriteExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionFloat Left = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Left = new TimelineOverwriteExpressionFloatConstant();
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionFloat Right = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Right = new TimelineOverwriteExpressionFloatConstant();
         
         /// <inheritdoc/>
         public override float GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -110,13 +110,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("float/Subtract")]
-    public class TimelineOverrideExpressionFloatSubtract : TimelineOverrideExpressionFloat
+    public class TimelineOverwriteExpressionFloatSubtract : TimelineOverwriteExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionFloat Left = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Left = new TimelineOverwriteExpressionFloatConstant();
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionFloat Right = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Right = new TimelineOverwriteExpressionFloatConstant();
 
         /// <inheritdoc/>
         public override float GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -130,13 +130,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("float/Multiply")]
-    public class TimelineOverrideExpressionFloatMultiply : TimelineOverrideExpressionFloat
+    public class TimelineOverwriteExpressionFloatMultiply : TimelineOverwriteExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionFloat Left = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Left = new TimelineOverwriteExpressionFloatConstant();
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionFloat Right = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Right = new TimelineOverwriteExpressionFloatConstant();
         
         /// <inheritdoc/>
         public override float GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -150,13 +150,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("float/Divide")]
-    public class TimelineOverrideExpressionFloatDivide : TimelineOverrideExpressionFloat
+    public class TimelineOverwriteExpressionFloatDivide : TimelineOverwriteExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionFloat Left = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Left = new TimelineOverwriteExpressionFloatConstant();
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionFloat Right = new TimelineOverrideExpressionFloatConstant();
+        public TimelineOverwriteExpressionFloat Right = new TimelineOverwriteExpressionFloatConstant();
 
         /// <inheritdoc/>
         public override float GetValue(TweenParameter parameter, TweenTimelineField field)

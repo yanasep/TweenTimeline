@@ -8,7 +8,7 @@ namespace TweenTimeline
     /// Colorの値表現
     /// </summary>
     [Serializable]
-    public abstract class TimelineOverrideExpressionColor : TimelineOverrideExpression<Color>
+    public abstract class TimelineOverwriteExpressionColor : TimelineOverwriteExpression<Color>
     {
     }
 
@@ -18,7 +18,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("Color/Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
-    public class TimelineOverrideExpressionColorConstant : TimelineOverrideExpressionColor
+    public class TimelineOverwriteExpressionColorConstant : TimelineOverwriteExpressionColor
     {
         public Color Value;
 
@@ -35,7 +35,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("Color/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TimelineOverrideExpressionColorParameter : TimelineOverrideExpressionColor, ISerializationCallbackReceiver
+    public class TimelineOverwriteExpressionColorParameter : TimelineOverwriteExpressionColor, ISerializationCallbackReceiver
     {
         public string ParameterName;
         private int paramHash;

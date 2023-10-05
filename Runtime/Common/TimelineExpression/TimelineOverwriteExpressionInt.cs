@@ -8,7 +8,7 @@ namespace TweenTimeline
     /// intの値表現
     /// </summary>
     [Serializable]
-    public abstract class TimelineOverrideExpressionInt : TimelineOverrideExpression<int>
+    public abstract class TimelineOverwriteExpressionInt : TimelineOverwriteExpression<int>
     {
     }
 
@@ -18,7 +18,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("int/Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
-    public class TimelineOverrideExpressionIntConstant : TimelineOverrideExpressionInt
+    public class TimelineOverwriteExpressionIntConstant : TimelineOverwriteExpressionInt
     {
         public int Value;
 
@@ -35,7 +35,7 @@ namespace TweenTimeline
     [Serializable]
     [Name("int/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TimelineOverrideExpressionIntParameter : TimelineOverrideExpressionInt, ISerializationCallbackReceiver
+    public class TimelineOverwriteExpressionIntParameter : TimelineOverwriteExpressionInt, ISerializationCallbackReceiver
     {
         public string ParameterName;
         private int paramHash;
@@ -62,13 +62,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("int/Add")]
-    public class TimelineOverrideExpressionIntAdd : TimelineOverrideExpressionInt
+    public class TimelineOverwriteExpressionIntAdd : TimelineOverwriteExpressionInt
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionInt Left;
+        public TimelineOverwriteExpressionInt Left;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionInt Right;
+        public TimelineOverwriteExpressionInt Right;
         
         /// <inheritdoc/>
         public override int GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -82,13 +82,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("int/Subtract")]
-    public class TimelineOverrideExpressionIntSubtract : TimelineOverrideExpressionInt
+    public class TimelineOverwriteExpressionIntSubtract : TimelineOverwriteExpressionInt
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionInt Left;
+        public TimelineOverwriteExpressionInt Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionInt Right;
+        public TimelineOverwriteExpressionInt Right;
 
         /// <inheritdoc/>
         public override int GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -102,13 +102,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("int/Multiply")]
-    public class TimelineOverrideExpressionIntMultiply : TimelineOverrideExpressionInt
+    public class TimelineOverwriteExpressionIntMultiply : TimelineOverwriteExpressionInt
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionInt Left;
+        public TimelineOverwriteExpressionInt Left;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverrideExpressionInt Right;
+        public TimelineOverwriteExpressionInt Right;
         
         /// <inheritdoc/>
         public override int GetValue(TweenParameter parameter, TweenTimelineField field)
@@ -122,13 +122,13 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [Name("int/Divide")]
-    public class TimelineOverrideExpressionIntDivide : TimelineOverrideExpressionInt
+    public class TimelineOverwriteExpressionIntDivide : TimelineOverwriteExpressionInt
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionInt Left;
+        public TimelineOverwriteExpressionInt Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverrideExpressionInt Right;
+        public TimelineOverwriteExpressionInt Right;
 
         /// <inheritdoc/>
         public override int GetValue(TweenParameter parameter, TweenTimelineField field)
