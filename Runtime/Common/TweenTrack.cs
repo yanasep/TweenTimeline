@@ -29,6 +29,7 @@ namespace TweenTimeline
         // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
         [SerializeField, ReadOnly] private byte _;
 
+        // WARNING: Template内で参照型フィールドをシリアライズする場合、Behaviour作成時にディーブコピーされないので注意
         protected abstract TweenMixerBehaviour<TBinding> Template { get; }
 
         /// <inheritdoc/>

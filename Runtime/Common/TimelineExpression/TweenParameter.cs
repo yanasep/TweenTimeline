@@ -30,6 +30,13 @@ namespace TweenTimeline
             Vector2.OverwriteFrom(source.Vector2);
             Color.OverwriteFrom(source.Color);
         }
+
+        public TweenParameter Clone()
+        {
+            var clone = new TweenParameter();
+            clone.OverwriteFrom(this);
+            return clone;
+        }
     }
 
     /// <summary>

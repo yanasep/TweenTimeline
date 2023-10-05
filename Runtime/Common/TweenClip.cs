@@ -29,6 +29,7 @@ namespace TweenTimeline
         public double Duration { get; set; }
         public TweenParameter Parameter { get; set; }
 
+        // WARNING: Template内で参照型フィールドをシリアライズする場合、Behaviour作成時にディーブコピーされないので注意
         protected abstract TweenBehaviour<TBinding> Template { get; }
 
         protected virtual Tween GetTween(TweenClipInfo<TBinding> info) => null;

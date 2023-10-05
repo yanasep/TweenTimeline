@@ -25,29 +25,22 @@ namespace TweenTimeline
     {
         private readonly List<RuntimeTweenParameterHolder> _runtimeParamHolders = new();
         
-        // TODO: シークで親Parameterが途中から反映されなくなるので調査
         public override void OnGraphStart(Playable playable)
         {
             var graph = playable.GetGraph();
             var director = (PlayableDirector)graph.GetResolver();
             var parameterHolder = director.GetComponent<TweenParameterHolder>();
-            var parameter = parameterHolder == null ? new TweenParameter() : parameterHolder.GetParameter();
+            var parameter = parameterHolder == null ? new TweenParameter() : parameterHolder.GetParameter().Clone();
             // 親から受け継いだParameterを反映
-            if (director.TryGetComponent<RuntimeTweenParameterHolder>(out var runtimeHolder) && runtimeHolder.Parameter != null)
+            if (director.TryGetComponent<RuntimeTweenParameterHolder>(out var runtimeHolder))
             {
-                if (parameter != runtimeHolder.Parameter)
-                {
-                    parameter.OverwriteFrom(runtimeHolder.Parameter);
-                    runtimeHolder.Parameter = parameter;
-                }
+                parameter.OverwriteFrom(runtimeHolder.Parameter);
+                runtimeHolder.Parameter = parameter;
             }
             else
             {
-                if (runtimeHolder == null)
-                {
-                    runtimeHolder = director.gameObject.AddComponent<RuntimeTweenParameterHolder>();
-                    _runtimeParamHolders.Add(runtimeHolder);
-                }
+                runtimeHolder = director.gameObject.AddComponent<RuntimeTweenParameterHolder>();
+                _runtimeParamHolders.Add(runtimeHolder);
                 runtimeHolder.Parameter = parameter;
             }
 
@@ -58,7 +51,7 @@ namespace TweenTimeline
                 if (TweenTimelineUtility.TryGetBehaviour<DirectorControlPlayable>(p, out var control))
                 {
                     var holder = control.director.gameObject.GetOrAddComponent<RuntimeTweenParameterHolder>();
-                    holder.Parameter = parameter;
+                    holder.Parameter = parameter.Clone();
                     _runtimeParamHolders.Add(holder);
                 }
             }

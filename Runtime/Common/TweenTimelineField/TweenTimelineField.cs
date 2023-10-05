@@ -9,6 +9,7 @@ namespace TweenTimeline
     /// </summary>
     public abstract class TweenTimelineField
     {
+        public TweenTimelineField Clone() => (TweenTimelineField)MemberwiseClone();
     }
 
     /// <summary>

@@ -60,11 +60,15 @@ namespace TweenTimeline
             results.Clear();
 
             // TODO: SourceGeneratorでやる
-            var fields = behaviour.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var field in fields)
+            var fieldInfos = behaviour.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var fieldInfo in fieldInfos)
             {
-                if (!field.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
-                results.Add(field.Name, (TweenTimelineField)field.GetValue(behaviour));
+                if (!fieldInfo.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
+                var tweenField = (TweenTimelineField)fieldInfo.GetValue(behaviour);
+                // クリップからBehaviour作成時にディーブコピー
+                tweenField = tweenField.Clone();
+                fieldInfo.SetValue(behaviour, tweenField);
+                results.Add(fieldInfo.Name, tweenField);
             }
 
             return results;
