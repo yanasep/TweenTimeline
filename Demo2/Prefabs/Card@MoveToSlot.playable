@@ -552,7 +552,7 @@ MonoBehaviour:
     overwrites:
     - Name: StartValue
       Expression:
-        rid: 819790500534419457
+        rid: 8175722315173855232
     SetStartValue: 1
     StartValue:
       predefinedValue: {x: 0, y: 0, z: 0}
@@ -561,7 +561,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 819790500534419457
+    - rid: 8175722315173855232
       type: {class: TimelineOverwriteExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
       data:
         ParameterName: StartPosition
