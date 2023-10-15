@@ -27,7 +27,7 @@ namespace TweenTimeline
         [SerializeField] private bool setStartValue;
 
         [EnableIf(nameof(setStartValue), true)]
-        [SerializeField] private TweenTimelineField<Vector3> startValue;
+        [SerializeField] private TweenTimelineFieldVector3 startValue;
         
         /// <inheritdoc/>
         protected override void OnStart(Playable playable)

@@ -17,7 +17,7 @@ namespace TweenTimeline
     [Serializable]
     public class CanvasGroupAlphaTweenBehaviour : TweenBehaviour<CanvasGroup>
     {
-        public TweenTimelineField<float> EndValue;
+        public TweenTimelineFieldFloat EndValue;
         public TweenTimelineField<Ease> Ease;
 
         private float _start;

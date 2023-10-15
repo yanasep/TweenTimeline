@@ -27,7 +27,7 @@ namespace TweenTimeline
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
-        public TweenTimelineField<Vector2> StartValue;
+        public TweenTimelineFieldVector2 StartValue;
 
         protected override void OnStart(Playable playable)
         {

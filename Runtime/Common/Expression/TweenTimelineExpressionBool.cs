@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Yanasep;
 
 namespace TweenTimeline
@@ -8,7 +9,7 @@ namespace TweenTimeline
     /// boolの値表現
     /// </summary>
     [Serializable]
-    public abstract class TimelineOverwriteExpressionBool : TimelineOverwriteExpression<bool>
+    public abstract class TweenTimelineExpressionBool : TweenTimelineExpression<bool>
     {
     }
 
@@ -16,14 +17,14 @@ namespace TweenTimeline
     /// boolの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("bool/Constant")]
+    [Name("Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
-    public class TimelineOverwriteExpressionBoolConstant : TimelineOverwriteExpressionBool
+    public class TweenTimelineExpressionBoolConstant : TweenTimelineExpressionBool
     {
-        public bool Value;
+        [FormerlySerializedAs("Val")] public bool Value;
 
         /// <inheritdoc/>
-        public override bool GetValue(TweenParameter parameter, TweenTimelineField field)
+        public override bool Evaluate(TweenParameter parameter)
         {
             return Value;
         }
@@ -33,15 +34,15 @@ namespace TweenTimeline
     /// boolの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("bool/Parameter")]
+    [Name("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TimelineOverwriteExpressionBoolParameter : TimelineOverwriteExpressionBool, ISerializationCallbackReceiver
+    public class TweenTimelineExpressionBoolParameter : TweenTimelineExpressionBool, ISerializationCallbackReceiver
     {
         public string ParameterName;
         private int paramHash;
 
         /// <inheritdoc/>
-        public override bool GetValue(TweenParameter parameter, TweenTimelineField field)
+        public override bool Evaluate(TweenParameter parameter)
         {
             return parameter.Bool.GetOrDefault(paramHash);
         }
@@ -61,19 +62,19 @@ namespace TweenTimeline
     /// boolの値表現 (And)
     /// </summary>
     [Serializable]
-    [Name("bool/And")]
-    public class TimelineOverwriteExpressionBoolAnd : TimelineOverwriteExpressionBool
+    [Name("And")]
+    public class TweenTimelineExpressionBoolAnd : TweenTimelineExpressionBool
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverwriteExpressionBool Left;
+        public TweenTimelineExpressionBool Left;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverwriteExpressionBool Right;
+        public TweenTimelineExpressionBool Right;
         
         /// <inheritdoc/>
-        public override bool GetValue(TweenParameter parameter, TweenTimelineField field)
+        public override bool Evaluate(TweenParameter parameter)
         {
-            return Left.GetValue(parameter, field) && Right.GetValue(parameter, field);
+            return Left.Evaluate(parameter) && Right.Evaluate(parameter);
         }
     }
 
@@ -81,19 +82,19 @@ namespace TweenTimeline
     /// boolの値表現 (Or)
     /// </summary>
     [Serializable]
-    [Name("bool/Or")]
-    public class TimelineOverwriteExpressionBoolOr : TimelineOverwriteExpressionBool
+    [Name("Or")]
+    public class TweenTimelineExpressionBoolOr : TweenTimelineExpressionBool
     {
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverwriteExpressionBool Left;
+        public TweenTimelineExpressionBool Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TimelineOverwriteExpressionBool Right;
+        public TweenTimelineExpressionBool Right;
 
         /// <inheritdoc/>
-        public override bool GetValue(TweenParameter parameter, TweenTimelineField field)
+        public override bool Evaluate(TweenParameter parameter)
         {
-            return Left.GetValue(parameter, field) || Right.GetValue(parameter, field);
+            return Left.Evaluate(parameter) || Right.Evaluate(parameter);
         }
     }
 
@@ -101,16 +102,16 @@ namespace TweenTimeline
     /// Vector3の値表現 (Not)
     /// </summary>
     [Serializable]
-    [Name("bool/Not")]
-    public class TimelineOverwriteExpressionBoolNot : TimelineOverwriteExpressionBool
+    [Name("Not")]
+    public class TweenTimelineExpressionBoolNot : TweenTimelineExpressionBool
     {
         [SerializeReference, SelectableSerializeReference] 
-        public TimelineOverwriteExpressionBool Value;
+        public TweenTimelineExpressionBool Value;
         
         /// <inheritdoc/>
-        public override bool GetValue(TweenParameter parameter, TweenTimelineField field)
+        public override bool Evaluate(TweenParameter parameter)
         {
-            return !Value.GetValue(parameter, field);
+            return !Value.Evaluate(parameter);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace TweenTimeline
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
-        public TweenTimelineField<Vector3> StartValue;
+        public TweenTimelineFieldVector3 StartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
         public TweenTimelineField<TransformTweenPositionType> positionType;

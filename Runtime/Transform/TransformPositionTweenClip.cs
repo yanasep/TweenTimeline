@@ -19,9 +19,9 @@ namespace TweenTimeline
     {
         public TweenTimelineField<TransformTweenPositionType> PositionType;
 
-        public TweenTimelineField<Vector3> EndValue;
+        public TweenTimelineFieldVector3 EndValue;
 
-        public TweenTimelineField<bool> IsRelative;
+        public TweenTimelineFieldBool IsRelative;
         
         public TweenTimelineField<Ease> Ease;
 

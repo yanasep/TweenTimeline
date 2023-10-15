@@ -18,10 +18,10 @@ namespace TweenTimeline
     [Serializable]
     public class TransformRotationTweenBehaviour : TweenBehaviour<Transform>
     {
-        [SerializeField] private TweenTimelineField<Vector3> EndValue;
+        [SerializeField] private TweenTimelineFieldVector3 EndValue;
         
         [SerializeField] private TweenTimelineField<Ease> Ease;
-        [SerializeField] private TweenTimelineField<bool> IsLocal;
+        [SerializeField] private TweenTimelineFieldBool IsLocal;
         
         private Tween _tween;
         

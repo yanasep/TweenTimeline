@@ -9,8 +9,6 @@ namespace TweenTimeline
     [Serializable]
     public class TweenPlayableBehaviour : PlayableBehaviour
     {
-        public TweenTimelineFieldOverwrite[] overwrites;
-        
         protected PlayableDirector _director { get; private set; }
 
         public override void OnBehaviourPlay(Playable playable, FrameData info)
@@ -25,50 +23,41 @@ namespace TweenTimeline
             }
             else
             {
-                ApplyOverrides(paramHolder.Parameter);
+                SetField(paramHolder.Parameter);
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void ApplyOverrides(TweenParameter parameter)
+        public void SetField(TweenParameter parameter)
         {
-            if (overwrites == null) return;
-            
             var fields = GatherFields(this);
             
-            foreach (var fieldOverride in overwrites)
+            foreach (var field in fields)
             {
-                if (fields.TryGetValue(fieldOverride.Name, out var field))
-                {
-                    fieldOverride.Expression?.Overwrite(field, parameter);
-                }
-                // else
-                // {
-                //     Debug.LogWarning($"field {fieldOverride.Name} is not found.");
-                // }
+                field.SetValue(parameter);
             }
         }
         
         /// <summary>
         /// TimelineFieldをDictionaryに入れる
         /// </summary>
-        private static Dictionary<string, TweenTimelineField> GatherFields(TweenPlayableBehaviour behaviour)
+        private static List<ITweenTimelineField> GatherFields(TweenPlayableBehaviour behaviour)
         {
-            var results = new Dictionary<string, TweenTimelineField>();
+            var results = new List<ITweenTimelineField>();
             results.Clear();
 
             // TODO: SourceGeneratorでやる
             var fieldInfos = behaviour.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var fieldInfo in fieldInfos)
             {
-                if (!fieldInfo.FieldType.IsSubclassOf(typeof(TweenTimelineField))) continue;
-                var tweenField = (TweenTimelineField)fieldInfo.GetValue(behaviour);
+                if (!typeof(ITweenTimelineField).IsAssignableFrom(fieldInfo.FieldType)) continue;
+                var tweenField = (ITweenTimelineField)fieldInfo.GetValue(behaviour);
                 // クリップからBehaviour作成時にディーブコピー
                 tweenField = tweenField.Clone();
                 fieldInfo.SetValue(behaviour, tweenField);
-                results.Add(fieldInfo.Name, tweenField);
+                results.Add(tweenField);
             }
 
             return results;

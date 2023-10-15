@@ -18,7 +18,7 @@ namespace TweenTimeline
     [Serializable]
     public class TextMeshProUGUICountUpTweenBehaviour : TweenBehaviour<TextMeshProUGUI>
     {
-        [SerializeField] private TweenTimelineField<int> EndValue;
+        [SerializeField] private TweenTimelineFieldInt EndValue;
         
         [SerializeField] private TweenTimelineField<Ease> ease;
 

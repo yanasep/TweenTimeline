@@ -29,7 +29,7 @@ namespace TweenTimeline
 
         [EnableIf(nameof(setStartValue), true)]
         [SerializeField]
-        private TweenTimelineField<Vector3> startValue;
+        private TweenTimelineFieldVector3 startValue;
 
         protected override void OnStart(Playable playable)
         {

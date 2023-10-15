@@ -29,10 +29,10 @@ namespace TweenTimeline
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
-        public TweenTimelineField<Vector3> StartValue = new();
+        public TweenTimelineFieldVector3 StartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
-        public TweenTimelineField<RectTransformTweenPositionType> PositionType = new();
+        public TweenTimelineField<RectTransformTweenPositionType> PositionType;
         
         protected override void OnStart(Playable playable)
         {

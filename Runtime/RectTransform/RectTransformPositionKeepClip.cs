@@ -22,7 +22,7 @@ namespace TweenTimeline
         public bool SpecifyValue;
 
         [EnableIf(nameof(SpecifyValue), true)]
-        public TweenTimelineField<Vector3> Value;
+        public TweenTimelineFieldVector3 Value;
         
         private Vector3 _start;
 

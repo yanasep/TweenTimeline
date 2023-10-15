@@ -17,7 +17,7 @@ namespace TweenTimeline
     [Serializable]
     public class TransformScaleTweenBehaviour : TweenBehaviour<Transform>
     {
-        [SerializeField] private TweenTimelineField<Vector3> endValue = new(Vector3.one);
+        [SerializeField] private TweenTimelineFieldVector3 endValue = new(Vector3.one);
         
         [SerializeField] private TweenTimelineField<Ease> ease;
 

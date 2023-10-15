@@ -21,8 +21,8 @@ namespace TweenTimeline
         [SerializeField] public TweenTimelineField<Vector3> Punch;
         
         public TweenTimelineField<Ease> Ease;
-        public TweenTimelineField<int> Vibrato = new(10);
-        public TweenTimelineField<float> Elasticity = new(1f);
+        public TweenTimelineFieldInt Vibrato = new(10);
+        public TweenTimelineFieldFloat Elasticity = new(1f);
 
         private Tween _tween;
 

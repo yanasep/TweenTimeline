@@ -17,7 +17,7 @@ namespace TweenTimeline
     [Serializable]
     public class RectTransformSizeDeltaTweenBehaviour : TweenBehaviour<RectTransform>
     {
-        [SerializeField] private TweenTimelineField<Vector2> endValue = new(new Vector2(100, 100));
+        [SerializeField] private TweenTimelineFieldVector2 endValue = new(new Vector2(100, 100));
         [SerializeField] private TweenTimelineField<Ease> ease;
 
         private Vector2 _start;

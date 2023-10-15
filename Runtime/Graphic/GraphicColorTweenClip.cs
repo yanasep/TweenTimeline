@@ -18,7 +18,7 @@ namespace TweenTimeline
     [Serializable]
     public class GraphicColorTweenBehaviour : TweenBehaviour<Graphic>
     {
-        public TweenTimelineField<Color> EndValue = new(Color.white);
+        public TweenTimelineFieldColor EndValue = new(Color.white);
         public RGBAFlags Enable;
         public TweenTimelineField<Ease> Ease;
 
