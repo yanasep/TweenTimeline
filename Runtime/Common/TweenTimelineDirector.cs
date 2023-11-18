@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -14,8 +15,9 @@ namespace TweenTimeline
     public class TweenTimelineDirector : MonoBehaviour
     {
         [SerializeField] private PlayableDirector _director;
+        private Tween _tween;
 
-        public TweenParameter Parameter { get; private set; }
+        public delegate void SetParameter(TweenParameter parameter);
 
         // private void OnEnable()
         // {
@@ -38,22 +40,6 @@ namespace TweenTimeline
         // }
 
         /// <summary>
-        /// 初期化
-        /// </summary>
-        [EditorPlayModeButton("Initialize")]
-        public void Initialize()
-        {
-            if (TryGetComponent<TweenParameterHolder>(out var holder))
-            {
-                Parameter = holder.GetParameter();
-            }
-            else
-            {
-                Parameter ??= new();
-            }
-        }
-
-        /// <summary>
         /// 再生
         /// </summary>
         [EditorPlayModeButton("Play")]
@@ -61,24 +47,26 @@ namespace TweenTimeline
         {
             var asset = _director.playableAsset as TimelineAsset;
             if (asset == null) return;
-            Play(asset);
+            Play(asset, null);
         }
 
         /// <summary>
         /// 再生
         /// </summary>
-        public void Play(TimelineAsset timelineAsset)
+        public void Play(TimelineAsset timelineAsset, SetParameter setParameter = null)
         {
-            _director.Play(timelineAsset);
+            _tween?.Kill();
+            _tween = TweenTimelineUtility.CreateTween(timelineAsset, _director, setParameter);
+            _tween.Play();
         }
 
         /// <summary>
         /// 再生
         /// </summary>
-        public UniTask PlayAsync(TimelineAsset timelineAsset)
+        public UniTask PlayAsync(TimelineAsset timelineAsset, SetParameter setParameter = null)
         {
-            Play(timelineAsset);
-            return UniTask.WaitWhile(() => _director.state == PlayState.Playing);
+            Play(timelineAsset, setParameter);
+            return _tween.WithCancellation(default);
         }
     }
 }

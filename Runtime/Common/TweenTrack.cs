@@ -76,9 +76,8 @@ namespace TweenTimeline
             var director = (PlayableDirector)graph.GetResolver();
             var binding = director.GetGenericBinding(this) as TBinding;
             if (binding == null) return base.CreateTrackMixer(graph, go, inputCount);
-            
-            var parameterHolder = director.GetComponent<TweenParameterHolder>();
-            var parameter = parameterHolder != null ? parameterHolder.GetParameter() : new TweenParameter();
+
+            var parameter = TweenTimelineUtility.GetTweenParameter(timelineAsset);
             var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, inputCount);
             playable.GetBehaviour().Tween = CreateTween(new CreateTweenArgs
             {

@@ -13,9 +13,12 @@ namespace TweenTimeline
         /// <summary>
         /// PlayableAssetをTweenに変換
         /// </summary>
-        public static Tween CreateTween(TimelineAsset timelineAsset, TweenParameter parameter, PlayableDirector director)
+        public static Tween CreateTween(TimelineAsset timelineAsset, PlayableDirector director, TweenTimelineDirector.SetParameter setParameter)
         {
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
+
+            var parameter = GetTweenParameter(timelineAsset);
+            setParameter?.Invoke(parameter);
 
             foreach (var track in timelineAsset.GetOutputTracks())
             {
@@ -32,6 +35,19 @@ namespace TweenTimeline
             }
 
             return sequence;
+        }
+
+        public static TweenParameter GetTweenParameter(TimelineAsset timelineAsset)
+        {
+            foreach (var track in timelineAsset.GetOutputTracks())
+            {
+                if (track is TweenParameterTrack parameterTrack)
+                {
+                    return parameterTrack.GetParameter();
+                }
+            }
+
+            return null;
         }
 
         // /// <summary>

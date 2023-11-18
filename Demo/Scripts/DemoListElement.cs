@@ -20,7 +20,6 @@ namespace TweenTimeline
 
         public void Initialize()
         {
-            _tweenDirector.Initialize();
         }
 
         public void Set(CountryCode country, int place, int score)
@@ -34,8 +33,10 @@ namespace TweenTimeline
 
         public UniTask UpdateScoreAsync(int score)
         {   
-            _tweenDirector.Parameter.Int.Set(TweenHashScore, score);
-            return _tweenDirector.PlayAsync(_scoreUpTween);
+            return _tweenDirector.PlayAsync(_scoreUpTween, parameter =>
+            {
+                parameter.Int.Set(TweenHashScore, score);   
+            });
         }
 
         public UniTask UpdatePlaceAsync(int place)
