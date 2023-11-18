@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Common;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using Yanasep;
 using Object = UnityEngine.Object;
 
 namespace TweenTimeline
@@ -19,6 +20,8 @@ namespace TweenTimeline
         /// <remarks>ビルトインアイコン： https://github.com/halak/unity-editor-icons</remarks>
         public virtual Texture2D Icon => null;  
 #endif
+        
+        public abstract Tween CreateTween(CreateTweenArgs args);
     }
     
     /// <summary>
@@ -28,9 +31,44 @@ namespace TweenTimeline
     {
         // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
         [SerializeField, ReadOnly] private byte _;
+        
+        public override Tween CreateTween(CreateTweenArgs args)
+        {
+            var target = args.Binding as TBinding;
+            if (target == null) return null;
+            
+            var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
-        // WARNING: Template内で参照型フィールドをシリアライズする場合、Behaviour作成時にディーブコピーされないので注意
-        protected abstract TweenMixerBehaviour<TBinding> Template { get; }
+            float currentTime = 0;
+            foreach (var clip in GetClips())
+            {
+                // interval
+                var tweenClip = (TweenClip<TBinding>)clip.asset;
+                float interval = (float)clip.start - currentTime;
+                currentTime = (float)(clip.start + clip.duration);
+                if (interval > 0) sequence.AppendInterval(interval);
+
+                var tweenClipInfo = new TweenClipInfo<TBinding>
+                {
+                    Target = target,
+                    Duration = (float)clip.duration,
+                    Parameter = args.Parameter
+                };
+                var tween = tweenClip.CreateTween(tweenClipInfo);
+                if (tween != null)
+                {
+                    sequence.Append(tween);
+                }
+            }
+
+            var remain = duration - currentTime;
+            if (remain > 0)
+            {
+                sequence.AppendInterval((float)remain);
+            }
+
+            return sequence;
+        }
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
@@ -41,23 +79,16 @@ namespace TweenTimeline
             
             var parameterHolder = director.GetComponent<TweenParameterHolder>();
             var parameter = parameterHolder != null ? parameterHolder.GetParameter() : new TweenParameter();
-            
-            foreach (var clip in GetClips())
+            var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, inputCount);
+            playable.GetBehaviour().Tween = CreateTween(new CreateTweenArgs
             {
-                var tweenClip = clip.asset as TweenClip<TBinding>;
-                if (tweenClip != null)
-                {
-                    tweenClip.StartTime = clip.start;
-                    tweenClip.Duration = clip.duration;
-                    tweenClip.Binding = binding;
-                    tweenClip.Parameter = parameter;
-                }
-            }
-
-            Template.Target = binding;
-            return ScriptPlayable<TweenMixerBehaviour>.Create(graph, Template, inputCount);
+                Binding = binding,
+                Parameter = parameter,
+                Duration = (float)timelineAsset.duration
+            });
+            return playable;
         }
-
+        
         /// <inheritdoc/>
         protected override void OnCreateClip(TimelineClip clip)
         {
@@ -70,33 +101,72 @@ namespace TweenTimeline
             }      
 #endif
         }
-    }
-
-    /// <summary>
-    /// TweenTimelineのMixerBehaviour
-    /// </summary>
-    public abstract class TweenTrack<TBinding, TMixerBehaviour> : TweenTrack<TBinding> 
-        where TBinding : Object
-        where TMixerBehaviour : TweenMixerBehaviour<TBinding>
-    {
-        [SerializeField, ExtractContent] private TMixerBehaviour template;
-        protected sealed override TweenMixerBehaviour<TBinding> Template => template;
-    }
-
-    /// <summary>
-    /// TweenTimelineのMixerBehaviour
-    /// </summary>
-    public class TweenMixerBehaviour : TweenPlayableBehaviour
-    {
         
-    }
+        public readonly struct ClipInputs
+        {
+            public readonly List<(float start, float end)> ClipIntervals;
 
+            public ClipInputs(List<(float start, float end)> clipIntervals)
+            {
+                ClipIntervals = clipIntervals;
+            }
+
+            public bool IsAnyPlaying(float trackTime)
+            {
+                bool active = false;
+                for (int i = 0; i < ClipIntervals.Count; i++)
+                {
+                    if (ClipIntervals[i].start <= trackTime && trackTime <= ClipIntervals[i].end)
+                    {
+                        active = true;
+                        break;
+                    }
+                }
+
+                return active;
+            }
+
+            public bool HasAnyStarted(float trackTime)
+            {
+                bool active = false;
+                for (int i = 0; i < ClipIntervals.Count; i++)
+                {
+                    if (ClipIntervals[i].start <= trackTime)
+                    {
+                        active = true;
+                        break;
+                    }
+                }
+
+                return active;
+            }
+        }
+
+        public ClipInputs GetClipInputs()
+        {
+            var inputs = new ClipInputs(new());
+
+            foreach (var clip in GetClips())
+            {
+                inputs.ClipIntervals.Add(((float)clip.start, (float)(clip.start + clip.duration)));
+            }
+
+            return inputs;
+        }
+    }
+    
     /// <summary>
     /// TweenTimelineのMixerBehaviour
     /// </summary>
-    public class TweenMixerBehaviour<TBinding> : TweenMixerBehaviour where TBinding : Object
+    public class TweenMixerBehaviour : PlayableBehaviour
     {
-        public TBinding Target { get; set; }
+        public Tween Tween { get; set; }
+        private PlayableDirector director;
+
+        public override void OnPlayableCreate(Playable playable)
+        {
+            director = playable.GetGraph().GetResolver() as PlayableDirector;
+        }
 
         /// <inheritdoc/>
         public sealed override void OnBehaviourPlay(Playable playable, FrameData info)
@@ -119,35 +189,35 @@ namespace TweenTimeline
         protected virtual void OnEnd(Playable playable) { }
         protected virtual void OnUpdate(Playable playable, double trackTime) { }
         
-        /// <inheritdoc/>
-        public override void PrepareFrame(Playable playable, FrameData info)
-        {
-            base.PrepareFrame(playable, info);
-        
-            var (jumped, trackTime) = GetWarpedTime(playable, info);
-            if (!jumped) return;
-            
-            // 時間がワープしている場合は、現在時刻の状態を再計算
-        
-            ResetToOriginalState();
-            OnStart(playable);
-            int inputCount = playable.GetInputCount();
-            
-            for (int i = 0; i < inputCount; i++)
-            {
-                var input = playable.GetInput(i);
-                var inputPlayable = (ScriptPlayable<TweenBehaviour>)input;
-                var clipBehaviour = inputPlayable.GetBehaviour();
-                var clipTime = trackTime - clipBehaviour.StartTime;
-                if (clipTime < 0) break;
-                clipBehaviour.Start();
-                clipBehaviour.Update(Math.Min(clipTime, clipBehaviour.Duration));
-                if (clipTime >= clipBehaviour.Duration)
-                {
-                    clipBehaviour.End();
-                }
-            }
-        }
+        // /// <inheritdoc/>
+        // public override void PrepareFrame(Playable playable, FrameData info)
+        // {
+        //     base.PrepareFrame(playable, info);
+        //
+        //     var (jumped, trackTime) = GetWarpedTime(playable, info);
+        //     if (!jumped) return;
+        //     
+        //     // 時間がワープしている場合は、現在時刻の状態を再計算
+        //
+        //     ResetToOriginalState();
+        //     OnStart(playable);
+        //     int inputCount = playable.GetInputCount();
+        //     
+        //     for (int i = 0; i < inputCount; i++)
+        //     {
+        //         var input = playable.GetInput(i);
+        //         var inputPlayable = (ScriptPlayable<TweenBehaviour>)input;
+        //         var clipBehaviour = inputPlayable.GetBehaviour();
+        //         var clipTime = trackTime - clipBehaviour.StartTime;
+        //         if (clipTime < 0) break;
+        //         clipBehaviour.Start();
+        //         clipBehaviour.Update(Math.Min(clipTime, clipBehaviour.Duration));
+        //         if (clipTime >= clipBehaviour.Duration)
+        //         {
+        //             clipBehaviour.End();
+        //         }
+        //     }
+        // }
         
         /// <summary>
         /// 時刻がワープしたかどうかと、トラックの現在時刻を取得
@@ -169,12 +239,16 @@ namespace TweenTimeline
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {   
             var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration());
-            OnUpdate(playable, trackTime);
+            // OnUpdate(playable, trackTime);
+            
+            // var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
+            // var trackTime = GetTrackTime(playable.GetTime(), duration);
+            Tween.GotoWithCallbacks(trackTime);
         }
 
         private double GetTrackTime(double time, double duration)
         {
-            return _director.extrapolationMode switch
+            return director.extrapolationMode switch
             {
                 DirectorWrapMode.Loop => time % duration,
                 _ => Math.Min(time, duration)

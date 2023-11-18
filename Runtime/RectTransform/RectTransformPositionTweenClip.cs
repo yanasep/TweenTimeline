@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
+using Yanasep;
 
 namespace TweenTimeline
 {
@@ -10,33 +11,26 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Position Tween")]
-    public class RectTransformPositionTweenClip : TweenClip<RectTransform, RectTransformPositionTweenBehaviour>
-    {
-    }
-
-    [Serializable]
-    public class RectTransformPositionTweenBehaviour : TweenBehaviour<RectTransform>
+    public class RectTransformPositionTweenClip : TweenClip<RectTransform>
     {
         public RectTransformTweenPositionType PositionType;
-
-        public TweenTimelineFieldVector3 EndValue;
-
-        public TweenTimelineFieldBool IsRelative;
-
+        
+        [SerializeReference, SelectableSerializeReference] 
+        public TweenTimelineExpressionVector3 EndValue;
+        
+        [SerializeReference, SelectableSerializeReference]
+        public TweenTimelineExpressionBool IsRelative;
+        
         public Ease Ease;
-
-        private Vector3 _startValue;
-
-        public override void Start()
+        
+        public override Tween CreateTween(TweenClipInfo<RectTransform> info)
         {
-            _startValue = Target.GetPosition(PositionType);
+            var target = info.Target;
+            return DOTween.To(() => target.GetPosition(PositionType), x => target.SetPosition(PositionType, x),
+                    EndValue.Evaluate(info.Parameter),
+                    info.Duration)
+                .SetEase(Ease)
+                .SetRelative(IsRelative.Evaluate(info.Parameter));
         }
-
-        public override void Update(double localTime)
-        {
-            var val = DOVirtual.EasedValue(_startValue, EndValue.Value, (float)(localTime / Duration), Ease);
-            if (IsRelative.Value) val += _startValue;
-            Target.SetPosition(PositionType, val);
-        } 
     }
 }

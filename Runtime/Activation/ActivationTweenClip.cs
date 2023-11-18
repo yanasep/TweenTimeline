@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEngine;
 
 namespace TweenTimeline
@@ -11,6 +12,9 @@ namespace TweenTimeline
     [DisplayName("Activation Tween")]
     public class ActivationTweenClip : TweenClip<GameObject>
     {
-        protected override TweenBehaviour<GameObject> Template => null;
+        public override Tween CreateTween(TweenClipInfo<GameObject> info)
+        {
+            return null;
+        }
     }
 }

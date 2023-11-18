@@ -1,11 +1,10 @@
-using System;
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -22,8 +21,15 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("d_Toggle Icon").image as Texture2D;
 #endif
 
-        [SerializeField, ExtractContent] private ActivationTweenMixerBehaviour template;
-        protected override TweenMixerBehaviour<GameObject> Template => template;
+        public override Tween CreateTween(CreateTweenArgs args)
+        {
+            var target = (GameObject)args.Binding;
+            var inputs = GetClipInputs();
+            return DOTweenEx.EveryUpdate(args.Duration, t =>
+            {
+                target.SetActive(inputs.IsAnyPlaying(t));
+            });
+        }
 
         /// <inheritdoc/>
         public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
@@ -37,18 +43,4 @@ namespace TweenTimeline
 #endif
         }
     }
-
-    [Serializable]
-    public class ActivationTweenMixerBehaviour : TweenMixerBehaviour<GameObject>
-    {
-        protected override void OnStart(Playable playable)
-        {
-            Target.SetActive(false);
-        }
-
-        protected override void OnUpdate(Playable playable, double trackTime)
-        {
-            Target.SetActive(IsAnyClipPlaying(playable));
-        }
-    } 
 }

@@ -1433,8 +1433,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 948ec574ec4a4beba5d58fcebfe01ce8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 19
-  newValue: 19
+  value: 43
+  newValue: 43
 --- !u!4 &2083994646
 Transform:
   m_ObjectHideFlags: 0

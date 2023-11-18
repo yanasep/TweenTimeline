@@ -19,5 +19,6 @@ namespace TweenTimeline
     {
         public Object Binding { get; init; }
         public TweenParameter Parameter { get; init; }
+        public float Duration { get; init; }
     }
 }

@@ -11,28 +11,16 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Color Tween")]
-    public class GraphicColorTweenClip : TweenClip<Graphic, GraphicColorTweenBehaviour>
-    {
-    }
-
-    [Serializable]
-    public class GraphicColorTweenBehaviour : TweenBehaviour<Graphic>
+    public class GraphicColorTweenClip : TweenClip<Graphic>
     {
         public TweenTimelineFieldColor EndValue = new(Color.white);
         public RGBAFlags Enable;
         public TweenTimelineField<Ease> Ease;
 
-        private Color _start;
-
-        public override void Start()
+        public override Tween CreateTween(TweenClipInfo<Graphic> info)
         {
-            _start = Target.color;
-        }
-
-        /// <inheritdoc/>
-        public override void Update(double localTime)
-        {
-            Target.color = Color.Lerp(_start, Enable.Apply(Target.color, EndValue.Value), DOVirtual.EasedValue(0, 1, (float)(localTime / Duration), Ease.Value));
+            var target = info.Target;
+            return DOTween.To(() => target.color, val => target.color = Enable.Apply(target.color, val), EndValue.Value, info.Duration).SetEase(Ease.Value);
         }
     }
 }
