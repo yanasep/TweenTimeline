@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -13,12 +13,19 @@ namespace TweenTimeline
     // [TrackClipType(typeof(TweenParameterClip))]
     public class TweenParameterTrack : TrackAsset
     {
-        [SerializeField] private SerializableDictionary<string, float> floats;
-        [SerializeField] private SerializableDictionary<string, int> ints;
-        [SerializeField] private SerializableDictionary<string, bool> bools;
-        [SerializeField] private SerializableDictionary<string, Vector3> vector3s;
-        [SerializeField] private SerializableDictionary<string, Vector2> vector2s;
-        [SerializeField] private SerializableDictionary<string, Color> colors;
+        [Serializable]
+        public struct Entry<T>
+        {
+            public string Name;
+            public T Value;
+        }
+        
+        [SerializeField] private Entry<float>[] floats;
+        [SerializeField] private Entry<int>[] ints;
+        [SerializeField] private Entry<bool>[] bools;
+        [SerializeField] private Entry<Vector3>[] vector3s;
+        [SerializeField] private Entry<Vector2>[] vector2s;
+        [SerializeField] private Entry<Color>[] colors;
 
         /// <summary>
         /// TimelineParameterContainerを取得
@@ -36,14 +43,14 @@ namespace TweenTimeline
             return parameter;
         }
 
-        private void Set<T>(SerializableDictionary<string, T> source, TimelineParameterDictionary<T> dest)
+        private void Set<T>(Entry<T>[] source, TimelineParameterDictionary<T> dest)
         {
             dest.Clear();
             
-            foreach (var (key, val) in source)
+            foreach (var entry in source)
             {
-                if (string.IsNullOrEmpty(key)) continue;
-                dest.Set(key, val);
+                if (string.IsNullOrEmpty(entry.Name)) continue;
+                dest.Set(entry.Name, entry.Value);
             }
         }
         
