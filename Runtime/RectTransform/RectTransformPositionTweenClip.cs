@@ -21,7 +21,7 @@ namespace TweenTimeline
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionBool IsRelative;
         
-        public Ease Ease;
+        public EaseOrCurve Ease;
         
         public override Tween CreateTween(TweenClipInfo<RectTransform> info)
         {

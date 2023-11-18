@@ -4,7 +4,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using UnityEngine.UI;
 
 namespace TweenTimeline
 {
@@ -37,7 +36,7 @@ namespace TweenTimeline
             base.GatherProperties(director, driver);
 
 #if UNITY_EDITOR
-            var binding = director.GetGenericBinding(this) as Graphic;
+            var binding = director.GetGenericBinding(this) as GameObject;
             if (binding == null) return;
             driver.AddFromName(binding, "m_IsActive");
 #endif

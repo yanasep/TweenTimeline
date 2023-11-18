@@ -13,7 +13,8 @@ namespace TweenTimeline
         /// <summary>
         /// PlayableAssetをTweenに変換
         /// </summary>
-        public static Tween CreateTween(TimelineAsset timelineAsset, PlayableDirector director, TweenTimelineDirector.SetParameter setParameter)
+        public static Tween CreateTween(TimelineAsset timelineAsset, PlayableDirector director, 
+            TweenTimelineDirector.SetParameter setParameter)
         {
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
 

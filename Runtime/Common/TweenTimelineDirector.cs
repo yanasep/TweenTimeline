@@ -47,7 +47,7 @@ namespace TweenTimeline
         {
             var asset = _director.playableAsset as TimelineAsset;
             if (asset == null) return;
-            Play(asset, null);
+            Play(asset);
         }
 
         /// <summary>
