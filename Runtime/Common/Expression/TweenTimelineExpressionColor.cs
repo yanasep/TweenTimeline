@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 using Yanasep;
 
@@ -16,7 +17,7 @@ namespace TweenTimeline
     /// Colorの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("Color/Constant")]
+    [DisplayName("Color/Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionColorConstant : TweenTimelineExpressionColor
     {
@@ -33,7 +34,7 @@ namespace TweenTimeline
     /// Colorの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("Color/Parameter")]
+    [DisplayName("Color/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionColorParameter : TweenTimelineExpressionColor, ISerializationCallbackReceiver
     {

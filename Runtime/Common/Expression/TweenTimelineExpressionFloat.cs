@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 using Yanasep;
 
@@ -16,7 +17,7 @@ namespace TweenTimeline
     /// floatの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("float/Constant")]
+    [DisplayName("float/Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionFloatConstant : TweenTimelineExpressionFloat
     {
@@ -33,7 +34,7 @@ namespace TweenTimeline
     /// floatの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("float/Parameter")]
+    [DisplayName("float/Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionFloatParameter : TweenTimelineExpressionFloat, ISerializationCallbackReceiver
     {
@@ -61,7 +62,7 @@ namespace TweenTimeline
     /// floatの値表現 (Add)
     /// </summary>
     [Serializable]
-    [Name("float/Add")]
+    [DisplayName("float/Add")]
     public class TweenTimelineExpressionFloatAdd : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -81,7 +82,7 @@ namespace TweenTimeline
     /// floatの値表現 (Subtract)
     /// </summary>
     [Serializable]
-    [Name("float/Subtract")]
+    [DisplayName("float/Subtract")]
     public class TweenTimelineExpressionFloatSubtract : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference]
@@ -101,7 +102,7 @@ namespace TweenTimeline
     /// floatの値表現 (Multiply)
     /// </summary>
     [Serializable]
-    [Name("float/Multiply")]
+    [DisplayName("float/Multiply")]
     public class TweenTimelineExpressionFloatMultiply : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -121,7 +122,7 @@ namespace TweenTimeline
     /// floatの値表現 (Divide)
     /// </summary>
     [Serializable]
-    [Name("float/Divide")]
+    [DisplayName("float/Divide")]
     public class TweenTimelineExpressionFloatDivide : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference]

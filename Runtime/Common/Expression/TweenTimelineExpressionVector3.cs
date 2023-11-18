@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 using Yanasep;
 
@@ -16,7 +17,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("Constant")]
+    [DisplayName("Constant")]
     public class TweenTimelineExpressionVector3Constant : TweenTimelineExpressionVector3
     {
         [NoPropertyLabel] public Vector3 Value;
@@ -39,7 +40,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("Parameter")]
+    [DisplayName("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionVector3Parameter : TweenTimelineExpressionVector3, ISerializationCallbackReceiver
     {
@@ -71,7 +72,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Add)
     /// </summary>
     [Serializable]
-    [Name("Add")]
+    [DisplayName("Add")]
     public class TweenTimelineExpressionVector3Add : TweenTimelineExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -91,7 +92,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Subtract)
     /// </summary>
     [Serializable]
-    [Name("Subtract")]
+    [DisplayName("Subtract")]
     public class TweenTimelineExpressionVector3Subtract : TweenTimelineExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -111,7 +112,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Multiply)
     /// </summary>
     [Serializable]
-    [Name("Multiply")]
+    [DisplayName("Multiply")]
     public class TweenTimelineExpressionVector3Multiply : TweenTimelineExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -131,7 +132,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Divide)
     /// </summary>
     [Serializable]
-    [Name("Divide")]
+    [DisplayName("Divide")]
     public class TweenTimelineExpressionVector3Divide : TweenTimelineExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]
@@ -151,7 +152,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Scale)
     /// </summary>
     [Serializable]
-    [Name("Scale")]
+    [DisplayName("Scale")]
     public class TweenTimelineExpressionVector3Scale : TweenTimelineExpressionVector3
     {
         [SerializeReference, SelectableSerializeReference]

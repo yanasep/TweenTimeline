@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Yanasep;
@@ -17,7 +18,7 @@ namespace TweenTimeline
     /// boolの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("Constant")]
+    [DisplayName("Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionBoolConstant : TweenTimelineExpressionBool
     {
@@ -34,7 +35,7 @@ namespace TweenTimeline
     /// boolの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("Parameter")]
+    [DisplayName("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionBoolParameter : TweenTimelineExpressionBool, ISerializationCallbackReceiver
     {
@@ -62,7 +63,7 @@ namespace TweenTimeline
     /// boolの値表現 (And)
     /// </summary>
     [Serializable]
-    [Name("And")]
+    [DisplayName("And")]
     public class TweenTimelineExpressionBoolAnd : TweenTimelineExpressionBool
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -82,7 +83,7 @@ namespace TweenTimeline
     /// boolの値表現 (Or)
     /// </summary>
     [Serializable]
-    [Name("Or")]
+    [DisplayName("Or")]
     public class TweenTimelineExpressionBoolOr : TweenTimelineExpressionBool
     {
         [SerializeReference, SelectableSerializeReference]
@@ -102,7 +103,7 @@ namespace TweenTimeline
     /// Vector3の値表現 (Not)
     /// </summary>
     [Serializable]
-    [Name("Not")]
+    [DisplayName("Not")]
     public class TweenTimelineExpressionBoolNot : TweenTimelineExpressionBool
     {
         [SerializeReference, SelectableSerializeReference] 

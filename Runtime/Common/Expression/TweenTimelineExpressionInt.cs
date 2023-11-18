@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 using Yanasep;
 
@@ -16,7 +17,7 @@ namespace TweenTimeline
     /// intの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [Name("Constant")]
+    [DisplayName("Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionIntConstant : TweenTimelineExpressionInt
     {
@@ -33,7 +34,7 @@ namespace TweenTimeline
     /// intの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [Name("Parameter")]
+    [DisplayName("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionIntParameter : TweenTimelineExpressionInt, ISerializationCallbackReceiver
     {
@@ -61,7 +62,7 @@ namespace TweenTimeline
     /// intの値表現 (Add)
     /// </summary>
     [Serializable]
-    [Name("Add")]
+    [DisplayName("Add")]
     public class TweenTimelineExpressionIntAdd : TweenTimelineExpressionInt
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -81,7 +82,7 @@ namespace TweenTimeline
     /// intの値表現 (Subtract)
     /// </summary>
     [Serializable]
-    [Name("Subtract")]
+    [DisplayName("Subtract")]
     public class TweenTimelineExpressionIntSubtract : TweenTimelineExpressionInt
     {
         [SerializeReference, SelectableSerializeReference]
@@ -101,7 +102,7 @@ namespace TweenTimeline
     /// intの値表現 (Multiply)
     /// </summary>
     [Serializable]
-    [Name("Multiply")]
+    [DisplayName("Multiply")]
     public class TweenTimelineExpressionIntMultiply : TweenTimelineExpressionInt
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -121,7 +122,7 @@ namespace TweenTimeline
     /// intの値表現 (Divide)
     /// </summary>
     [Serializable]
-    [Name("Divide")]
+    [DisplayName("Divide")]
     public class TweenTimelineExpressionIntDivide : TweenTimelineExpressionInt
     {
         [SerializeReference, SelectableSerializeReference]
