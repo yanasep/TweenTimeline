@@ -279,9 +279,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PositionType: 0
   EndValue:
-    rid: 5718004038834585605
+    rid: 5718004038834585612
   IsRelative:
-    rid: 5718004038834585603
+    rid: 5718004038834585611
   Ease:
     Ease: 0
     UseAnimationCurve: 0
@@ -321,14 +321,25 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 5718004038834585603
+    - rid: 5718004038834585611
       type: {class: TweenTimelineExpressionBoolConstant, ns: TweenTimeline, asm: TweenTimeline}
       data:
         Value: 0
-    - rid: 5718004038834585605
-      type: {class: TweenTimelineExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
+    - rid: 5718004038834585612
+      type: {class: TweenTimelineExpressionVector3Divide, ns: TweenTimeline, asm: TweenTimeline}
       data:
-        ParameterName: TargetPosition
+        Left:
+          rid: 5718004038834585613
+        Right:
+          rid: 5718004038834585614
+    - rid: 5718004038834585613
+      type: {class: TweenTimelineExpressionVector3Constant, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        Value: {x: 3.88, y: 0, z: 0}
+    - rid: 5718004038834585614
+      type: {class: TweenTimelineExpressionFloatConstant, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        Value: -0.62
 --- !u!114 &7603085381516058995
 MonoBehaviour:
   m_ObjectHideFlags: 1

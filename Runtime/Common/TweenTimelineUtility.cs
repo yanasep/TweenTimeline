@@ -23,6 +23,7 @@ namespace TweenTimeline
 
             foreach (var track in timelineAsset.GetOutputTracks())
             {
+                if (track.mutedInHierarchy) continue;
                 if (track is not TweenTrack tweenTrack) continue;
 
                 var binding = director.GetGenericBinding(tweenTrack);
@@ -42,6 +43,7 @@ namespace TweenTimeline
         {
             foreach (var track in timelineAsset.GetOutputTracks())
             {
+                if (track.mutedInHierarchy) continue;
                 if (track is TweenParameterTrack parameterTrack)
                 {
                     return parameterTrack.GetParameter();
