@@ -44,6 +44,7 @@ namespace TweenTimeline
             {
                 // interval
                 var tweenClip = (TweenClip<TBinding>)clip.asset;
+                tweenClip.target = target;
                 float interval = (float)clip.start - currentTime;
                 currentTime = (float)(clip.start + clip.duration);
                 if (interval > 0) sequence.AppendInterval(interval);

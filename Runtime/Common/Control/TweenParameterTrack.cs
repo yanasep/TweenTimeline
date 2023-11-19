@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -62,5 +63,75 @@ namespace TweenTimeline
         {
             return default;
         }
+        
+#if UNITY_EDITOR
+        private static readonly HashSet<PlayableDirector> s_ProcessedDirectors = new HashSet<PlayableDirector>();
+        
+        /// <inheritdoc/>
+        public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
+        {
+            if (director == null)
+                return;
+
+            // avoid recursion
+            if (s_ProcessedDirectors.Contains(director))
+                return;
+
+            s_ProcessedDirectors.Add(director);
+
+            var subDirectorsToPreview = new HashSet<PlayableDirector>();
+
+            foreach (var clip in GetClips())
+            {
+                var controlPlayableAsset = clip.asset as ControlPlayableAsset;
+                if (controlPlayableAsset == null)
+                    continue;
+
+                var gameObject = controlPlayableAsset.sourceGameObject.Resolve(director);
+                if (gameObject == null)
+                    continue;
+                
+                subDirectorsToPreview.UnionWith(GetComponent<PlayableDirector>(gameObject));
+            }
+
+            PreviewDirectors(driver, subDirectorsToPreview);
+
+            s_ProcessedDirectors.Remove(director);
+
+            subDirectorsToPreview.Clear();
+        }
+        
+        internal static void PreviewDirectors(IPropertyCollector driver, IEnumerable<PlayableDirector> directors)
+        {
+            foreach (var childDirector in directors)
+            {
+                if (childDirector == null)
+                    continue;
+
+                var timeline = childDirector.playableAsset as TimelineAsset;
+                if (timeline == null)
+                    continue;
+
+                timeline.GatherProperties(childDirector, driver);
+            }
+        }
+        
+        internal IList<T> GetComponent<T>(GameObject gameObject)
+        {
+            var components = new List<T>();
+            if (gameObject != null)
+            {
+                // if (searchHierarchy)
+                // {
+                //     gameObject.GetComponentsInChildren<T>(true, components);
+                // }
+                // else
+                {
+                    gameObject.GetComponents<T>(components);
+                }
+            }
+            return components;
+        }
+#endif
     }
 }
