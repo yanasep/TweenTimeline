@@ -178,11 +178,8 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
-  floats:
-  - Name: 
-    Value: 0
-  - Name: 
-    Value: 0
+  _: 0
+  floats: []
   ints: []
   bools: []
   vector3s:

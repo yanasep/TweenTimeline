@@ -13,6 +13,9 @@ namespace TweenTimeline
     // [TrackClipType(typeof(TweenParameterClip))]
     public class TweenParameterTrack : TrackAsset
     {
+        // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
+        [SerializeField, Common.ReadOnly] private byte _;
+        
         [Serializable]
         public struct Entry<T>
         {
