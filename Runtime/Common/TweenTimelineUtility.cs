@@ -41,6 +41,8 @@ namespace TweenTimeline
 
         public static TweenParameter GetTweenParameter(TimelineAsset timelineAsset)
         {
+            if (timelineAsset == null) return null;
+            
             foreach (var track in timelineAsset.GetOutputTracks())
             {
                 if (track.mutedInHierarchy) continue;

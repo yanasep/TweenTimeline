@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a1c94554adb495caa5d907b34455b40, type: 3}
   m_Name: ActivationTweenClip
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!114 &-3376053721125720014
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -274,6 +275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedb5db395ce4a2585e5c4b860338e68, type: 3}
   m_Name: RectTransformPositionTweenClip
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   PositionType: 0
   EndValue:
     rid: 5718004038834585612

@@ -224,7 +224,11 @@ PlayableDirector:
     value: {fileID: 2547630930989272211}
   - key: {fileID: 0}
     value: {fileID: 2547630930989272211}
-  - key: {fileID: 6779325764354009375, guid: b03de3b562bc540dd8c3cef3c1bf4e0e, type: 2}
+  - key: {fileID: 0}
+    value: {fileID: 2547630930989272214}
+  - key: {fileID: 0}
+    value: {fileID: 2547630930989272214}
+  - key: {fileID: -4832611753957265783, guid: b03de3b562bc540dd8c3cef3c1bf4e0e, type: 2}
     value: {fileID: 2547630930989272214}
   m_ExposedReferences:
     m_References:
@@ -1624,7 +1628,7 @@ PrefabInstance:
       objectReference: {fileID: 1992680847}
     - target: {fileID: 8024394947737877198, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9056960254268646697, guid: 22502021e253347aeb90681f30a730e1, type: 3}
       propertyPath: m_SceneBindings.Array.size

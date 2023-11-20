@@ -5,12 +5,12 @@ using UnityEngine.Timeline;
 
 namespace TweenTimeline
 {
-    [CustomTimelineEditor(typeof(MyControlPlayableAsset))]
-    class MyControlPlayableAssetEditor : ClipEditor
+    [CustomTimelineEditor(typeof(SubTweenClip))]
+    public class SubTweenClipEditor : ClipEditor
     {
         public override void OnCreate(TimelineClip clip, TrackAsset track, TimelineClip clonedFrom)
         {
-            var asset = (MyControlPlayableAsset)clip.asset;
+            var asset = (SubTweenClip)clip.asset;
             PlayableDirector binding = null;
 
             // go by sourceObject first, then by prefab
@@ -31,7 +31,7 @@ namespace TweenTimeline
 
         public override void GetSubTimelines(TimelineClip clip, PlayableDirector director, List<PlayableDirector> subTimelines)
         {
-            var asset = (MyControlPlayableAsset)clip.asset;
+            var asset = (SubTweenClip)clip.asset;
 
             // If there is a prefab, it will override the source GameObject
             if (director == null)
