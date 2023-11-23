@@ -50,7 +50,8 @@ namespace TweenTimeline
         private void Set<T>(Entry<T>[] source, TimelineParameterDictionary<T> dest)
         {
             dest.Clear();
-            
+
+            if (source == null) return;
             foreach (var entry in source)
             {
                 if (string.IsNullOrEmpty(entry.Name)) continue;

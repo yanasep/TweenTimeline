@@ -5,7 +5,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -22,9 +21,6 @@ namespace TweenTimeline
         public override Texture2D Icon => EditorGUIUtility.IconContent("d_Toggle Icon").image as Texture2D;
 #endif
         
-        public bool controlActivation;
-        
-        [SerializeField, EnableIf(nameof(controlActivation), true)]
         public ActivationControlPlayable.PostPlaybackState postPlayback = ActivationControlPlayable.PostPlaybackState.Revert;
 
         /// <inheritdoc/>

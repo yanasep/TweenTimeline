@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Common;
 using DG.Tweening;
@@ -34,46 +33,6 @@ namespace TweenTimeline
 
             return inputs;
         }
-        
-        public readonly struct ClipInputs
-        {
-            public readonly List<(float start, float end)> ClipIntervals;
-
-            public ClipInputs(List<(float start, float end)> clipIntervals)
-            {
-                ClipIntervals = clipIntervals;
-            }
-
-            public bool IsAnyPlaying(float trackTime)
-            {
-                bool active = false;
-                for (int i = 0; i < ClipIntervals.Count; i++)
-                {
-                    if (ClipIntervals[i].start <= trackTime && trackTime <= ClipIntervals[i].end)
-                    {
-                        active = true;
-                        break;
-                    }
-                }
-
-                return active;
-            }
-
-            public bool HasAnyStarted(float trackTime)
-            {
-                bool active = false;
-                for (int i = 0; i < ClipIntervals.Count; i++)
-                {
-                    if (ClipIntervals[i].start <= trackTime)
-                    {
-                        active = true;
-                        break;
-                    }
-                }
-
-                return active;
-            }
-        }
     }
     
     /// <summary>
@@ -83,6 +42,8 @@ namespace TweenTimeline
     {
         // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
         [SerializeField, ReadOnly] private byte _;
+
+        public virtual TweenCallback GetStartCallback(CreateTweenArgs args) => null;
         
         public override Tween CreateTween(CreateTweenArgs args)
         {
@@ -91,12 +52,17 @@ namespace TweenTimeline
             
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
+            var startCallback = GetStartCallback(args);
+            if (startCallback != null)
+            {
+                sequence.AppendCallback(startCallback);
+            }
+
             double currentTime = 0;
             foreach (var clip in GetClips())
             {
                 // interval
                 var tweenClip = (TweenClip<TBinding>)clip.asset;
-                tweenClip.target = target;
                 float interval = (float)(clip.start - currentTime);
                 currentTime = clip.start + clip.duration;
                 if (interval > 0) sequence.AppendInterval(interval);
@@ -163,76 +129,10 @@ namespace TweenTimeline
         public Tween Tween { get; set; }
         private PlayableDirector director;
 
+        /// <inheritdoc/>
         public override void OnPlayableCreate(Playable playable)
         {
             director = playable.GetGraph().GetResolver() as PlayableDirector;
-        }
-
-        /// <inheritdoc/>
-        public sealed override void OnBehaviourPlay(Playable playable, FrameData info)
-        {
-            base.OnBehaviourPlay(playable, info);
-            OnStart(playable);
-        }
-
-        /// <inheritdoc/>
-        public override void OnBehaviourPause(Playable playable, FrameData info)
-        {
-            base.OnBehaviourPause(playable, info);
-            OnEnd(playable);
-        }
-
-        /// <summary>
-        /// Track開始時 (ループ時も呼ばれる)
-        /// </summary>
-        protected virtual void OnStart(Playable playable) { }
-        protected virtual void OnEnd(Playable playable) { }
-        protected virtual void OnUpdate(Playable playable, double trackTime) { }
-        
-        // /// <inheritdoc/>
-        // public override void PrepareFrame(Playable playable, FrameData info)
-        // {
-        //     base.PrepareFrame(playable, info);
-        //
-        //     var (jumped, trackTime) = GetWarpedTime(playable, info);
-        //     if (!jumped) return;
-        //     
-        //     // 時間がワープしている場合は、現在時刻の状態を再計算
-        //
-        //     ResetToOriginalState();
-        //     OnStart(playable);
-        //     int inputCount = playable.GetInputCount();
-        //     
-        //     for (int i = 0; i < inputCount; i++)
-        //     {
-        //         var input = playable.GetInput(i);
-        //         var inputPlayable = (ScriptPlayable<TweenBehaviour>)input;
-        //         var clipBehaviour = inputPlayable.GetBehaviour();
-        //         var clipTime = trackTime - clipBehaviour.StartTime;
-        //         if (clipTime < 0) break;
-        //         clipBehaviour.Start();
-        //         clipBehaviour.Update(Math.Min(clipTime, clipBehaviour.Duration));
-        //         if (clipTime >= clipBehaviour.Duration)
-        //         {
-        //             clipBehaviour.End();
-        //         }
-        //     }
-        // }
-        
-        /// <summary>
-        /// 時刻がワープしたかどうかと、トラックの現在時刻を取得
-        /// </summary>
-        private (bool warped, float trackTime) GetWarpedTime(Playable playable, FrameData info)
-        {
-            var time = (float)playable.GetTime();
-            if (info.seekOccurred) return (true, time);
-        
-            var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
-            var prevTrackTime = GetTrackTime(playable.GetPreviousTime(), duration);
-            var trackTime = GetTrackTime(playable.GetTime(), duration);
-            var warped = prevTrackTime > trackTime;
-            // var warped = info.evaluationType == FrameData.EvaluationType.Evaluate;
-            return (warped, (float)trackTime);
         }
 
         /// <inheritdoc/>
@@ -242,6 +142,12 @@ namespace TweenTimeline
             Tween.GotoWithCallbacks(trackTime);
         }
 
+        /// <inheritdoc/>
+        public override void OnPlayableDestroy(Playable playable)
+        {
+            Tween?.Kill();
+        }
+
         private double GetTrackTime(double time, double duration)
         {
             return director.extrapolationMode switch
@@ -249,45 +155,6 @@ namespace TweenTimeline
                 DirectorWrapMode.Loop => time % duration,
                 _ => Math.Min(time, duration)
             };
-        }
-
-        private void ResetToOriginalState()
-        {
-            // TODO
-        }
-
-        public bool IsAnyClipPlaying(Playable playable)
-        {
-            int inputCount = playable.GetInputCount();
-            bool hasInput = false;
-            for (int i = 0; i < inputCount; i++)
-            {
-                if (playable.GetInputWeight(i) > 0)
-                {
-                    hasInput = true;
-                    break;
-                }
-            }
-
-            return hasInput;
-        }
-
-        public bool HasAnyClipStarted(Playable playable)
-        {   
-            int inputCount = playable.GetInputCount();
-            bool hasInput = false;
-            for (int i = 0; i < inputCount; i++)
-            {
-                var time = playable.GetInput(i).GetTime();
-                Debug.Log($"input time {time}, index {i}");
-                if (playable.GetInputWeight(i) > 0)
-                {
-                    hasInput = true;
-                    break;
-                }
-            }
-
-            return hasInput;
         }
     }
 }

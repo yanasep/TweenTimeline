@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -19,21 +20,26 @@ namespace TweenTimeline
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("MoveTool").image as Texture2D;
 #endif
-        
         public bool SetStartValue;
 
         [EnableIf(nameof(SetStartValue), true)]
-        public TweenTimelineFieldVector3 StartValue;
+        [SerializeReference, SelectableSerializeReference]
+        public TweenTimelineExpressionVector3 StartValue = new TweenTimelineExpressionVector3Constant { Value = Vector3.zero };
 
         [EnableIf(nameof(SetStartValue), true)]
-        public TweenTimelineField<RectTransformTweenPositionType> PositionType;
-        
-        // protected override void OnStart(Playable playable)
-        // {
-        //     base.OnStart(playable);
-        //     if (!SetStartValue) return;
-        //
-        //     Target.SetPosition(PositionType.Value, StartValue.Value);
-        // }
+        public RectTransformTweenPositionType PositionType;
+
+        /// <inheritdoc/>
+        public override TweenCallback GetStartCallback(CreateTweenArgs args)
+        {
+            if (!SetStartValue) return null;
+
+            var target = (RectTransform)args.Binding;
+            var startPos = StartValue.Evaluate(args.Parameter);
+            return () =>
+            {
+                target.SetPosition(PositionType, startPos);
+            };
+        }
     }
 }

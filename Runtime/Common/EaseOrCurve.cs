@@ -17,34 +17,38 @@ namespace TweenTimeline
     [CustomPropertyDrawer(typeof(EaseOrCurve))]
     public class EaseOrCurvePropertyDrawer : PropertyDrawer
     {
+        private readonly string[] options = { "Ease", "Curve" };
+        private const float PopupWidth = 60;
+        
         /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var fieldRect = position;
-            fieldRect.height = EditorGUIUtility.singleLineHeight;
+            using var _ = new EditorGUI.PropertyScope(position, label, property);
+            
+            var easeProp = property.FindPropertyRelative(nameof(EaseOrCurve.Ease));
+            var curveProp = property.FindPropertyRelative(nameof(EaseOrCurve.Curve));
+            var isCurveProp = property.FindPropertyRelative(nameof(EaseOrCurve.UseAnimationCurve));
 
-            using (new EditorGUI.PropertyScope(fieldRect, label, property))
-            {
-                var easeProp = property.FindPropertyRelative(nameof(EaseOrCurve.Ease));
-                var curveProp = property.FindPropertyRelative(nameof(EaseOrCurve.Curve));
-                var isCustomProp = property.FindPropertyRelative(nameof(EaseOrCurve.UseAnimationCurve));
-                var activeProp = isCustomProp.boolValue ? curveProp : easeProp;
-                EditorGUI.PropertyField(fieldRect, activeProp, new GUIContent("Ease"));
+            var rect = EditorGUI.PrefixLabel(position, label);
 
-                fieldRect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                
-                var rect = EditorGUI.PrefixLabel(fieldRect, new GUIContent(" "));
-                var prevIndent = EditorGUI.indentLevel;
-                EditorGUI.indentLevel = 0;
-                EditorGUI.PropertyField(rect, isCustomProp, new GUIContent("Animation Curve"));
-                EditorGUI.indentLevel = prevIndent;
-            }
+            var prevIndent = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+            var popupPos = rect;
+            popupPos.width = PopupWidth;
+            var index = isCurveProp.boolValue ? 1 : 0;
+            index = EditorGUI.Popup(popupPos, index, options);
+            isCurveProp.boolValue = index == 1;
+            var selectedProp = isCurveProp.boolValue ? curveProp : easeProp;
+            var fieldPos = rect;
+            fieldPos.xMin = popupPos.xMax + 2;
+            EditorGUI.PropertyField(fieldPos, selectedProp, GUIContent.none);
+            EditorGUI.indentLevel = prevIndent;
         }
 
         /// <inheritdoc/>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 2;
+            return EditorGUIUtility.singleLineHeight;
         }
     }
 #endif

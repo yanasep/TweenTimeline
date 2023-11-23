@@ -54,6 +54,8 @@ namespace TweenTimeline
          
          public override Tween CreateTween(TweenClipInfo<PlayableDirector> info)
          {
+             if (timelineAsset == null) return null;
+             
              return TweenTimelineUtility.CreateTween(timelineAsset, info.Target, parameter =>
              {
                  Set(parameter.Int, ints, info.Parameter);
@@ -71,6 +73,7 @@ namespace TweenTimeline
          {
              foreach (var overwrite in overwrites)
              {
+                 if (overwrite.Expression == null) continue;
                  destParamDic.Set(overwrite.ParameterName, overwrite.Expression.Evaluate(parentParameter));
              }
          }

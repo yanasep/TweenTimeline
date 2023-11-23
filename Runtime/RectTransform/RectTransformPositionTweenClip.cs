@@ -16,10 +16,10 @@ namespace TweenTimeline
         public RectTransformTweenPositionType PositionType;
         
         [SerializeReference, SelectableSerializeReference] 
-        public TweenTimelineExpressionVector3 EndValue;
+        public TweenTimelineExpressionVector3 EndValue = new TweenTimelineExpressionVector3Constant();
         
         [SerializeReference, SelectableSerializeReference]
-        public TweenTimelineExpressionBool IsRelative;
+        public TweenTimelineExpressionBool IsRelative = new TweenTimelineExpressionBoolConstant();
         
         public EaseOrCurve Ease;
         

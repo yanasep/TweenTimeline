@@ -23,6 +23,9 @@ namespace TweenTimeline
     public class TweenTimelineExpressionBoolConstant : TweenTimelineExpressionBool
     {
         [FormerlySerializedAs("Val")] public bool Value;
+        
+        public TweenTimelineExpressionBoolConstant() { }
+        public TweenTimelineExpressionBoolConstant(bool value) => Value = value;
 
         /// <inheritdoc/>
         public override bool Evaluate(TweenParameter parameter)

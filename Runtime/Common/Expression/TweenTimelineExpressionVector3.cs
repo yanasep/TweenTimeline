@@ -22,6 +22,10 @@ namespace TweenTimeline
     {
         [NoPropertyLabel] public Vector3 Value;
 
+        public TweenTimelineExpressionVector3Constant() { }
+
+        public TweenTimelineExpressionVector3Constant(Vector3 val) => Value = val;
+
         /// <inheritdoc/>
         public override Vector3 Evaluate(TweenParameter parameter)
         {

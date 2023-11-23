@@ -22,8 +22,6 @@ namespace TweenTimeline
     {
         public virtual ClipCaps clipCaps => ClipCaps.None;
 
-        public TBinding target;
-
         public abstract Tween CreateTween(TweenClipInfo<TBinding> info);
         
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
