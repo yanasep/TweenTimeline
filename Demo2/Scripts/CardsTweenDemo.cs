@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Yanasep;
@@ -13,6 +14,7 @@ namespace TweenTimeline.Demo2
         public TweenTimelineDirector director;
         public Transform dropSourceUIObj;
         private readonly List<Card> cards = new();
+        private CancellationTokenSource cts;
 
         private static readonly int Vec3ParamDropPosition = TweenParameter.StringToHash("DropPosition");
 
@@ -30,6 +32,9 @@ namespace TweenTimeline.Demo2
         [EditorPlayModeButton("Play")]
         public async UniTask Play()
         {
+            cts?.Cancel();
+            cts = new CancellationTokenSource();
+            
             for (int i = cards.Count; i < cardParents.Length; i++)
             {
                 var card = Instantiate(cardPrefab, cardParents[i]);
@@ -45,10 +50,10 @@ namespace TweenTimeline.Demo2
 
             var dropScreenPos = dropSourceUIObj.position;
 
-            await director.PlayAsync(param =>
+            await director.Play(param =>
             {
                 param.Vector3.Set(Vec3ParamDropPosition, dropScreenPos);
-            });
+            }).ToUniTask(TweenCancelBehaviour.KillAndCancelAwait, cancellationToken: cts.Token);
 
             for (int i = 0; i < cardParents.Length; i++)
             {

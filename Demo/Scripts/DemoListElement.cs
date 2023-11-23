@@ -32,17 +32,17 @@ namespace TweenTimeline
         }
 
         public UniTask UpdateScoreAsync(int score)
-        {   
-            return _tweenDirector.PlayAsync(_scoreUpTween, parameter =>
+        {
+            return _tweenDirector.Play(_scoreUpTween, parameter =>
             {
-                parameter.Int.Set(TweenHashScore, score);   
-            });
+                parameter.Int.Set(TweenHashScore, score);
+            }).ToUniTask();
         }
 
         public UniTask UpdatePlaceAsync(int place)
         {
             placeText.SetText("{0}", place);
-            return _tweenDirector.PlayAsync(_changePlaceTween);
+            return _tweenDirector.Play(_changePlaceTween).ToUniTask();
         }
     }
 }

@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -15,7 +14,6 @@ namespace TweenTimeline
     public class TweenTimelineDirector : MonoBehaviour
     {
         [SerializeField] private PlayableDirector _director;
-        private Tween _tween;
 
         public PlayableAsset PlayableAsset => _director.playableAsset;
 
@@ -25,38 +23,20 @@ namespace TweenTimeline
         /// 再生
         /// </summary>
         [EditorPlayModeButton("Play", null)]
-        public void Play(SetParameter setParameter = null)
+        public Tween Play(SetParameter setParameter = null)
         {
             var asset = _director.playableAsset as TimelineAsset;
-            if (asset == null) return;
-            Play(asset, setParameter);
+            if (asset == null) return null;
+            return Play(asset, setParameter);
         }
 
         /// <summary>
         /// 再生
         /// </summary>
-        public void Play(TimelineAsset timelineAsset, SetParameter setParameter = null)
+        public Tween Play(TimelineAsset timelineAsset, SetParameter setParameter = null)
         {
-            _tween?.Kill();
-            _tween = TweenTimelineUtility.CreateTween(timelineAsset, _director, setParameter);
-        }
-
-        /// <summary>
-        /// 再生
-        /// </summary>
-        public UniTask PlayAsync(TimelineAsset timelineAsset, SetParameter setParameter = null)
-        {
-            Play(timelineAsset, setParameter);
-            return _tween.ToUniTask();
-        }
-
-        /// <summary>
-        /// 再生
-        /// </summary>
-        public UniTask PlayAsync(SetParameter setParameter = null)
-        {
-            Play(setParameter);
-            return _tween.ToUniTask();
+            var tween = TweenTimelineUtility.CreateTween(timelineAsset, _director, setParameter);
+            return tween;
         }
 
         public void SetTrackBinding(PlayableAsset timelineAsset, string trackName, Object value)
