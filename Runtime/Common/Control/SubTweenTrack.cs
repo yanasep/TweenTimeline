@@ -17,16 +17,26 @@ namespace TweenTimeline
     [TrackClipType(typeof(SubTweenClip))]
     public class SubTweenTrack : TweenTrack<PlayableDirector>
     {
-        public bool controlActive;
+        public bool controlActivation;
 
-        [SerializeField, EnableIf(nameof(controlActive), true)]
+        [SerializeField, EnableIf(nameof(controlActivation), true)]
         public ActivationControlPlayable.PostPlaybackState postPlayback = ActivationControlPlayable.PostPlaybackState.Revert;
 
         /// <inheritdoc/>
         public override Tween CreateTween(CreateTweenArgs args)
         {
-            // TODO: activationを追加
-            return base.CreateTween(args);
+            var target = args.Binding as PlayableDirector;
+            if (target == null) return null;
+
+            var sequence = (Sequence)base.CreateTween(args);
+            
+            if (controlActivation)
+            {
+                var activationTween = ActivationTweenTrack.CreateTween(this, target.gameObject, args.Duration, postPlayback);
+                sequence.Insert(0, activationTween);
+            }
+            
+            return sequence;
         }
 
 #if UNITY_EDITOR
@@ -77,9 +87,9 @@ namespace TweenTimeline
                 }
             }
 
-            if (controlActive)
+            if (controlActivation)
             {
-                SubTweenClip.PreviewActivation(driver, binding.gameObject);
+                driver.AddFromName(binding.gameObject, "m_IsActive");
             }
 
             SubTweenClip.PreviewDirector(driver, binding, timelinesToPreview);

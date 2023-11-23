@@ -22,6 +22,58 @@ namespace TweenTimeline
 #endif
         
         public abstract Tween CreateTween(CreateTweenArgs args);
+
+        public ClipInputs GetClipInputs()
+        {
+            var inputs = new ClipInputs(new());
+
+            foreach (var clip in GetClips())
+            {
+                inputs.ClipIntervals.Add(((float)clip.start, (float)(clip.start + clip.duration)));
+            }
+
+            return inputs;
+        }
+        
+        public readonly struct ClipInputs
+        {
+            public readonly List<(float start, float end)> ClipIntervals;
+
+            public ClipInputs(List<(float start, float end)> clipIntervals)
+            {
+                ClipIntervals = clipIntervals;
+            }
+
+            public bool IsAnyPlaying(float trackTime)
+            {
+                bool active = false;
+                for (int i = 0; i < ClipIntervals.Count; i++)
+                {
+                    if (ClipIntervals[i].start <= trackTime && trackTime <= ClipIntervals[i].end)
+                    {
+                        active = true;
+                        break;
+                    }
+                }
+
+                return active;
+            }
+
+            public bool HasAnyStarted(float trackTime)
+            {
+                bool active = false;
+                for (int i = 0; i < ClipIntervals.Count; i++)
+                {
+                    if (ClipIntervals[i].start <= trackTime)
+                    {
+                        active = true;
+                        break;
+                    }
+                }
+
+                return active;
+            }
+        }
     }
     
     /// <summary>
@@ -39,14 +91,14 @@ namespace TweenTimeline
             
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
-            float currentTime = 0;
+            double currentTime = 0;
             foreach (var clip in GetClips())
             {
                 // interval
                 var tweenClip = (TweenClip<TBinding>)clip.asset;
                 tweenClip.target = target;
-                float interval = (float)clip.start - currentTime;
-                currentTime = (float)(clip.start + clip.duration);
+                float interval = (float)(clip.start - currentTime);
+                currentTime = clip.start + clip.duration;
                 if (interval > 0) sequence.AppendInterval(interval);
 
                 var tweenClipInfo = new TweenClipInfo<TBinding>
@@ -100,58 +152,6 @@ namespace TweenTimeline
                 clip.displayName = attr.DisplayName;
             }      
 #endif
-        }
-        
-        public readonly struct ClipInputs
-        {
-            public readonly List<(float start, float end)> ClipIntervals;
-
-            public ClipInputs(List<(float start, float end)> clipIntervals)
-            {
-                ClipIntervals = clipIntervals;
-            }
-
-            public bool IsAnyPlaying(float trackTime)
-            {
-                bool active = false;
-                for (int i = 0; i < ClipIntervals.Count; i++)
-                {
-                    if (ClipIntervals[i].start <= trackTime && trackTime <= ClipIntervals[i].end)
-                    {
-                        active = true;
-                        break;
-                    }
-                }
-
-                return active;
-            }
-
-            public bool HasAnyStarted(float trackTime)
-            {
-                bool active = false;
-                for (int i = 0; i < ClipIntervals.Count; i++)
-                {
-                    if (ClipIntervals[i].start <= trackTime)
-                    {
-                        active = true;
-                        break;
-                    }
-                }
-
-                return active;
-            }
-        }
-
-        public ClipInputs GetClipInputs()
-        {
-            var inputs = new ClipInputs(new());
-
-            foreach (var clip in GetClips())
-            {
-                inputs.ClipIntervals.Add(((float)clip.start, (float)(clip.start + clip.duration)));
-            }
-
-            return inputs;
         }
     }
     
@@ -239,10 +239,6 @@ namespace TweenTimeline
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {   
             var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration());
-            // OnUpdate(playable, trackTime);
-            
-            // var duration = playable.GetGraph().GetRootPlayable(0).GetDuration();
-            // var trackTime = GetTrackTime(playable.GetTime(), duration);
             Tween.GotoWithCallbacks(trackTime);
         }
 

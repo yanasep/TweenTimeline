@@ -1,9 +1,11 @@
+using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
+using Yanasep;
 
 namespace TweenTimeline
 {
@@ -19,15 +21,45 @@ namespace TweenTimeline
 #if UNITY_EDITOR
         public override Texture2D Icon => EditorGUIUtility.IconContent("d_Toggle Icon").image as Texture2D;
 #endif
+        
+        public bool controlActivation;
+        
+        [SerializeField, EnableIf(nameof(controlActivation), true)]
+        public ActivationControlPlayable.PostPlaybackState postPlayback = ActivationControlPlayable.PostPlaybackState.Revert;
 
+        /// <inheritdoc/>
         public override Tween CreateTween(CreateTweenArgs args)
         {
-            var target = (GameObject)args.Binding;
-            var inputs = GetClipInputs();
-            return DOTweenEx.EveryUpdate(args.Duration, t =>
+            var go = args.Binding as GameObject;
+            if (go == null) return null;
+            return CreateTween(this, go, args.Duration, postPlayback);
+        }
+
+        public static Tween CreateTween(TweenTrack track, GameObject target, float duration, ActivationControlPlayable.PostPlaybackState postPlayback)
+        {
+            var inputs = track.GetClipInputs();
+            var initialActive = target.activeSelf;
+            var tween = DOTweenEx.EveryUpdate(duration, t =>
             {
                 target.SetActive(inputs.IsAnyPlaying(t));
             });
+
+            switch (postPlayback)
+            {
+                case ActivationControlPlayable.PostPlaybackState.Active:
+                    tween.OnKill(() => target.SetActive(true));
+                    break;
+                case ActivationControlPlayable.PostPlaybackState.Inactive:
+                    tween.OnKill(() => target.SetActive(false));
+                    break;
+                case ActivationControlPlayable.PostPlaybackState.Revert:
+                    tween.OnKill(() => target.SetActive(initialActive));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return tween;
         }
 
         /// <inheritdoc/>
