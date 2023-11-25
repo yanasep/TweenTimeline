@@ -30,12 +30,12 @@ namespace TweenTimeline
             public T Value;
         }
         
-        public ParameterSetEntry<float>[] floats;
-        public ParameterSetEntry<int>[] ints;
-        public ParameterSetEntry<bool>[] bools;
-        public ParameterSetEntry<Vector3>[] vector3s;
-        public ParameterSetEntry<Vector2>[] vector2s;
-        public ParameterSetEntry<Color>[] colors;
+        public List<ParameterSetEntry<float>> floats;
+        public List<ParameterSetEntry<int>> ints;
+        public List<ParameterSetEntry<bool>> bools;
+        public List<ParameterSetEntry<Vector3>> vector3s;
+        public List<ParameterSetEntry<Vector2>> vector2s;
+        public List<ParameterSetEntry<Color>> colors;
 
         /// <summary>
         /// TimelineParameterContainerを取得
@@ -53,7 +53,7 @@ namespace TweenTimeline
             return parameter;
         }
 
-        private void Set<T>(ParameterSetEntry<T>[] source, TimelineParameterDictionary<T> dest)
+        private void Set<T>(List<ParameterSetEntry<T>> source, TimelineParameterDictionary<T> dest)
         {
             dest.Clear();
 

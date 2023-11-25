@@ -3,7 +3,7 @@
     <ui:VisualElement name="EntryRoot" style="flex-grow: 1;">
         <ui:VisualElement style="flex-direction: row;">
             <ui:TextField picking-mode="Ignore" value="New Parameter" name="ParameterName" binding-path="Name" />
-            <ui:EnumField type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" value="Center" />
+            <ui:EnumField type="TweenTimeline.TweenParameterType, TweenTimeline.Editor" />
         </ui:VisualElement>
         <uie:PropertyField binding-path="Value" style="height: 38px;" />
     </ui:VisualElement>
