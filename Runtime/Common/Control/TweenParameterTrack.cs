@@ -11,25 +11,31 @@ namespace TweenTimeline
     /// TweenParameterトラック
     /// </summary>
     [DisplayName("Tween/Tween Parameter Track")]
-    // [TrackClipType(typeof(TweenParameterClip))]
     public class TweenParameterTrack : TrackAsset
     {
         // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
         [SerializeField, Common.ReadOnly] private byte _;
         
         [Serializable]
-        public struct Entry<T>
+        public class ParameterSetEntry
         {
             public string Name;
+            /// <summary>インスペクターのリスト表示におけるインデックス</summary>
+            public int ViewIndex;   
+        }
+        
+        [Serializable]
+        public class ParameterSetEntry<T> : ParameterSetEntry
+        {
             public T Value;
         }
         
-        [SerializeField] private Entry<float>[] floats;
-        [SerializeField] private Entry<int>[] ints;
-        [SerializeField] private Entry<bool>[] bools;
-        [SerializeField] private Entry<Vector3>[] vector3s;
-        [SerializeField] private Entry<Vector2>[] vector2s;
-        [SerializeField] private Entry<Color>[] colors;
+        public ParameterSetEntry<float>[] floats;
+        public ParameterSetEntry<int>[] ints;
+        public ParameterSetEntry<bool>[] bools;
+        public ParameterSetEntry<Vector3>[] vector3s;
+        public ParameterSetEntry<Vector2>[] vector2s;
+        public ParameterSetEntry<Color>[] colors;
 
         /// <summary>
         /// TimelineParameterContainerを取得
@@ -47,7 +53,7 @@ namespace TweenTimeline
             return parameter;
         }
 
-        private void Set<T>(Entry<T>[] source, TimelineParameterDictionary<T> dest)
+        private void Set<T>(ParameterSetEntry<T>[] source, TimelineParameterDictionary<T> dest)
         {
             dest.Clear();
 
@@ -122,14 +128,7 @@ namespace TweenTimeline
             var components = new List<T>();
             if (gameObject != null)
             {
-                // if (searchHierarchy)
-                // {
-                //     gameObject.GetComponentsInChildren<T>(true, components);
-                // }
-                // else
-                {
-                    gameObject.GetComponents<T>(components);
-                }
+                gameObject.GetComponents<T>(components);
             }
             return components;
         }
