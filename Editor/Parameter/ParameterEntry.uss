@@ -1,2 +1,33 @@
 #EntryRoot {
+    padding-top: 4px;
+    padding-right: 6px;
+    padding-bottom: 4px;
+    padding-left: 2px;
+    margin-bottom: 1px;
+    border-left-color: rgb(49, 49, 49);
+    border-right-color: rgb(49, 49, 49);
+    border-top-color: rgb(49, 49, 49);
+    border-bottom-color: rgb(49, 49, 49);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    margin-top: 1px;
+}
+
+#NameRow {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+#ParameterName {
+    flex-grow: 1;
+    width: 50%;
+    margin-right: 1px;
+}
+
+#ParameterType {
+    flex-grow: 1;
+    width: 40%;
 }
