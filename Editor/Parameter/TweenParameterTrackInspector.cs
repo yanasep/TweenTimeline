@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using TweenTimeline.Editor;
 using UnityEditor;
@@ -80,10 +81,7 @@ namespace TweenTimeline
             var addButton = root.Q<Button>("add-button");
             addButton.clicked += () => AddItemAsync(VisualElementUtility.GetScreenPosition(addButton)).Forget();
             var removeButton = root.Q<Button>("remove-button");
-            removeButton.clicked += () =>
-            {
-                Debug.Log($"TODO");
-            };
+            removeButton.clicked += () => RemoveItem();
 
             return root;
         }
@@ -94,7 +92,7 @@ namespace TweenTimeline
             var bindingList = GetDataList(type);
             var bindingData = CreateBindingData(type);
             bindingData.Name = "New Parameter";
-            bindingData.ViewIndex = paramList[^1].BindingData.ViewIndex + 1;
+            bindingData.ViewIndex = paramList.Count == 0 ? 0 : paramList[^1].BindingData.ViewIndex + 1;
             bindingList.Add(bindingData);
             OnDataChanged();
             var viewData = new ListItem
@@ -106,12 +104,45 @@ namespace TweenTimeline
             };
             paramList.Add(viewData);
             _listView.RefreshItems();
+            
+            // focus added item
+            _listView.selectedIndex = paramList.Count - 1;
+            var elem = _listView.Q(className: "unity-collection-view__item--selected");
+            var text = elem.Q<TextField>();
+            text.Focus();
+        }
+
+        private void RemoveItem()
+        {
+            void remove(ListItem item)
+            {
+                paramList.Remove(item);
+                var dataList = GetDataList(item.ParameterType);
+                dataList.RemoveAt(item.BindingListItemIndex);   
+            }
+            
+            // 何も選択していなければ最後の要素を削除
+            if (_listView.selectedIndex == -1 && paramList.Count > 0)
+            {
+                remove(paramList[^1]);
+            }
+            else
+            {
+                var views = _listView.selectedIndices.Select(i => paramList[i]).ToList();
+                foreach (var view in views)
+                {
+                    remove(view);
+                }
+            }
+
+            OnDataChanged();
+            _listView.RefreshItems();
         }
 
         private string ParameterTypeToListName(TweenParameterType type)
         {
             var name = type.ToString();
-            return $"{name.Substring(0).ToLower()}{name.Substring(1)}s";
+            return $"{name.Substring(0, 1).ToLower()}{name.Substring(1)}s";
         }
 
         private void OnParamTypeChange(ChangeEvent<Enum> evt, ListItem data)
@@ -159,6 +190,8 @@ namespace TweenTimeline
         private void OnDataChanged()
         {
             serializedObject.ApplyModifiedProperties();
+            serializedObject.Update();
+            EditorUtility.SetDirty(target);
         }
 
         private void GatherParamListData()
