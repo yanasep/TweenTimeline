@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using TweenTimeline.Editor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -26,6 +28,7 @@ namespace TweenTimeline
         private TweenParameterTrack _track;
         private ListView _listView;
         private List<ListItem> paramList;
+        private VisualElement _root;
 
         private class ListItem
         {
@@ -43,6 +46,7 @@ namespace TweenTimeline
         public override VisualElement CreateInspectorGUI()
         {
             var root = new VisualElement();
+            _root = root;
             inspectorXml.CloneTree(root);
             _listView = root.Q<ListView>();
 
@@ -73,27 +77,8 @@ namespace TweenTimeline
                 paramList[index2].BindingData.ViewIndex = index2;
             };
 
-            // var addButton = _listView.Q<Button>("unity-list-view__add-button");
             var addButton = root.Q<Button>("add-button");
-            addButton.clicked += () =>
-            {
-                // TODO: Type選択ポップアップ
-                var type = TweenParameterType.Int;
-                var bindingList = GetDataList(type);
-                var bindingData = CreateBindingData(type);
-                bindingData.Name = "New Parameter";
-                bindingData.ViewIndex = paramList[^1].BindingData.ViewIndex + 1;
-                bindingList.Add(bindingData);
-                var viewData = new ListItem
-                {
-                    BindingListName = ParameterTypeToListName(type),
-                    ParameterType = type,
-                    BindingListItemIndex = bindingList.Count - 1,
-                    BindingData = bindingData
-                };
-                paramList.Add(viewData);
-                _listView.RefreshItems();
-            };
+            addButton.clicked += () => AddItemAsync(VisualElementUtility.GetScreenPosition(addButton)).Forget();
             var removeButton = root.Q<Button>("remove-button");
             removeButton.clicked += () =>
             {
@@ -101,6 +86,26 @@ namespace TweenTimeline
             };
 
             return root;
+        }
+        
+        private async UniTask AddItemAsync(Vector2 position)
+        {
+            var type = await SearchWindow.OpenAsync<ParameterTypeSearchWindow, TweenParameterType>(position);
+            var bindingList = GetDataList(type);
+            var bindingData = CreateBindingData(type);
+            bindingData.Name = "New Parameter";
+            bindingData.ViewIndex = paramList[^1].BindingData.ViewIndex + 1;
+            bindingList.Add(bindingData);
+            OnDataChanged();
+            var viewData = new ListItem
+            {
+                BindingListName = ParameterTypeToListName(type),
+                ParameterType = type,
+                BindingListItemIndex = bindingList.Count - 1,
+                BindingData = bindingData
+            };
+            paramList.Add(viewData);
+            _listView.RefreshItems();
         }
 
         private string ParameterTypeToListName(TweenParameterType type)
@@ -149,6 +154,11 @@ namespace TweenTimeline
             var constructedType = typeof(TweenParameterTrack.ParameterSetEntry<>).MakeGenericType(typeArg);
             var instance = Activator.CreateInstance(constructedType);
             return (TweenParameterTrack.ParameterSetEntry)instance;
+        }
+
+        private void OnDataChanged()
+        {
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void GatherParamListData()
