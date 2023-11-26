@@ -97,7 +97,7 @@ namespace TweenTimeline
             OnDataChanged();
             var viewData = new ListItem
             {
-                BindingListName = ParameterTypeToListName(type),
+                BindingListName = GetParameterListName(type),
                 ParameterType = type,
                 BindingListItemIndex = bindingList.Count - 1,
                 BindingData = bindingData
@@ -139,7 +139,7 @@ namespace TweenTimeline
             _listView.RefreshItems();
         }
 
-        private string ParameterTypeToListName(TweenParameterType type)
+        private string GetParameterListName(TweenParameterType type)
         {
             var name = type.ToString();
             return $"{name.Substring(0, 1).ToLower()}{name.Substring(1)}s";
@@ -147,8 +147,20 @@ namespace TweenTimeline
 
         private void OnParamTypeChange(ChangeEvent<Enum> evt, ListItem data)
         {
-            var prevType = (TweenParameterType)evt.previousValue;
             var newType = (TweenParameterType)evt.newValue;
+            GetDataList(data.ParameterType).RemoveAt(data.BindingListItemIndex);
+
+            data.ParameterType = newType;
+            var bindingData = CreateBindingData(newType);
+            bindingData.Name = data.BindingData.Name;
+            ParameterSetEntryConverter.TryConvert(prevData: data.BindingData, newData: bindingData);
+            data.BindingData = bindingData;
+            var bindingList = GetDataList(newType);
+            bindingList.Add(data.BindingData);
+            data.BindingListItemIndex = bindingList.Count - 1;
+            data.BindingListName = GetParameterListName(newType);
+            OnDataChanged();
+            _listView.RefreshItems();
         }
 
         private IList GetDataList(TweenParameterType type)

@@ -21,7 +21,7 @@ namespace TweenTimeline
         {
             public string Name;
             /// <summary>インスペクターのリスト表示におけるインデックス</summary>
-            public int ViewIndex;   
+            public int ViewIndex;
         }
         
         [Serializable]
