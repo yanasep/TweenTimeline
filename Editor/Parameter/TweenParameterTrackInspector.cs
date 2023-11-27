@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -89,7 +88,7 @@ namespace TweenTimeline
         private async UniTask AddItemAsync(Vector2 position)
         {
             var type = await SearchWindow.OpenAsync<ParameterTypeSearchWindow, TweenParameterType>(position);
-            var bindingList = GetDataList(type);
+            var bindingList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, type);
             var bindingData = CreateBindingData(type);
             bindingData.Name = "New Parameter";
             bindingData.ViewIndex = paramList.Count == 0 ? 0 : paramList[^1].BindingData.ViewIndex + 1;
@@ -117,7 +116,7 @@ namespace TweenTimeline
             void remove(ListItem item)
             {
                 paramList.Remove(item);
-                var dataList = GetDataList(item.ParameterType);
+                var dataList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, item.ParameterType);
                 dataList.RemoveAt(item.BindingListItemIndex);   
             }
             
@@ -148,14 +147,14 @@ namespace TweenTimeline
         private void OnParamTypeChange(ChangeEvent<Enum> evt, ListItem data)
         {
             var newType = (TweenParameterType)evt.newValue;
-            GetDataList(data.ParameterType).RemoveAt(data.BindingListItemIndex);
+            TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, data.ParameterType).RemoveAt(data.BindingListItemIndex);
 
             data.ParameterType = newType;
             var bindingData = CreateBindingData(newType);
             bindingData.Name = data.BindingData.Name;
             ParameterSetEntryConverter.TryConvert(prevData: data.BindingData, newData: bindingData);
             data.BindingData = bindingData;
-            var bindingList = GetDataList(newType);
+            var bindingList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, newType);
             bindingList.Add(data.BindingData);
             data.BindingListItemIndex = bindingList.Count - 1;
             data.BindingListName = GetParameterListName(newType);
@@ -163,37 +162,9 @@ namespace TweenTimeline
             _listView.RefreshItems();
         }
 
-        private IList GetDataList(TweenParameterType type)
-        {
-            return type switch
-            {
-                TweenParameterType.Int => _track.ints,
-                TweenParameterType.Float => _track.floats,
-                TweenParameterType.Bool => _track.bools,
-                TweenParameterType.Vector3 => _track.vector3s,
-                TweenParameterType.Vector2 => _track.vector2s,
-                TweenParameterType.Color => _track.colors,
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
-        }
-
-        private Type ParameterTypeToType(TweenParameterType type)
-        {
-            return type switch
-            {
-                TweenParameterType.Int => typeof(int),
-                TweenParameterType.Float => typeof(float),
-                TweenParameterType.Bool => typeof(bool),
-                TweenParameterType.Vector3 => typeof(Vector3),
-                TweenParameterType.Vector2 => typeof(Vector2),
-                TweenParameterType.Color => typeof(Color),
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };   
-        }
-
         private TweenParameterTrack.ParameterSetEntry CreateBindingData(TweenParameterType paramType)
         {
-            var typeArg = ParameterTypeToType(paramType);
+            var typeArg = TweenParameterEditorUtility.ParameterTypeToType(paramType);
             var constructedType = typeof(TweenParameterTrack.ParameterSetEntry<>).MakeGenericType(typeArg);
             var instance = Activator.CreateInstance(constructedType);
             return (TweenParameterTrack.ParameterSetEntry)instance;

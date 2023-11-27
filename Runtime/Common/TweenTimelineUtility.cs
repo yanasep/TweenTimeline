@@ -40,14 +40,20 @@ namespace TweenTimeline
 
         public static TweenParameter GetTweenParameter(TimelineAsset timelineAsset)
         {
+            var track = FindTweenParameterTrack(timelineAsset);
+            return track == null ? null : track.GetParameter();
+        }
+
+        public static TweenParameterTrack FindTweenParameterTrack(TimelineAsset timelineAsset)
+        {
             if (timelineAsset == null) return null;
-            
+
             foreach (var track in timelineAsset.GetOutputTracks())
             {
                 if (track.mutedInHierarchy) continue;
                 if (track is TweenParameterTrack parameterTrack)
                 {
-                    return parameterTrack.GetParameter();
+                    return parameterTrack;
                 }
             }
 

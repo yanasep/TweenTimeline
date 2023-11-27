@@ -46,9 +46,11 @@ namespace TweenTimeline
     [Serializable]
     [DisplayName("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TweenTimelineExpressionVector3Parameter : TweenTimelineExpressionVector3, ISerializationCallbackReceiver
+    public class TweenTimelineExpressionVector3Parameter : TweenTimelineExpressionVector3,  ISerializationCallbackReceiver
     {
+        [TweenParameterNameField(typeof(Vector3))]
         public string ParameterName;
+        
         private int paramHash;
 
         /// <inheritdoc/>
