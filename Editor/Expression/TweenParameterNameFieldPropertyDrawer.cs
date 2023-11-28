@@ -13,6 +13,8 @@ namespace TweenTimeline.Editor
     {
         private bool _initialized;
         private string[] _paramNameOptions;
+        // 空の選択肢を用意したいが、空文字やスペースだとPopupで区切り線として扱われてしまうため、見えない文字で代用
+        private const string EmptyValue = "\u00A0";
 
         private void Initialize(SerializedProperty property)
         {
@@ -30,19 +32,33 @@ namespace TweenTimeline.Editor
             
             var fieldPos = EditorGUI.PrefixLabel(position, label);
             var options = _paramNameOptions;
-            var index = Array.IndexOf(options, property.stringValue);
+            var val = property.stringValue;
+            if (string.IsNullOrEmpty(val)) val = EmptyValue;
+            bool isMissing = false;
+            var index = Array.IndexOf(options, val);
             if (index < 0)
             {
+                isMissing = true;
                 options = options.Prepend($"{property.stringValue} (missing)").ToArray();
+                index = 0;
             }
             
             using (var ccs = new EditorGUI.ChangeCheckScope())
             {
-                index = EditorGUI.Popup(fieldPos, index, options);
+                var optionGuis = options.Select(x => new GUIContent(x)).ToArray();
+                if (isMissing)
+                {
+                    var content = EditorGUIUtility.IconContent("console.warnicon.sml");
+                    content.text = options[0];
+                    optionGuis[0] = content;
+                }
+                index = EditorGUI.Popup(fieldPos, index, optionGuis);
 
                 if (ccs.changed)
                 {
-                    property.stringValue = options[index];
+                    var newVal = options[index];
+                    if (index == Array.IndexOf(options, EmptyValue)) newVal = "";
+                    property.stringValue = newVal;
                 }
             }
         }
@@ -62,7 +78,7 @@ namespace TweenTimeline.Editor
             var attr = (TweenParameterNameFieldAttribute)attribute;
             var paramType = TweenParameterEditorUtility.TypeToParameterType(attr.ParameterType);
             var paramList = TweenParameterEditorUtility.GetParameterSetEntries(parameterTrack, paramType);
-            _paramNameOptions = paramList.Select(x => x.Name).Prepend("").ToArray();
+            _paramNameOptions = paramList.Select(x => x.Name).Prepend(EmptyValue).ToArray();
         }
     }
 }
