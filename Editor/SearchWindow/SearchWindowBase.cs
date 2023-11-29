@@ -9,9 +9,7 @@ namespace TweenTimeline.Editor
 {
     public static class SearchWindow
     {
-        public static UniTask<TResult> OpenAsync<TSearchWindow, TResult>(Vector2 position, 
-            float requestedWidth = 0.0f,
-            float requestedHeight = 0.0f) 
+        public static UniTask<TResult> OpenAsync<TSearchWindow, TResult>(SearchWindowContext context)
             where TSearchWindow : SearchWindowProviderBase<TResult>
         {
             var _completionSource = new UniTaskCompletionSource<TResult>();
@@ -22,7 +20,22 @@ namespace TweenTimeline.Editor
                 Object.DestroyImmediate(searchWindowProvider);
             });
             searchWindowProvider.onDestroy += () => _completionSource.TrySetCanceled();
-            UnityEditor.Experimental.GraphView.SearchWindow.Open(new SearchWindowContext(position, requestedWidth, requestedHeight), searchWindowProvider);
+            UnityEditor.Experimental.GraphView.SearchWindow.Open(context, searchWindowProvider);
+            return _completionSource.Task;
+        }
+        
+        public static UniTask<TResult> OpenAsync<TSearchWindow, TResult, TArg>(TArg arg, SearchWindowContext context)
+            where TSearchWindow : SearchWindowProviderBase<TResult, TArg>
+        {
+            var _completionSource = new UniTaskCompletionSource<TResult>();
+            var searchWindowProvider = ScriptableObject.CreateInstance<TSearchWindow>();
+            searchWindowProvider.Initialize(onSelectEntry: val =>
+            {
+                _completionSource.TrySetResult(val);
+                Object.DestroyImmediate(searchWindowProvider);
+            }, arg);
+            searchWindowProvider.onDestroy += () => _completionSource.TrySetCanceled();
+            UnityEditor.Experimental.GraphView.SearchWindow.Open(context, searchWindowProvider);
             return _completionSource.Task;
         }
         

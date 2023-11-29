@@ -7,7 +7,7 @@ using UnityEngine.Timeline;
 using Yanasep;
 
 namespace TweenTimeline
-{   
+{
     /// <summary>
     /// Playable Asset that generates playables for controlling time-related elements on a GameObject.
     /// </summary>
