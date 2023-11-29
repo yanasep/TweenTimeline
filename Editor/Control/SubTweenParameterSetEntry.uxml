@@ -2,9 +2,9 @@
     <Style src="project://database/Assets/Externals/TweenTimeline/Editor/Parameter/TweenParameterEditor.uss?fileID=7433441132597879392&amp;guid=792c44a74beba8f41b1b778710579c73&amp;type=3#TweenParameterEditor" />
     <ui:VisualElement name="EntryRoot" class="list-entry" style="flex-grow: 1;">
         <ui:VisualElement name="NameRow" class="list-entry-name-row">
-            <ui:TextField picking-mode="Ignore" value="New Parameter" name="ParameterName" binding-path="Name" class="list-entry-name" />
-            <ui:EnumField type="TweenTimeline.TweenParameterType, TweenTimeline.Editor" name="ParameterType" class="list-entry-type" />
+            <ui:TextField picking-mode="Ignore" value="New Parameter" name="ParameterName" binding-path="ParameterName" class="list-entry-name" />
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ParameterType" class="list-entry-type" />
         </ui:VisualElement>
-        <uie:PropertyField binding-path="Value" />
+        <uie:PropertyField binding-path="Expression" />
     </ui:VisualElement>
 </ui:UXML>

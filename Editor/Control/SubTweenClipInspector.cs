@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -10,26 +11,27 @@ using UnityEngine.UIElements;
 
 namespace TweenTimeline
 {
-    [CustomEditor(typeof(TweenParameterTrack))]
-    public class TweenParameterTrackInspector : UnityEditor.Editor
+    [CustomEditor(typeof(SubTweenClip))]
+    public class SubTweenClipInspector : UnityEditor.Editor
     {
         [SerializeField] private VisualTreeAsset _inspectorXml;
         [SerializeField] private VisualTreeAsset _entryXml;
-        private TweenParameterTrack _track;
+        private SubTweenClip _clip;
         private ListView _listView;
         private List<EntryViewData> _viewDataList;
+        private List<(string paramName, TweenParameterType paramType)> _parameterCandidates;
 
         private class EntryViewData
         {
             public string BindingListName;
             public TweenParameterType ParameterType;
             public int BindingListItemIndex;
-            public TweenParameterTrack.ParameterSetEntry BindingData;
+            public SubTweenClip.ParameterOverwrite BindingData;
         }
 
         private void OnEnable()
         {
-            _track = (TweenParameterTrack)target;
+            _clip = (SubTweenClip)target;
         }
 
         public override VisualElement CreateInspectorGUI()
@@ -38,26 +40,26 @@ namespace TweenTimeline
             _inspectorXml.CloneTree(root);
             _listView = root.Q<ListView>();
 
+            root.Bind(serializedObject);
+
             _viewDataList ??= new();
             GatherEntryViewData();
             _viewDataList.Sort((a, b) => a.BindingData.ViewIndex.CompareTo(b.BindingData.ViewIndex));
 
             _listView.makeItem = _entryXml.CloneTree;
-            _listView.bindItem = (elem, i) =>
-            {
-                var data = _viewDataList[i];
-                (elem as IBindable)!.bindingPath = $"{data.BindingListName}.Array.data[{data.BindingListItemIndex}]";
-                elem.Bind(serializedObject);
-                var typeEnumField = elem.Q<EnumField>();
-                typeEnumField.SetValueWithoutNotify(data.ParameterType);
-                typeEnumField.RegisterCallback<ChangeEvent<Enum>, EntryViewData>(OnParamTypeChange, data);
-            };
-            _listView.unbindItem = (elem, _) =>
-            {
-                (elem as IBindable)!.bindingPath = "";
-                var typeEnumField = elem.Q<EnumField>();
-                typeEnumField.UnregisterCallback<ChangeEvent<Enum>, EntryViewData>(OnParamTypeChange);
-            };
+            // _listView.bindItem = (elem, i) =>
+            // {
+            //     var data = _viewDataList[i];
+            //     (elem as IBindable)!.bindingPath = $"{data.BindingListName}.Array.data[{data.BindingListItemIndex}]";
+            //     elem.Bind(serializedObject);
+            //     var typeEnumField = elem.Q<EnumField>();
+            //     typeEnumField.SetValueWithoutNotify(data.ParameterType);
+            //     typeEnumField.RegisterCallback<ChangeEvent<Enum>, EntryViewData>(OnParamTypeChange, data);
+            // };
+            // _listView.unbindItem = (elem, _) =>
+            // {
+            //     (elem as IBindable)!.bindingPath = "";
+            // };
             _listView.itemsSource = _viewDataList;
             _listView.itemIndexChanged += (index1, index2) =>
             {
@@ -75,28 +77,31 @@ namespace TweenTimeline
         
         private async UniTask AddItemAsync(Vector2 position)
         {
-            var type = await SearchWindow.OpenAsync<ParameterTypeSearchWindow, TweenParameterType>(position);
-            var bindingList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, type);
-            var bindingData = CreateBindingData(type);
-            bindingData.Name = "New Parameter";
-            bindingData.ViewIndex = _viewDataList.Count == 0 ? 0 : _viewDataList[^1].BindingData.ViewIndex + 1;
-            bindingList.Add(bindingData);
-            OnDataChanged();
-            var viewData = new EntryViewData
-            {
-                BindingListName = GetParameterListName(type),
-                ParameterType = type,
-                BindingListItemIndex = bindingList.Count - 1,
-                BindingData = bindingData
-            };
-            _viewDataList.Add(viewData);
-            _listView.RefreshItems();
+            // var options = _parameterCandidates.Select(x => $"{x.paramName} ({x.paramType})").ToArray();
+            // var selectedParam = await SearchWindow.OpenAsync<StringSearchWindow, string, (string, string)>(position);
+            // var selectedIndex = Array.IndexOf(options, selectedParam);
+            // var (paramName, paramType) = _parameterCandidates[selectedIndex];
+            // var bindingList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(_clip, paramType);
+            // var bindingData = CreateBindingData(paramType);
+            // bindingData.Name = "New Parameter";
+            // bindingData.ViewIndex = _viewDataList.Count == 0 ? 0 : _viewDataList[^1].BindingData.ViewIndex + 1;
+            // bindingList.Add(bindingData);
+            // OnDataChanged();
+            // var viewData = new EntryViewData
+            // {
+            //     BindingListName = GetParameterListName(paramName),
+            //     ParameterType = paramName,
+            //     BindingListItemIndex = bindingList.Count - 1,
+            //     BindingData = bindingData
+            // };
+            // _viewDataList.Add(viewData);
+            // _listView.RefreshItems();
             
             // focus added item
             _listView.selectedIndex = _viewDataList.Count - 1;
-            var elem = _listView.Q(className: "unity-collection-view__item--selected");
-            var text = elem.Q<TextField>();
-            text.Focus();
+            // var elem = _listView.Q(className: "unity-collection-view__item--selected");
+            // var text = elem.Q<TextField>();
+            // text.Focus();
         }
 
         private void RemoveItem()
@@ -104,7 +109,7 @@ namespace TweenTimeline
             void remove(EntryViewData item)
             {
                 _viewDataList.Remove(item);
-                var dataList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, item.ParameterType);
+                var dataList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(_clip, item.ParameterType);
                 dataList.RemoveAt(item.BindingListItemIndex);   
             }
             
@@ -132,28 +137,12 @@ namespace TweenTimeline
             return $"{char.ToLower(typeName[0])}{typeName.Substring(1)}s";
         }
 
-        private void OnParamTypeChange(ChangeEvent<Enum> evt, EntryViewData data)
-        {
-            var newType = (TweenParameterType)evt.newValue;
-            TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, data.ParameterType).RemoveAt(data.BindingListItemIndex);
-
-            data.ParameterType = newType;
-            var bindingData = CreateBindingData(newType);
-            bindingData.Name = data.BindingData.Name;
-            ParameterSetEntryConverter.TryConvert(prevData: data.BindingData, newData: bindingData);
-            data.BindingData = bindingData;
-            var bindingList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, newType);
-            bindingList.Add(data.BindingData);
-            data.BindingListItemIndex = bindingList.Count - 1;
-            data.BindingListName = GetParameterListName(newType);
-            OnDataChanged();
-            _listView.RefreshItems();
-        }
-
         private TweenParameterTrack.ParameterSetEntry CreateBindingData(TweenParameterType paramType)
         {
             var typeArg = TweenParameterEditorUtility.ParameterTypeToType(paramType);
-            var constructedType = typeof(TweenParameterTrack.ParameterSetEntry<>).MakeGenericType(typeArg);
+            // TODO
+            Type expressionType = null;
+            var constructedType = typeof(SubTweenClip.ParameterOverwrite<,>).MakeGenericType(expressionType, typeArg);
             var instance = Activator.CreateInstance(constructedType);
             return (TweenParameterTrack.ParameterSetEntry)instance;
         }
@@ -168,15 +157,15 @@ namespace TweenTimeline
         private void GatherEntryViewData()
         {
             _viewDataList.Clear();
-            AddEntries(_track.floats, nameof(_track.floats), TweenParameterType.Float);
-            AddEntries(_track.ints, nameof(_track.ints), TweenParameterType.Int);
-            AddEntries(_track.bools, nameof(_track.bools), TweenParameterType.Bool);
-            AddEntries(_track.vector3s, nameof(_track.vector3s), TweenParameterType.Vector3);
-            AddEntries(_track.vector2s, nameof(_track.vector2s), TweenParameterType.Vector2);
-            AddEntries(_track.colors, nameof(_track.colors), TweenParameterType.Color);
+            AddEntries(_clip.floats, nameof(_clip.floats), TweenParameterType.Float);
+            AddEntries(_clip.ints, nameof(_clip.ints), TweenParameterType.Int);
+            AddEntries(_clip.bools, nameof(_clip.bools), TweenParameterType.Bool);
+            AddEntries(_clip.vector3s, nameof(_clip.vector3s), TweenParameterType.Vector3);
+            AddEntries(_clip.vector2s, nameof(_clip.vector2s), TweenParameterType.Vector2);
+            AddEntries(_clip.colors, nameof(_clip.colors), TweenParameterType.Color);
             return;
 
-            void AddEntries<T>(List<TweenParameterTrack.ParameterSetEntry<T>> entries, string listName, TweenParameterType parameterType)
+            void AddEntries(IList entries, string listName, TweenParameterType parameterType)
             {
                 for (int i = 0; i < entries.Count; i++)
                 {
@@ -185,7 +174,7 @@ namespace TweenTimeline
                     {
                         BindingListName = listName,
                         BindingListItemIndex = i,
-                        BindingData = entry,
+                        BindingData = entry as SubTweenClip.ParameterOverwrite,
                         ParameterType = parameterType
                     });
                 }

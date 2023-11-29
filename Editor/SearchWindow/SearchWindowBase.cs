@@ -25,18 +25,70 @@ namespace TweenTimeline.Editor
             UnityEditor.Experimental.GraphView.SearchWindow.Open(new SearchWindowContext(position, requestedWidth, requestedHeight), searchWindowProvider);
             return _completionSource.Task;
         }
+        
+        public static UniTask<TResult> OpenAsync<TSearchWindow, TResult, TArg>(TArg arg, Vector2 position, 
+            float requestedWidth = 0.0f,
+            float requestedHeight = 0.0f) 
+            where TSearchWindow : SearchWindowProviderBase<TResult, TArg>
+        {
+            var _completionSource = new UniTaskCompletionSource<TResult>();
+            var searchWindowProvider = ScriptableObject.CreateInstance<TSearchWindow>();
+            searchWindowProvider.Initialize(onSelectEntry: val =>
+            {
+                _completionSource.TrySetResult(val);
+                Object.DestroyImmediate(searchWindowProvider);
+            }, arg);
+            searchWindowProvider.onDestroy += () => _completionSource.TrySetCanceled();
+            UnityEditor.Experimental.GraphView.SearchWindow.Open(new SearchWindowContext(position, requestedWidth, requestedHeight), searchWindowProvider);
+            return _completionSource.Task;
+        }
     }
 
-    public abstract class SearchWindowProviderBase<T> : SearchWindowProviderBase
+    /// <summary>
+    /// 検索windowのベースクラス
+    /// </summary>
+    public abstract class SearchWindowProviderBase<TResult> : SearchWindowProviderBase
     {
-        public void Initialize(Action<T> onSelectEntry)
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        public void Initialize(Action<TResult> onSelectEntry)
         {
             base.Initialize(obj => onSelectEntry?.Invoke(CastResult(obj)));
         }
 
-        protected virtual T CastResult(object result)
+        /// <summary>
+        /// 選択されたSearchTreeEntryのuserDataをリザルトに変換
+        /// </summary>
+        protected virtual TResult CastResult(object result)
         {
-            return (T)result;
+            return (TResult)result;
+        }
+    }
+
+    /// <summary>
+    /// 検索windowのベースクラス
+    /// </summary>
+    public abstract class SearchWindowProviderBase<TResult, TArg> : SearchWindowProviderBase
+    {
+        protected TArg _arg;
+        
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        public void Initialize(Action<TResult> onSelectEntry, TArg arg)
+        {
+            base.Initialize(obj => onSelectEntry?.Invoke(CastResult(obj)));
+
+            _arg = arg;
+        }
+
+        /// <summary>
+        /// 選択されたSearchTreeEntryのuserDataをリザルトに変換
+        /// </summary>
+        protected virtual TResult CastResult(object result)
+        {
+            return (TResult)result;
         }
     }
     

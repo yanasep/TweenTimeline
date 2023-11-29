@@ -37,17 +37,24 @@ namespace TweenTimeline
             get { return ClipCaps.ClipIn | ClipCaps.SpeedMultiplier | (m_SupportLoop ? ClipCaps.Looping : ClipCaps.None); }
         }
         
-         [SerializeField] private ParameterOverwrite<TweenTimelineExpressionInt, int>[] ints;
-         [SerializeField] private ParameterOverwrite<TweenTimelineExpressionFloat, float>[] floats;
-         [SerializeField] private ParameterOverwrite<TweenTimelineExpressionBool, bool>[] bools;
-         [SerializeField] private ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>[] vector3s;
-         [SerializeField] private ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>[] vector2s;
-         [SerializeField] private ParameterOverwrite<TweenTimelineExpressionColor, Color>[] colors;
+         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionInt, int>[] ints;
+         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionFloat, float>[] floats;
+         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionBool, bool>[] bools;
+         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>[] vector3s;
+         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>[] vector2s;
+         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionColor, Color>[] colors;
 
          [Serializable]
-         private struct ParameterOverwrite<TExpression, TValue> where TExpression : TweenTimelineExpression<TValue>
+         public class ParameterOverwrite
          {
              public string ParameterName;
+             /// <summary>インスペクターのリスト表示におけるインデックス</summary>
+             public int ViewIndex;
+         }
+
+         [Serializable]
+         public class ParameterOverwrite<TExpression, TValue> : ParameterOverwrite where TExpression : TweenTimelineExpression<TValue>
+         {
              [SerializeReference, SelectableSerializeReference]
              public TExpression Expression;
          }
