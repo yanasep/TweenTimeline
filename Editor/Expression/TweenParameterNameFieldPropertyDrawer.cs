@@ -12,7 +12,9 @@ namespace TweenTimeline.Editor
     public class TweenParameterNameFieldPropertyDrawer : PropertyDrawer
     {
         private bool _initialized;
-        private string[] _paramNameOptions;
+        private string[] _paramNames;
+        private GUIContent[] _options;
+        private int _index;
         // 空の選択肢を用意したいが、空文字やスペースだとPopupで区切り線として扱われてしまうため、見えない文字で代用
         private const string EmptyValue = "\u00A0";
 
@@ -22,6 +24,7 @@ namespace TweenTimeline.Editor
             _initialized = true;
 
             GatherParameterNames(property);
+            UpdateOptions(property);
         }
         
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -31,34 +34,23 @@ namespace TweenTimeline.Editor
             Initialize(property);
             
             var fieldPos = EditorGUI.PrefixLabel(position, label);
-            var options = _paramNameOptions;
-            var val = property.stringValue;
-            if (string.IsNullOrEmpty(val)) val = EmptyValue;
-            bool isMissing = false;
-            var index = Array.IndexOf(options, val);
-            if (index < 0)
-            {
-                isMissing = true;
-                options = options.Prepend($"{property.stringValue} (missing)").ToArray();
-                index = 0;
-            }
             
             using (var ccs = new EditorGUI.ChangeCheckScope())
             {
-                var optionGuis = options.Select(x => new GUIContent(x)).ToArray();
-                if (isMissing)
-                {
-                    var content = EditorGUIUtility.IconContent("console.warnicon.sml");
-                    content.text = options[0];
-                    optionGuis[0] = content;
-                }
-                index = EditorGUI.Popup(fieldPos, index, optionGuis);
+                // 警告アイコンは必ず表示させたいので、サイズを指定
+                var prevSide = EditorGUIUtility.GetIconSize();
+                EditorGUIUtility.SetIconSize(new Vector2(16, 16));
+                
+                _index = EditorGUI.Popup(fieldPos, _index, _options);
+                
+                EditorGUIUtility.SetIconSize(prevSide);
 
                 if (ccs.changed)
                 {
-                    var newVal = options[index];
-                    if (index == Array.IndexOf(options, EmptyValue)) newVal = "";
+                    var newVal = _options[_index].text;
+                    if (_index == Array.IndexOf(_options, EmptyValue)) newVal = "";
                     property.stringValue = newVal;
+                    UpdateOptions(property);
                 }
             }
         }
@@ -70,7 +62,7 @@ namespace TweenTimeline.Editor
 
         private void GatherParameterNames(SerializedProperty property)
         {
-            _paramNameOptions = Array.Empty<string>();
+            _paramNames = Array.Empty<string>();
             if (property.serializedObject.context is not PlayableDirector director) return;
             if (director.playableAsset is not TimelineAsset timelineAsset) return;
             var parameterTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
@@ -78,7 +70,30 @@ namespace TweenTimeline.Editor
             var attr = (TweenParameterNameFieldAttribute)attribute;
             var paramType = TweenParameterEditorUtility.TypeToParameterType(attr.ParameterType);
             var paramList = TweenParameterEditorUtility.GetParameterSetEntries(parameterTrack, paramType);
-            _paramNameOptions = paramList.Select(x => x.Name).Prepend(EmptyValue).ToArray();
+            _paramNames = paramList.Select(x => x.Name).Prepend(EmptyValue).ToArray();
+        }
+
+        private void UpdateOptions(SerializedProperty property)
+        {
+            var val = property.stringValue;
+            if (string.IsNullOrEmpty(val)) val = EmptyValue;
+            _index = Array.IndexOf(_paramNames, val);
+            bool isMissing = _index < 0;
+            if (isMissing)
+            {
+                var missingContent = new GUIContent(EditorGUIUtility.IconContent("console.warnicon.sml"));
+                missingContent.text = $"{property.stringValue} (missing)";
+                
+                _options = _paramNames.Select(x => new GUIContent(x))
+                    .Prepend(missingContent)
+                    .ToArray();
+
+                _index = 0;
+            }
+            else
+            {
+                _options = _paramNames.Select(x => new GUIContent(x)).ToArray();
+            }
         }
     }
 }
