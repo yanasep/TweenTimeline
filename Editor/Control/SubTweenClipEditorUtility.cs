@@ -11,12 +11,12 @@ namespace TweenTimeline
         {
             return type switch
             {
-                TweenParameterType.Int => clip.ints,
-                TweenParameterType.Float => clip.floats,
-                TweenParameterType.Bool => clip.bools,
-                TweenParameterType.Vector3 => clip.vector3s,
-                TweenParameterType.Vector2 => clip.vector2s,
-                TweenParameterType.Color => clip.colors,
+                TweenParameterType.Int => clip.OverwriteSet.Ints,
+                TweenParameterType.Float => clip.OverwriteSet.Floats,
+                TweenParameterType.Bool => clip.OverwriteSet.Bools,
+                TweenParameterType.Vector3 => clip.OverwriteSet.Vector3s,
+                TweenParameterType.Vector2 => clip.OverwriteSet.Vector2s,
+                TweenParameterType.Color => clip.OverwriteSet.Colors,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }

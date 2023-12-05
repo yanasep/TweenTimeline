@@ -7,7 +7,7 @@ using UnityEngine.Timeline;
 using Yanasep;
 
 namespace TweenTimeline
-{
+{   
     /// <summary>
     /// Playable Asset that generates playables for controlling time-related elements on a GameObject.
     /// </summary>
@@ -36,13 +36,19 @@ namespace TweenTimeline
         {
             get { return ClipCaps.ClipIn | ClipCaps.SpeedMultiplier | (m_SupportLoop ? ClipCaps.Looping : ClipCaps.None); }
         }
-        
-         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionInt, int>[] ints;
-         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionFloat, float>[] floats;
-         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionBool, bool>[] bools;
-         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>[] vector3s;
-         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>[] vector2s;
-         [SerializeField] public ParameterOverwrite<TweenTimelineExpressionColor, Color>[] colors;
+
+        public ParameterOverwriteSet OverwriteSet;
+
+         [Serializable]
+         public class ParameterOverwriteSet
+         {
+             public ParameterOverwrite<TweenTimelineExpressionInt, int>[] Ints;
+             public ParameterOverwrite<TweenTimelineExpressionFloat, float>[] Floats;
+             public ParameterOverwrite<TweenTimelineExpressionBool, bool>[] Bools;
+             public ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>[] Vector3s;
+             public ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>[] Vector2s;
+             public ParameterOverwrite<TweenTimelineExpressionColor, Color>[] Colors;
+         }
 
          [Serializable]
          public class ParameterOverwrite
@@ -65,12 +71,12 @@ namespace TweenTimeline
              
              return TweenTimelineUtility.CreateTween(timelineAsset, info.Target, parameter =>
              {
-                 Set(parameter.Int, ints, info.Parameter);
-                 Set(parameter.Float, floats, info.Parameter);
-                 Set(parameter.Bool, bools, info.Parameter);
-                 Set(parameter.Vector3, vector3s, info.Parameter);
-                 Set(parameter.Vector2, vector2s, info.Parameter);
-                 Set(parameter.Color, colors, info.Parameter);
+                 Set(parameter.Int, OverwriteSet.Ints, info.Parameter);
+                 Set(parameter.Float, OverwriteSet.Floats, info.Parameter);
+                 Set(parameter.Bool, OverwriteSet.Bools, info.Parameter);
+                 Set(parameter.Vector3, OverwriteSet.Vector3s, info.Parameter);
+                 Set(parameter.Vector2, OverwriteSet.Vector2s, info.Parameter);
+                 Set(parameter.Color, OverwriteSet.Colors, info.Parameter);
              });
          }
 
@@ -78,6 +84,7 @@ namespace TweenTimeline
              TweenParameter parentParameter)
              where TExp : TweenTimelineExpression<TVal>
          {
+             if (overwrites == null) return;
              foreach (var overwrite in overwrites)
              {
                  if (overwrite.Expression == null) continue;
