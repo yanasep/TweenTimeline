@@ -33,7 +33,7 @@ namespace TweenTimeline
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-                // var obj = property.boxedValue;
+            var obj = property.GetValue<SubTweenClip.ParameterOverwriteSet>();
             EditorGUI.PropertyField(position, property, label);
         }
 
