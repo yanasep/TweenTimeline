@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: baf33cf476fb44ff99e60df036850cea
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - SubTweenClipInspectorXml: {fileID: 9197481963319205126, guid: 3dad4e074d5bb484dbceaedfecdc17ee, type: 3}
+  - SubTweenClipOverwriteEntryXml: {fileID: 9197481963319205126, guid: 3dd40fb82703d9b4cb7c9276b50a849f, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

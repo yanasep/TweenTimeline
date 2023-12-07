@@ -8,8 +8,6 @@ namespace TweenTimeline
     [CustomPropertyDrawer(typeof(SubTweenClip.ParameterOverwriteSet))]
     public class SubTweenClipParameterOverwriteSetDrawer : PropertyDrawer
     {
-        [SerializeField] private VisualTreeAsset _inspectorXml;
-        [SerializeField] private VisualTreeAsset _entryXml;
         private SubTweenClip _clip;
         private ListView _listView;
         private List<EntryViewData> _viewDataList;
