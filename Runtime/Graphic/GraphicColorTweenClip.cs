@@ -15,7 +15,7 @@ namespace TweenTimeline
     public class GraphicColorTweenClip : TweenClip<Graphic>
     {
         [SerializeReference, SelectableSerializeReference]
-        public TweenTimelineExpressionColor EndValue;
+        public TweenTimelineExpressionColor EndValue = new TweenTimelineExpressionColorConstant(Color.white);
         
         public RGBAFlags Enable;
         public EaseOrCurve Ease;

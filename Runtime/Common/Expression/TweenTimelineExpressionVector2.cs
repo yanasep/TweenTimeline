@@ -22,6 +22,9 @@ namespace TweenTimeline
     {
         [NoPropertyLabel] public Vector2 Value;
 
+        public TweenTimelineExpressionVector2Constant() { }
+        public TweenTimelineExpressionVector2Constant(Vector2 value) => Value = value;
+
         /// <inheritdoc/>
         public override Vector2 Evaluate(TweenParameter parameter)
         {
@@ -37,7 +40,9 @@ namespace TweenTimeline
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionVector2Parameter : TweenTimelineExpressionVector2, ISerializationCallbackReceiver
     {
+        [TweenParameterNameField(typeof(Vector2))]
         public string ParameterName;
+        
         private int paramHash;
 
         /// <inheritdoc/>

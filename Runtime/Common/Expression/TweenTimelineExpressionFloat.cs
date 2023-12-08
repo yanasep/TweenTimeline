@@ -17,11 +17,14 @@ namespace TweenTimeline
     /// floatの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [DisplayName("float/Constant")]
+    [DisplayName("Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionFloatConstant : TweenTimelineExpressionFloat
     {
         public float Value;
+
+        public TweenTimelineExpressionFloatConstant() { }
+        public TweenTimelineExpressionFloatConstant(float value) => Value = value;
 
         /// <inheritdoc/>
         public override float Evaluate(TweenParameter parameter)
@@ -34,11 +37,13 @@ namespace TweenTimeline
     /// floatの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [DisplayName("float/Parameter")]
+    [DisplayName("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionFloatParameter : TweenTimelineExpressionFloat, ISerializationCallbackReceiver
     {
+        [TweenParameterNameField(typeof(float))]
         public string ParameterName;
+        
         private int paramHash;
 
         /// <inheritdoc/>
@@ -62,7 +67,7 @@ namespace TweenTimeline
     /// floatの値表現 (Add)
     /// </summary>
     [Serializable]
-    [DisplayName("float/Add")]
+    [DisplayName("Add")]
     public class TweenTimelineExpressionFloatAdd : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -82,7 +87,7 @@ namespace TweenTimeline
     /// floatの値表現 (Subtract)
     /// </summary>
     [Serializable]
-    [DisplayName("float/Subtract")]
+    [DisplayName("Subtract")]
     public class TweenTimelineExpressionFloatSubtract : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference]
@@ -102,7 +107,7 @@ namespace TweenTimeline
     /// floatの値表現 (Multiply)
     /// </summary>
     [Serializable]
-    [DisplayName("float/Multiply")]
+    [DisplayName("Multiply")]
     public class TweenTimelineExpressionFloatMultiply : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference] 
@@ -122,7 +127,7 @@ namespace TweenTimeline
     /// floatの値表現 (Divide)
     /// </summary>
     [Serializable]
-    [DisplayName("float/Divide")]
+    [DisplayName("Divide")]
     public class TweenTimelineExpressionFloatDivide : TweenTimelineExpressionFloat
     {
         [SerializeReference, SelectableSerializeReference]

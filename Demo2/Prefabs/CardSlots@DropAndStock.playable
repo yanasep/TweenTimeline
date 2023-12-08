@@ -251,22 +251,16 @@ MonoBehaviour:
   m_Name: SubTweenClip
   m_EditorClassIdentifier: 
   timelineAsset: {fileID: 0}
-  ints: []
-  floats: []
-  bools: []
-  vector3s:
-  - ParameterName: TargetPosition
-    Expression:
-      rid: 5718004038834585615
-  vector2s: []
-  colors: []
+  OverwriteSet:
+    Ints: []
+    Floats: []
+    Bools: []
+    Vector3s: []
+    Vector2s: []
+    Colors: []
   references:
     version: 2
-    RefIds:
-    - rid: 5718004038834585615
-      type: {class: TweenTimelineExpressionVector3Constant, ns: TweenTimeline, asm: TweenTimeline}
-      data:
-        Value: {x: 500, y: 0, z: 0}
+    RefIds: []
 --- !u!114 &-4033434277799039730
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -280,22 +274,16 @@ MonoBehaviour:
   m_Name: SubTweenClip(Clone)(Clone)
   m_EditorClassIdentifier: 
   timelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
-  ints: []
-  floats: []
-  bools: []
-  vector3s:
-  - ParameterName: DropPosition
-    Expression:
-      rid: 5718004148268433470
-  vector2s: []
-  colors: []
+  OverwriteSet:
+    Ints: []
+    Floats: []
+    Bools: []
+    Vector3s: []
+    Vector2s: []
+    Colors: []
   references:
     version: 2
-    RefIds:
-    - rid: 5718004148268433470
-      type: {class: TweenTimelineExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
-      data:
-        ParameterName: DropPosition
+    RefIds: []
 --- !u!114 &-3879210598457888528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -424,19 +412,21 @@ MonoBehaviour:
   m_Name: SubTweenClip
   m_EditorClassIdentifier: 
   timelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
-  ints: []
-  floats: []
-  bools: []
-  vector3s:
-  - ParameterName: DropPosition
-    Expression:
-      rid: 5718004148268433468
-  vector2s: []
-  colors: []
+  OverwriteSet:
+    Ints: []
+    Floats: []
+    Bools: []
+    Vector3s:
+    - ParameterName: DropPosition
+      ViewIndex: 0
+      Expression:
+        rid: 2068997397188968452
+    Vector2s: []
+    Colors: []
   references:
     version: 2
     RefIds:
-    - rid: 5718004148268433468
+    - rid: 2068997397188968452
       type: {class: TweenTimelineExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
       data:
         ParameterName: DropPosition
@@ -539,22 +529,22 @@ MonoBehaviour:
   m_Name: SubTweenClip(Clone)
   m_EditorClassIdentifier: 
   timelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
-  ints: []
-  floats: []
-  bools: []
-  vector3s:
-  - ParameterName: DropPosition
-    Expression:
-      rid: 5718004148268433469
-  vector2s: []
-  colors: []
+  OverwriteSet:
+    Ints: []
+    Floats: []
+    Bools: []
+    Vector3s:
+    - ParameterName: 
+      ViewIndex: 0
+      Expression:
+        rid: -2
+    Vector2s: []
+    Colors: []
   references:
     version: 2
     RefIds:
-    - rid: 5718004148268433469
-      type: {class: TweenTimelineExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
-      data:
-        ParameterName: DropPosition
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &5855800426212961705
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -584,6 +574,7 @@ MonoBehaviour:
   bools: []
   vector3s:
   - Name: DropPosition
+    ViewIndex: 0
     Value: {x: 400, y: 130, z: 0}
   vector2s: []
   colors: []

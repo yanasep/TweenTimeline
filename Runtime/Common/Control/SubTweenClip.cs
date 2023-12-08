@@ -23,6 +23,7 @@ namespace TweenTimeline
         private static HashSet<PlayableDirector> s_ProcessedDirectors = new HashSet<PlayableDirector>();
         
         public PlayableDirector Binding { get; set; }
+        public TimelineAsset RootTimelineAsset { get; set; }
 
         /// <summary>
         /// Returns the duration in seconds needed to play the underlying director or particle system exactly once.
@@ -71,6 +72,7 @@ namespace TweenTimeline
              
              return TweenTimelineUtility.CreateTween(timelineAsset, info.Target, parameter =>
              {
+                 if (OverwriteSet == null) return;
                  Set(parameter.Int, OverwriteSet.Ints, info.Parameter);
                  Set(parameter.Float, OverwriteSet.Floats, info.Parameter);
                  Set(parameter.Bool, OverwriteSet.Bools, info.Parameter);
@@ -109,9 +111,10 @@ namespace TweenTimeline
                 // so they are tied to the latest gameObject bound
                 UpdateDurationAndLoopFlag(Binding);
 
-                if (go == Binding.gameObject)
+                if (go == Binding.gameObject && timelineAsset == RootTimelineAsset)
                 {
                     Debug.LogWarningFormat("Control Playable ({0}) is referencing the same PlayableDirector component than the one in which it is playing.", name);
+                    return Playable.Null;
                 }
             }
 

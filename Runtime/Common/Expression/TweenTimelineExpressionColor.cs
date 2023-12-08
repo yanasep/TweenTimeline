@@ -17,11 +17,14 @@ namespace TweenTimeline
     /// Colorの値表現 (Constant)
     /// </summary>
     [Serializable]
-    [DisplayName("Color/Constant")]
+    [DisplayName("Constant")]
     [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionColorConstant : TweenTimelineExpressionColor
     {
-        public Color Value;
+        public Color Value = Color.white;
+
+        public TweenTimelineExpressionColorConstant() { }
+        public TweenTimelineExpressionColorConstant(Color value) => Value = value;
 
         /// <inheritdoc/>
         public override Color Evaluate(TweenParameter parameter)
@@ -34,11 +37,13 @@ namespace TweenTimeline
     /// Colorの値表現 (Parameter取得)
     /// </summary>
     [Serializable]
-    [DisplayName("Color/Parameter")]
+    [DisplayName("Parameter")]
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionColorParameter : TweenTimelineExpressionColor, ISerializationCallbackReceiver
     {
+        [TweenParameterNameField(typeof(Color))]
         public string ParameterName;
+        
         private int paramHash;
 
         /// <inheritdoc/>

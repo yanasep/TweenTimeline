@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -28,6 +29,14 @@ namespace TweenTimeline
             var target = args.Binding as PlayableDirector;
             if (target == null) return null;
 
+            bool hasValidSubTween = GetClips().Any(clip =>
+            {
+                var subTweenClip = clip.asset as SubTweenClip;
+                return subTweenClip != null && subTweenClip.timelineAsset != null;
+            });
+
+            if (!hasValidSubTween) return null;
+
             var sequence = (Sequence)base.CreateTween(args);
             
             if (controlActivation)
@@ -47,9 +56,10 @@ namespace TweenTimeline
 
             foreach (var clip in GetClips())
             {
-                if (clip.asset is SubTweenClip controlClip)
+                if (clip.asset is SubTweenClip subTweenClip)
                 {
-                    controlClip.Binding = binding;
+                    subTweenClip.Binding = binding;
+                    subTweenClip.RootTimelineAsset = timelineAsset;
                 }
             }
 

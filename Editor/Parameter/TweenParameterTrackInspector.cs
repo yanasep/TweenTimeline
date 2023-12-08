@@ -180,6 +180,7 @@ namespace TweenTimeline
 
             void AddEntries<T>(List<TweenParameterTrack.ParameterSetEntry<T>> entries, string listName, TweenParameterType parameterType)
             {
+                if (entries == null) return;
                 for (int i = 0; i < entries.Count; i++)
                 {
                     var entry = entries[i];

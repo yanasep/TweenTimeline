@@ -181,6 +181,7 @@ namespace TweenTimeline.Editor
         
             void AddEntries(IList entries, string listName, TweenParameterType parameterType)
             {
+                if (entries == null) return;
                 for (int i = 0; i < entries.Count; i++)
                 {
                     var entry = entries[i];
@@ -204,6 +205,7 @@ namespace TweenTimeline.Editor
             if (timelineAsset == null) return;
 
             var paramTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
+            if (paramTrack == null) return;
             AddCandidates(paramTrack.floats);
             AddCandidates(paramTrack.ints);
             AddCandidates(paramTrack.bools);

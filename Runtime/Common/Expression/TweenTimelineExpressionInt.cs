@@ -22,6 +22,9 @@ namespace TweenTimeline
     public class TweenTimelineExpressionIntConstant : TweenTimelineExpressionInt
     {
         public int Value;
+
+        public TweenTimelineExpressionIntConstant() { }
+        public TweenTimelineExpressionIntConstant(int value) => Value = value;
     
         /// <inheritdoc/>
         public override int Evaluate(TweenParameter parameter)
@@ -38,7 +41,9 @@ namespace TweenTimeline
     [SelectableSerializeSingleLine(nameof(ParameterName))]
     public class TweenTimelineExpressionIntParameter : TweenTimelineExpressionInt, ISerializationCallbackReceiver
     {
+        [TweenParameterNameField(typeof(int))]
         public string ParameterName;
+        
         private int paramHash;
 
         /// <inheritdoc/>

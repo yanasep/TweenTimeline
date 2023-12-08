@@ -97,13 +97,15 @@ namespace TweenTimeline
             if (binding == null) return base.CreateTrackMixer(graph, go, inputCount);
 
             var parameter = TweenTimelineUtility.GetTweenParameter(timelineAsset);
-            var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, inputCount);
-            playable.GetBehaviour().Tween = CreateTween(new CreateTweenArgs
+            var tween = CreateTween(new CreateTweenArgs
             {
                 Binding = binding,
                 Parameter = parameter,
                 Duration = (float)timelineAsset.duration
             });
+            if (tween == null) return base.CreateTrackMixer(graph, go, inputCount);
+            var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, inputCount);
+            playable.GetBehaviour().Tween = tween;
             return playable;
         }
         
