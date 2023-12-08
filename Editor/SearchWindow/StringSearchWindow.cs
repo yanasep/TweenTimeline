@@ -21,12 +21,11 @@ namespace TweenTimeline.Editor
         public override List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
             var entries = new List<SearchTreeEntry>();
-            // entries.Add(new SearchTreeGroupEntry(new GUIContent(_arg.label)) { level = 0 });
+            entries.Add(new SearchTreeGroupEntry(new GUIContent(_arg.label)) { level = 0 });
 
             foreach (var val in _arg.options)
             {
-                // entries.Add(new SearchTreeEntry(new GUIContent(val, _icon)) { level = 1, userData = val });
-                entries.Add(new SearchTreeEntry(new GUIContent(val, _icon)) { level = 0, userData = val });
+                entries.Add(new SearchTreeEntry(new GUIContent(val, _icon)) { level = 1, userData = val });
             }
             return entries;
         }

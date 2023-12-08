@@ -42,12 +42,12 @@ namespace TweenTimeline
          [Serializable]
          public class ParameterOverwriteSet
          {
-             public ParameterOverwrite<TweenTimelineExpressionInt, int>[] Ints;
-             public ParameterOverwrite<TweenTimelineExpressionFloat, float>[] Floats;
-             public ParameterOverwrite<TweenTimelineExpressionBool, bool>[] Bools;
-             public ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>[] Vector3s;
-             public ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>[] Vector2s;
-             public ParameterOverwrite<TweenTimelineExpressionColor, Color>[] Colors;
+             public List<ParameterOverwrite<TweenTimelineExpressionInt, int>> Ints;
+             public List<ParameterOverwrite<TweenTimelineExpressionFloat, float>> Floats;
+             public List<ParameterOverwrite<TweenTimelineExpressionBool, bool>> Bools;
+             public List<ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>> Vector3s;
+             public List<ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>> Vector2s;
+             public List<ParameterOverwrite<TweenTimelineExpressionColor, Color>> Colors;
          }
 
          [Serializable]
@@ -80,7 +80,7 @@ namespace TweenTimeline
              });
          }
 
-         private void Set<TVal, TExp>(TimelineParameterDictionary<TVal> destParamDic, ParameterOverwrite<TExp, TVal>[] overwrites, 
+         private void Set<TVal, TExp>(TimelineParameterDictionary<TVal> destParamDic, List<ParameterOverwrite<TExp, TVal>> overwrites, 
              TweenParameter parentParameter)
              where TExp : TweenTimelineExpression<TVal>
          {

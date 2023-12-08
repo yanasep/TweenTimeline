@@ -7,23 +7,23 @@ namespace TweenTimeline
 {
     public static class SubTweenClipEditorUtility
     {
-        public static IReadOnlyList<SubTweenClip.ParameterOverwrite> GetParameterSetEntries(SubTweenClip clip, TweenParameterType type)
+        public static IReadOnlyList<SubTweenClip.ParameterOverwrite> GetParameterSetEntries(SubTweenClip.ParameterOverwriteSet set, TweenParameterType type)
         {
             return type switch
             {
-                TweenParameterType.Int => clip.OverwriteSet.Ints,
-                TweenParameterType.Float => clip.OverwriteSet.Floats,
-                TweenParameterType.Bool => clip.OverwriteSet.Bools,
-                TweenParameterType.Vector3 => clip.OverwriteSet.Vector3s,
-                TweenParameterType.Vector2 => clip.OverwriteSet.Vector2s,
-                TweenParameterType.Color => clip.OverwriteSet.Colors,
+                TweenParameterType.Int => set.Ints,
+                TweenParameterType.Float => set.Floats,
+                TweenParameterType.Bool => set.Bools,
+                TweenParameterType.Vector3 => set.Vector3s,
+                TweenParameterType.Vector2 => set.Vector2s,
+                TweenParameterType.Color => set.Colors,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
 
-        public static IList GetParameterSetEntriesAsList(SubTweenClip clip, TweenParameterType type)
+        public static IList GetParameterSetEntriesAsList(SubTweenClip.ParameterOverwriteSet set, TweenParameterType type)
         {
-            return (IList)GetParameterSetEntries(clip, type);
+            return (IList)GetParameterSetEntries(set, type);
         }
 
         public static Type ParameterTypeToType(TweenParameterType type)
