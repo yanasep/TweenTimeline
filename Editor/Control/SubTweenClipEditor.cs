@@ -41,7 +41,7 @@ namespace TweenTimeline
             if (subDirector == null || subDirector == director || subDirector == TimelineEditor.masterDirector)
                 return;
 
-            if (asset.timelineAsset != null)
+            if (asset.OverwriteSet?.TimelineAsset != null)
                 subTimelines.Add(subDirector);
         }
     }

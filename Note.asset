@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 018fe04c2d564e5b8549077436916bd5, type: 3}
   m_Name: Note
   m_EditorClassIdentifier: UnityEngine.CoreModule:UnityEngine:ScriptableObject
-  Note: "\u5B9F\u88C5\u30E1\u30E2\n\n\nSubTweenTrack\n\u5B50\u306EParameter\u3092\u4E0A\u66F8\u304D\nParameter\u540D+Expression\u3067\u8A2D\u5B9A\n\nParameter\n\u30C9\u30ED\u30C3\u30D7\u30C0\u30A6\u30F3\u3067\u540D\u524D\u3092\u9078\u629E\u53EF\u80FD\u306B\n\nParameterTrack\nUndo/Redo\n\n\u30EA\u30CD\u30FC\u30E0\u5BFE\u5FDC"
+  Note: "\u5B9F\u88C5\u30E1\u30E2\n\n\u30EA\u30CD\u30FC\u30E0\u5BFE\u5FDC"

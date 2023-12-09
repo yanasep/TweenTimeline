@@ -31,6 +31,19 @@ namespace TweenTimeline
         private void OnEnable()
         {
             _track = (TweenParameterTrack)target;
+            Undo.undoRedoPerformed += OnUndoRedoPerformed;
+        }
+
+        private void OnDisable()
+        {
+            Undo.undoRedoPerformed -= OnUndoRedoPerformed;
+        }
+
+        private void OnUndoRedoPerformed()
+        {
+            serializedObject.Update();
+            GatherEntryViewData();
+            _listView.RefreshItems();
         }
 
         public override VisualElement CreateInspectorGUI()
@@ -41,27 +54,26 @@ namespace TweenTimeline
 
             _viewDataList ??= new();
             GatherEntryViewData();
-            _viewDataList.Sort((a, b) => a.BindingData.ViewIndex.CompareTo(b.BindingData.ViewIndex));
 
             _listView.makeItem = _entryXml.CloneTree;
             _listView.bindItem = (elem, i) =>
             {
                 var data = _viewDataList[i];
-                (elem as IBindable)!.bindingPath = $"{data.BindingListName}.Array.data[{data.BindingListItemIndex}]";
-                elem.Bind(serializedObject);
+                var property = serializedObject.FindProperty(data.BindingListName).GetArrayElementAtIndex(data.BindingListItemIndex);
+                (elem as IBindable)!.BindProperty(property);
                 var typeEnumField = elem.Q<EnumField>();
                 typeEnumField.SetValueWithoutNotify(data.ParameterType);
                 typeEnumField.RegisterCallback<ChangeEvent<Enum>, EntryViewData>(OnParamTypeChange, data);
             };
             _listView.unbindItem = (elem, _) =>
             {
-                (elem as IBindable)!.bindingPath = "";
                 var typeEnumField = elem.Q<EnumField>();
                 typeEnumField.UnregisterCallback<ChangeEvent<Enum>, EntryViewData>(OnParamTypeChange);
             };
             _listView.itemsSource = _viewDataList;
             _listView.itemIndexChanged += (index1, index2) =>
             {
+                Undo.RecordObject(_track, "Reorder Parameters");
                 _viewDataList[index1].BindingData.ViewIndex = index1;
                 _viewDataList[index2].BindingData.ViewIndex = index2;
             };
@@ -77,6 +89,7 @@ namespace TweenTimeline
         private async UniTask AddItemAsync(Vector2 position)
         {
             var type = await EnumSearchWindow.OpenAsync<TweenParameterType>("Type", new SearchWindowContext(position));
+            Undo.RecordObject(_track, "Add Tween Parameter");
             var bindingList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, type);
             var bindingData = CreateBindingData(type);
             bindingData.Name = "New Parameter";
@@ -102,12 +115,7 @@ namespace TweenTimeline
 
         private void RemoveItem()
         {
-            void remove(EntryViewData item)
-            {
-                _viewDataList.Remove(item);
-                var dataList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, item.ParameterType);
-                dataList.RemoveAt(item.BindingListItemIndex);   
-            }
+            Undo.RecordObject(_track, "Remove Tween Parameter");
             
             // 何も選択していなければ最後の要素を削除
             if (_listView.selectedIndex == -1 && _viewDataList.Count > 0)
@@ -125,6 +133,14 @@ namespace TweenTimeline
 
             OnDataChanged();
             _listView.RefreshItems();
+            return;
+            
+            void remove(EntryViewData item)
+            {
+                _viewDataList.Remove(item);
+                var dataList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, item.ParameterType);
+                dataList.RemoveAt(item.BindingListItemIndex);   
+            }
         }
 
         private string GetParameterListName(TweenParameterType type)
@@ -135,6 +151,7 @@ namespace TweenTimeline
 
         private void OnParamTypeChange(ChangeEvent<Enum> evt, EntryViewData data)
         {
+            Undo.RecordObject(_track, "Change Tween Parameter Type");
             var newType = (TweenParameterType)evt.newValue;
             TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, data.ParameterType).RemoveAt(data.BindingListItemIndex);
 
@@ -175,6 +192,7 @@ namespace TweenTimeline
             AddEntries(_track.vector3s, nameof(_track.vector3s), TweenParameterType.Vector3);
             AddEntries(_track.vector2s, nameof(_track.vector2s), TweenParameterType.Vector2);
             AddEntries(_track.colors, nameof(_track.colors), TweenParameterType.Color);
+            _viewDataList.Sort((a, b) => a.BindingData.ViewIndex.CompareTo(b.BindingData.ViewIndex));
             return;
 
             void AddEntries<T>(List<TweenParameterTrack.ParameterSetEntry<T>> entries, string listName, TweenParameterType parameterType)

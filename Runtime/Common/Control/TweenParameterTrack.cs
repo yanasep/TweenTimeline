@@ -13,9 +13,6 @@ namespace TweenTimeline
     [DisplayName("Tween/Tween Parameter Track")]
     public class TweenParameterTrack : TrackAsset
     {
-        // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
-        [SerializeField, Common.ReadOnly] private byte _;
-        
         [Serializable]
         public class ParameterSetEntry
         {

@@ -35,13 +35,14 @@ namespace TweenTimeline.Editor
             
             var root = new VisualElement();
             TweenTimelineEditorResourceHolder.instance.SubTweenClipInspectorXml.CloneTree(root);
-            _listView = root.Q<ListView>();
+            root.Q<PropertyField>("TimelineAsset")
+                .BindProperty(property.FindPropertyRelative(nameof(SubTweenClip.ParameterOverwriteSet.TimelineAsset)));
             
+            _listView = root.Q<ListView>();
             _viewDataList ??= new();
             _parameterCandidates ??= new();
             GatherEntryViewData(set);
             GatherPropertyCandidates(property);
-            _viewDataList.Sort((a, b) => a.BindingData.ViewIndex.CompareTo(b.BindingData.ViewIndex));
             
             _listView.makeItem = TweenTimelineEditorResourceHolder.instance.SubTweenClipOverwriteEntryXml.CloneTree;
             _listView.bindItem = (elem, i) =>
@@ -49,17 +50,14 @@ namespace TweenTimeline.Editor
                 var data = _viewDataList[i];
                 elem.Q<Label>("ParameterName").text = data.BindingData.ParameterName;
                 elem.Q<Label>("ParameterType").text = data.ParameterType.ToString();
-                // TODO: アイテム追加時にnullエラーが出るので対応 (インスペクターを開き直すと直る)
-                var expressionProperty = property.FindPropertyRelative(data.BindingListName).GetArrayElementAtIndex(i).FindPropertyRelative("Expression");
+                var expressionProperty = property.FindPropertyRelative(data.BindingListName)
+                    .GetArrayElementAtIndex(data.BindingListItemIndex).FindPropertyRelative("Expression");
                 elem.Q<PropertyField>("Expression").BindProperty(expressionProperty);
-            };
-            _listView.unbindItem = (elem, _) =>
-            {
-                (elem as IBindable)!.bindingPath = "";
             };
             _listView.itemsSource = _viewDataList;
             _listView.itemIndexChanged += (index1, index2) =>
             {
+                Undo.RecordObject(property.serializedObject.targetObject, "Reorder parameter overwrites");
                 _viewDataList[index1].BindingData.ViewIndex = index1;
                 _viewDataList[index2].BindingData.ViewIndex = index2;
             };
@@ -69,13 +67,24 @@ namespace TweenTimeline.Editor
             var removeButton = root.Q<Button>("remove-button");
             removeButton.clicked += () => RemoveItem(property, set);
 
+            root.TrackPropertyValue(property, OnPropertyValueChanged);
             return root;
+        }
+
+        private void OnPropertyValueChanged(SerializedProperty property)
+        {
+            var set = property.GetValue<SubTweenClip.ParameterOverwriteSet>();
+            GatherEntryViewData(set);
+            GatherPropertyCandidates(property);
+            _listView.RefreshItems();
+            EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
         
         private async UniTask AddItemAsync(Vector2 position, SerializedProperty property, SubTweenClip.ParameterOverwriteSet set)
         {
             var options = _parameterCandidates.Select(x => $"{x.paramName} ({x.paramType})").ToArray();
             var selectedParam = await StringSearchWindow.OpenAsync("Parameter", options, new SearchWindowContext(position));
+            Undo.RecordObject(property.serializedObject.targetObject, "Add parameter overwrite");
             var selectedIndex = Array.IndexOf(options, selectedParam);
             var (paramName, paramType) = _parameterCandidates[selectedIndex];
             var bindingList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(set, paramType);
@@ -83,7 +92,6 @@ namespace TweenTimeline.Editor
             bindingData.ParameterName = paramName;
             bindingData.ViewIndex = _viewDataList.Count == 0 ? 0 : _viewDataList[^1].BindingData.ViewIndex + 1;
             bindingList.Add(bindingData);
-            OnDataChanged(property);
             var viewData = new EntryViewData
             {
                 BindingListName = GetParameterListName(paramType),
@@ -92,20 +100,14 @@ namespace TweenTimeline.Editor
                 BindingData = bindingData
             };
             _viewDataList.Add(viewData);
-            _listView.RefreshItems();
             
             // focus added item
             _listView.selectedIndex = _viewDataList.Count - 1;
         }
         
         private void RemoveItem(SerializedProperty property, SubTweenClip.ParameterOverwriteSet set)
-        {
-            void remove(EntryViewData item)
-            {
-                _viewDataList.Remove(item);
-                var dataList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(set, item.ParameterType);
-                dataList.RemoveAt(item.BindingListItemIndex);   
-            }
+        {   
+            Undo.RecordObject(property.serializedObject.targetObject, "Remove parameter overwrite");
             
             // 何も選択していなければ最後の要素を削除
             if (_listView.selectedIndex == -1 && _viewDataList.Count > 0)
@@ -121,8 +123,14 @@ namespace TweenTimeline.Editor
                 }
             }
         
-            OnDataChanged(property);
-            _listView.RefreshItems();
+            return;
+            
+            void remove(EntryViewData item)
+            {
+                _viewDataList.Remove(item);
+                var dataList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(set, item.ParameterType);
+                dataList.RemoveAt(item.BindingListItemIndex);   
+            }
         }
         
         private string GetParameterListName(TweenParameterType type)
@@ -161,13 +169,6 @@ namespace TweenTimeline.Editor
             return null;
         }
         
-        private void OnDataChanged(SerializedProperty property)
-        {
-            property.serializedObject.ApplyModifiedProperties();
-            property.serializedObject.Update();
-            EditorUtility.SetDirty(property.serializedObject.targetObject);
-        }
-        
         private void GatherEntryViewData(SubTweenClip.ParameterOverwriteSet set)
         {
             _viewDataList.Clear();
@@ -177,6 +178,7 @@ namespace TweenTimeline.Editor
             AddEntries(set.Vector3s, nameof(set.Vector3s), TweenParameterType.Vector3);
             AddEntries(set.Vector2s, nameof(set.Vector2s), TweenParameterType.Vector2);
             AddEntries(set.Colors, nameof(set.Colors), TweenParameterType.Color);
+            _viewDataList.Sort((a, b) => a.BindingData.ViewIndex.CompareTo(b.BindingData.ViewIndex));
             return;
         
             void AddEntries(IList entries, string listName, TweenParameterType parameterType)
@@ -201,24 +203,27 @@ namespace TweenTimeline.Editor
         {
             _parameterCandidates.Clear();
 
-            var timelineAsset = property.serializedObject.FindProperty("timelineAsset").GetValue<TimelineAsset>();
+            var timelineAsset = property.FindPropertyRelative(nameof(SubTweenClip.ParameterOverwriteSet.TimelineAsset)).GetValue<TimelineAsset>();
             if (timelineAsset == null) return;
 
             var paramTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
             if (paramTrack == null) return;
+
+            var enumerable = Enumerable.Empty<(string paramName, TweenParameterType paramType, int index)>();
             AddCandidates(paramTrack.floats);
             AddCandidates(paramTrack.ints);
             AddCandidates(paramTrack.bools);
             AddCandidates(paramTrack.vector3s);
             AddCandidates(paramTrack.vector2s);
             AddCandidates(paramTrack.colors);
+            _parameterCandidates.AddRange(enumerable.OrderBy(x => x.index).Select(x => (x.paramName, x.paramType)));
             return;
 
-            void AddCandidates<T>(List<TweenParameterTrack.ParameterSetEntry<T>> list)
+            void AddCandidates<T>(IEnumerable<TweenParameterTrack.ParameterSetEntry<T>> list)
             {
                 foreach (var item in list)
                 {
-                    _parameterCandidates.Add((item.Name, TweenParameterEditorUtility.TypeToParameterType(typeof(T))));
+                    enumerable = enumerable.Append((item.Name, TweenParameterEditorUtility.TypeToParameterType(typeof(T)), item.ViewIndex));
                 }
             }
         }

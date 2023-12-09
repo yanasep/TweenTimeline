@@ -16,7 +16,7 @@ namespace TweenTimeline
                 TweenParameterType.Bool => track.bools ??= new(),
                 TweenParameterType.Vector3 => track.vector3s ??= new(),
                 TweenParameterType.Vector2 => track.vector2s ??= new(),
-                TweenParameterType.Color => track.colors,
+                TweenParameterType.Color => track.colors ??= new(),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }

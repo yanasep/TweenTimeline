@@ -32,7 +32,7 @@ namespace TweenTimeline
             bool hasValidSubTween = GetClips().Any(clip =>
             {
                 var subTweenClip = clip.asset as SubTweenClip;
-                return subTweenClip != null && subTweenClip.timelineAsset != null;
+                return subTweenClip != null && subTweenClip.OverwriteSet?.TimelineAsset != null;
             });
 
             if (!hasValidSubTween) return null;
@@ -87,13 +87,13 @@ namespace TweenTimeline
 
             foreach (var clip in GetClips())
             {
-                var controlClip = clip.asset as SubTweenClip;
-                if (controlClip == null)
+                var subTweenClip = clip.asset as SubTweenClip;
+                if (subTweenClip == null)
                     continue;
 
-                if (controlClip.timelineAsset != null)
+                if (subTweenClip.OverwriteSet?.TimelineAsset != null)
                 {
-                    timelinesToPreview.Add(controlClip.timelineAsset);
+                    timelinesToPreview.Add(subTweenClip.OverwriteSet.TimelineAsset);
                 }
             }
 

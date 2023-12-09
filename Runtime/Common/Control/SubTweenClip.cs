@@ -15,8 +15,6 @@ namespace TweenTimeline
     [NotKeyable]
     public class SubTweenClip : TweenClip<PlayableDirector>, IPropertyPreview
     {
-        [SerializeField] public TimelineAsset timelineAsset;
-
         double m_Duration = PlayableBinding.DefaultDuration;
         bool m_SupportLoop;
 
@@ -43,6 +41,7 @@ namespace TweenTimeline
          [Serializable]
          public class ParameterOverwriteSet
          {
+             public TimelineAsset TimelineAsset;
              public List<ParameterOverwrite<TweenTimelineExpressionInt, int>> Ints;
              public List<ParameterOverwrite<TweenTimelineExpressionFloat, float>> Floats;
              public List<ParameterOverwrite<TweenTimelineExpressionBool, bool>> Bools;
@@ -68,9 +67,9 @@ namespace TweenTimeline
          
          public override Tween CreateTween(TweenClipInfo<PlayableDirector> info)
          {
-             if (timelineAsset == null) return null;
+             if (OverwriteSet?.TimelineAsset == null) return null;
              
-             return TweenTimelineUtility.CreateTween(timelineAsset, info.Target, parameter =>
+             return TweenTimelineUtility.CreateTween(OverwriteSet.TimelineAsset, info.Target, parameter =>
              {
                  if (OverwriteSet == null) return;
                  Set(parameter.Int, OverwriteSet.Ints, info.Parameter);
@@ -111,7 +110,7 @@ namespace TweenTimeline
                 // so they are tied to the latest gameObject bound
                 UpdateDurationAndLoopFlag(Binding);
 
-                if (go == Binding.gameObject && timelineAsset == RootTimelineAsset)
+                if (go == Binding.gameObject && OverwriteSet.TimelineAsset == RootTimelineAsset)
                 {
                     Debug.LogWarningFormat("Control Playable ({0}) is referencing the same PlayableDirector component than the one in which it is playing.", name);
                     return Playable.Null;
@@ -155,7 +154,7 @@ namespace TweenTimeline
             if (s_ProcessedDirectors.Contains(director))
                 return;
             s_ProcessedDirectors.Add(director);
-            PreviewDirector(driver, director, new[] { timelineAsset });
+            PreviewDirector(driver, director, new[] { OverwriteSet.TimelineAsset });
             s_ProcessedDirectors.Remove(director);
         }
 
