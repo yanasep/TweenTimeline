@@ -3,93 +3,53 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace TweenTimeline.Editor
 {
-    public static class SearchWindow
+    /// <summary>
+    /// 検索windowのベースクラス
+    /// </summary>
+    public abstract class SearchWindowBase<TResult> : SearchWindowBase<TResult, object>
     {
-        public static UniTask<TResult> OpenAsync<TSearchWindow, TResult>(SearchWindowContext context)
-            where TSearchWindow : SearchWindowProviderBase<TResult>
+        /// <summary>
+        /// 開く
+        /// </summary>
+        protected static UniTask<TResult> OpenAsync<TSearchWindow>(SearchWindowContext context)
+            where TSearchWindow : SearchWindowBase<TResult>
         {
-            var _completionSource = new UniTaskCompletionSource<TResult>();
-            var searchWindowProvider = ScriptableObject.CreateInstance<TSearchWindow>();
-            searchWindowProvider.Initialize(onSelectEntry: val =>
-            {
-                _completionSource.TrySetResult(val);
-                Object.DestroyImmediate(searchWindowProvider);
-            });
-            searchWindowProvider.onDestroy += () => _completionSource.TrySetCanceled();
-            UnityEditor.Experimental.GraphView.SearchWindow.Open(context, searchWindowProvider);
-            return _completionSource.Task;
-        }
-        
-        public static UniTask<TResult> OpenAsync<TSearchWindow, TResult, TArg>(TArg arg, SearchWindowContext context)
-            where TSearchWindow : SearchWindowProviderBase<TResult, TArg>
-        {
-            var _completionSource = new UniTaskCompletionSource<TResult>();
-            var searchWindowProvider = ScriptableObject.CreateInstance<TSearchWindow>();
-            searchWindowProvider.Initialize(onSelectEntry: val =>
-            {
-                _completionSource.TrySetResult(val);
-                Object.DestroyImmediate(searchWindowProvider);
-            }, arg);
-            searchWindowProvider.onDestroy += () => _completionSource.TrySetCanceled();
-            UnityEditor.Experimental.GraphView.SearchWindow.Open(context, searchWindowProvider);
-            return _completionSource.Task;
-        }
-        
-        public static UniTask<TResult> OpenAsync<TSearchWindow, TResult, TArg>(TArg arg, Vector2 position, 
-            float requestedWidth = 0.0f,
-            float requestedHeight = 0.0f) 
-            where TSearchWindow : SearchWindowProviderBase<TResult, TArg>
-        {
-            var _completionSource = new UniTaskCompletionSource<TResult>();
-            var searchWindowProvider = ScriptableObject.CreateInstance<TSearchWindow>();
-            searchWindowProvider.Initialize(onSelectEntry: val =>
-            {
-                _completionSource.TrySetResult(val);
-                Object.DestroyImmediate(searchWindowProvider);
-            }, arg);
-            searchWindowProvider.onDestroy += () => _completionSource.TrySetCanceled();
-            UnityEditor.Experimental.GraphView.SearchWindow.Open(new SearchWindowContext(position, requestedWidth, requestedHeight), searchWindowProvider);
-            return _completionSource.Task;
+            return OpenAsync<TSearchWindow>(null, context);
         }
     }
 
     /// <summary>
     /// 検索windowのベースクラス
     /// </summary>
-    public abstract class SearchWindowProviderBase<TResult> : SearchWindowProviderBase
+    public abstract class SearchWindowBase<TResult, TArg> : SearchWindowBase
     {
         /// <summary>
-        /// 初期化
+        /// 開く
         /// </summary>
-        public void Initialize(Action<TResult> onSelectEntry)
+        protected static UniTask<TResult> OpenAsync<TSearchWindow>(TArg arg, SearchWindowContext context)
+            where TSearchWindow : SearchWindowBase<TResult, TArg>
         {
-            base.Initialize(obj => onSelectEntry?.Invoke(CastResult(obj)));
+            var _completionSource = new UniTaskCompletionSource<TResult>();
+            var searchWindowProvider = CreateInstance<TSearchWindow>();
+            searchWindowProvider.Initialize(onSelectEntry: val =>
+            {
+                _completionSource.TrySetResult(val);
+                DestroyImmediate(searchWindowProvider);
+            }, arg);
+            searchWindowProvider.onDestroy += () => _completionSource.TrySetCanceled();
+            SearchWindow.Open(context, searchWindowProvider);
+            return _completionSource.Task;
         }
 
-        /// <summary>
-        /// 選択されたSearchTreeEntryのuserDataをリザルトに変換
-        /// </summary>
-        protected virtual TResult CastResult(object result)
-        {
-            return (TResult)result;
-        }
-    }
-
-    /// <summary>
-    /// 検索windowのベースクラス
-    /// </summary>
-    public abstract class SearchWindowProviderBase<TResult, TArg> : SearchWindowProviderBase
-    {
         protected TArg _arg;
         
         /// <summary>
         /// 初期化
         /// </summary>
-        public void Initialize(Action<TResult> onSelectEntry, TArg arg)
+        private void Initialize(Action<TResult> onSelectEntry, TArg arg)
         {
             base.Initialize(obj => onSelectEntry?.Invoke(CastResult(obj)));
 
@@ -108,7 +68,7 @@ namespace TweenTimeline.Editor
     /// <summary>
     /// 検索windowのベースクラス
     /// </summary>
-    public abstract class SearchWindowProviderBase : ScriptableObject, ISearchWindowProvider
+    public abstract class SearchWindowBase : ScriptableObject, ISearchWindowProvider
     {
         private Action<object> _onSelectEntry;
         protected Texture2D _icon;

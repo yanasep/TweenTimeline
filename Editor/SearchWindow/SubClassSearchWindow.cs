@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -8,8 +9,25 @@ namespace TweenTimeline.Editor
     /// <summary>
     /// Typeの検索window
     /// </summary>
-    public class SubClassSearchWindowProvider<T> : SearchWindowProviderBase
+    public class SubClassSearchWindow<T> : SearchWindowBase<Type, string>
     {
+        /// <summary>
+        /// 開く
+        /// </summary>
+        public static UniTask<Type> OpenAsync(SearchWindowContext context)
+        {
+            var label = typeof(T).Name;
+            return OpenAsync<SubClassSearchWindow<T>>(label, context);
+        }
+        
+        /// <summary>
+        /// 開く
+        /// </summary>
+        public static UniTask<Type> OpenAsync(string label, SearchWindowContext context)
+        {
+            return OpenAsync<SubClassSearchWindow<T>>(label, context);
+        }
+
         /// <summary>
         /// 検索結果のTree表示取得
         /// </summary>

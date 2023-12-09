@@ -8,7 +8,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using SearchWindow = TweenTimeline.Editor.SearchWindow;
 
 namespace TweenTimeline
 {
@@ -77,7 +76,7 @@ namespace TweenTimeline
         
         private async UniTask AddItemAsync(Vector2 position)
         {
-            var type = await SearchWindow.OpenAsync<ParameterTypeSearchWindow, TweenParameterType>(new SearchWindowContext(position));
+            var type = await EnumSearchWindow.OpenAsync<TweenParameterType>("Type", new SearchWindowContext(position));
             var bindingList = TweenParameterEditorUtility.GetParameterSetEntriesAsList(_track, type);
             var bindingData = CreateBindingData(type);
             bindingData.Name = "New Parameter";

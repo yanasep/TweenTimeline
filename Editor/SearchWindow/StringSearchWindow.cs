@@ -8,11 +8,14 @@ namespace TweenTimeline.Editor
     /// <summary>
     /// 指定したstringリストからの検索window
     /// </summary>
-    public class StringSearchWindow : SearchWindowProviderBase<string, (string label, IList<string> options)>
+    public class StringSearchWindow : SearchWindowBase<string, (string label, IList<string> options)>
     {
+        /// <summary>
+        /// 開く
+        /// </summary>
         public static UniTask<string> OpenAsync(string label, IList<string> options, SearchWindowContext context)
         {
-            return SearchWindow.OpenAsync<StringSearchWindow, string, (string label, IList<string> options)>((label, options), context);
+            return OpenAsync<StringSearchWindow>((label, options), context);
         }
         
         /// <summary>
