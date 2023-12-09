@@ -128,7 +128,7 @@ namespace TweenTimeline.Editor
         private string GetParameterListName(TweenParameterType type)
         {
             var typeName = type.ToString();
-            return $"{char.ToLower(typeName[0])}{typeName.Substring(1)}s";
+            return $"{char.ToUpper(typeName[0])}{typeName.Substring(1)}s";
         }
         
         private SubTweenClip.ParameterOverwrite CreateBindingData(TweenParameterType paramType)

@@ -11,11 +11,11 @@ namespace TweenTimeline
         {
             return type switch
             {
-                TweenParameterType.Int => track.ints,
-                TweenParameterType.Float => track.floats,
-                TweenParameterType.Bool => track.bools,
-                TweenParameterType.Vector3 => track.vector3s,
-                TweenParameterType.Vector2 => track.vector2s,
+                TweenParameterType.Int => track.ints ??= new(),
+                TweenParameterType.Float => track.floats ??= new(),
+                TweenParameterType.Bool => track.bools ??= new(),
+                TweenParameterType.Vector3 => track.vector3s ??= new(),
+                TweenParameterType.Vector2 => track.vector2s ??= new(),
                 TweenParameterType.Color => track.colors,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };

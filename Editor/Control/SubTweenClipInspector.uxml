@@ -2,7 +2,7 @@
          engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
          noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <Style src="project://database/Assets/Externals/TweenTimeline/Editor/Parameter/TweenParameterEditor.uss?fileID=7433441132597879392&amp;guid=792c44a74beba8f41b1b778710579c73&amp;type=3#TweenParameterEditor" />
-    <ui:Label tabindex="-1" text="Parameters" class="list-header" />
+    <ui:Label tabindex="-1" text="Parameter Overwrites" class="list-header" />
     <ui:ListView focusable="true" reorderable="true" show-add-remove-footer="false" virtualization-method="DynamicHeight" selection-type="Multiple" show-border="false" reorder-mode="Animated" class="list" style="border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(46, 46, 46); border-right-color: rgb(46, 46, 46); border-top-color: rgb(46, 46, 46); border-bottom-color: rgb(46, 46, 46);" />
     <ui:VisualElement style="flex-grow: 0; width: 66px; margin-left: auto; height: 24px; flex-direction: row; margin-right: 10px; translate: 0 -0.8px;">
         <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="add-button" text="+" enable-rich-text="false" class="list-button list-button-add" />
