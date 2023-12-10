@@ -45,11 +45,9 @@ namespace TweenTimeline
         {
             base.GatherProperties(director, driver);
 
-#if UNITY_EDITOR
             var binding = director.GetGenericBinding(this) as Graphic;
             if (binding == null) return;
             driver.AddFromName<Graphic>(binding.gameObject, "m_Color");
-#endif
         }
     }
 }

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using Yanasep;
 
@@ -14,7 +15,7 @@ namespace TweenTimeline
     [TrackBindingType(typeof(RectTransform))]
     [TrackClipType(typeof(RectTransformPositionTweenClip))]
     // [TrackClipType(typeof(RectTransformPositionKeepClip))]
-    // [TrackClipType(typeof(TransformPositionTweenClip))]
+    [TrackClipType(typeof(TransformPositionTweenClip))]
     public class RectTransformPositionTweenTrack : RectTransformTweenTrack
     {
 #if UNITY_EDITOR
@@ -40,6 +41,20 @@ namespace TweenTimeline
             {
                 target.SetPosition(PositionType, startPos);
             };
+        }
+
+        /// <inheritdoc/>
+        public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
+        {
+            base.GatherProperties(director, driver);
+
+            var binding = director.GetGenericBinding(this) as Transform;
+            if (binding == null) return;
+            driver.AddFromName<Transform>(binding.gameObject, "m_LocalPosition.x");
+            driver.AddFromName<Transform>(binding.gameObject, "m_LocalPosition.y");
+            driver.AddFromName<Transform>(binding.gameObject, "m_LocalPosition.z");
+            driver.AddFromName<Transform>(binding.gameObject, "m_AnchoredPosition.x");
+            driver.AddFromName<Transform>(binding.gameObject, "m_AnchoredPosition.y");
         }
     }
 }

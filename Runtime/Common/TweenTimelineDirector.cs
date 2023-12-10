@@ -22,8 +22,16 @@ namespace TweenTimeline
         /// <summary>
         /// 再生
         /// </summary>
-        [EditorPlayModeButton("Play", null)]
-        public Tween Play(SetParameter setParameter = null)
+        [EditorPlayModeButton("Play")]
+        public Tween Play()
+        {
+            return Play(null);
+        }
+        
+        /// <summary>
+        /// 再生
+        /// </summary>
+        public Tween Play(SetParameter setParameter)
         {
             var asset = _director.playableAsset as TimelineAsset;
             if (asset == null) return null;

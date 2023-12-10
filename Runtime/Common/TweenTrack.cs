@@ -44,6 +44,7 @@ namespace TweenTimeline
         [SerializeField, ReadOnly] private byte _;
 
         public virtual TweenCallback GetStartCallback(CreateTweenArgs args) => null;
+        public virtual TweenCallback GetKillCallback(CreateTweenArgs args) => null;
         
         public override Tween CreateTween(CreateTweenArgs args)
         {
@@ -84,6 +85,12 @@ namespace TweenTimeline
             if (remain > 0)
             {
                 sequence.AppendInterval((float)remain);
+            }
+
+            var killCallback = GetKillCallback(args);
+            if (killCallback != null)
+            {
+                sequence.OnKill(GetKillCallback(args));
             }
 
             return sequence;
@@ -147,7 +154,13 @@ namespace TweenTimeline
         /// <inheritdoc/>
         public override void OnPlayableDestroy(Playable playable)
         {
-            Tween?.Kill();
+            Tween.Kill();
+            
+            // NOTE: EditModeだと自動でonKillが呼ばれない
+            if (!Application.isPlaying)
+            {
+                Tween.onKill?.Invoke();
+            }
         }
 
         private double GetTrackTime(double time, double duration)
