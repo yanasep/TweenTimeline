@@ -9,7 +9,7 @@ namespace TweenTimeline.Editor
     /// <summary>
     /// Typeの検索window
     /// </summary>
-    public class SubClassSearchWindow<T> : SearchWindowBase<Type, string>
+    public class SubClassSearchWindow<T> : SearchWindowBase<string>
     {
         /// <summary>
         /// 開く
@@ -17,15 +17,16 @@ namespace TweenTimeline.Editor
         public static UniTask<Type> OpenAsync(SearchWindowContext context)
         {
             var label = typeof(T).Name;
-            return OpenAsync<SubClassSearchWindow<T>>(label, context);
+            return OpenAsync(label, context);
         }
         
         /// <summary>
         /// 開く
         /// </summary>
-        public static UniTask<Type> OpenAsync(string label, SearchWindowContext context)
+        public static async UniTask<Type> OpenAsync(string label, SearchWindowContext context)
         {
-            return OpenAsync<SubClassSearchWindow<T>>(label, context);
+            var result = await OpenAsync<SubClassSearchWindow<T>>(label, context);
+            return (Type)result;
         }
 
         /// <summary>

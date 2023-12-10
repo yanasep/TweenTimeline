@@ -51,7 +51,6 @@ namespace TweenTimeline.Editor
             {
                 var data = _viewDataList[i];
                 elem.Q<Label>("ParameterName").text = data.BindingData.ParameterName;
-                elem.Q<Label>("ParameterType").text = data.ParameterType.ToString();
                 var expressionProperty = property.FindPropertyRelative(data.BindingListName)
                     .GetArrayElementAtIndex(data.BindingListItemIndex).FindPropertyRelative("Expression");
                 elem.Q<PropertyField>("Expression").BindProperty(expressionProperty);
@@ -84,11 +83,13 @@ namespace TweenTimeline.Editor
         
         private async UniTask AddItemAsync(Vector2 position, SerializedProperty property, SubTweenClip.ParameterOverwriteSet set)
         {
-            var options = _parameterCandidates.Select(x => $"{x.paramName} ({x.paramType})").ToArray();
-            var selectedParam = await StringSearchWindow.OpenAsync("Parameter", options, new SearchWindowContext(position));
+            var options = _parameterCandidates
+                .Where(x => !_viewDataList.Any(viewData => viewData.ParameterType == x.paramType && viewData.BindingData.ParameterName == x.paramName))
+                .ToArray();
+            var optionNames = options.Select(x => $"{x.paramName} ({x.paramType})").ToArray();
+            var (_, selectedIndex) = await StringSearchWindow.OpenAsync("Parameter", optionNames, new SearchWindowContext(position));
             Undo.RecordObject(property.serializedObject.targetObject, "Add parameter overwrite");
-            var selectedIndex = Array.IndexOf(options, selectedParam);
-            var (paramName, paramType) = _parameterCandidates[selectedIndex];
+            var (paramName, paramType) = options[selectedIndex];
             var bindingList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(set, paramType);
             var bindingData = CreateBindingData(paramType);
             bindingData.ParameterName = paramName;

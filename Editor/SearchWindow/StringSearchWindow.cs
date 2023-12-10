@@ -8,14 +8,21 @@ namespace TweenTimeline.Editor
     /// <summary>
     /// 指定したstringリストからの検索window
     /// </summary>
-    public class StringSearchWindow : SearchWindowBase<string, (string label, IList<string> options)>
+    public class StringSearchWindow : SearchWindowBase<(string label, IList<string> options)>
     {
         /// <summary>
         /// 開く
         /// </summary>
-        public static UniTask<string> OpenAsync(string label, IList<string> options, SearchWindowContext context)
+        public static async UniTask<(string value, int index)> OpenAsync(string label, IList<string> options, SearchWindowContext context)
         {
-            return OpenAsync<StringSearchWindow>((label, options), context);
+            var result = (UserData)await OpenAsync<StringSearchWindow>((label, options), context);
+            return (result.Value, result.Index);
+        }
+        
+        private class UserData
+        {
+            public string Value;
+            public int Index;
         }
         
         /// <summary>
@@ -26,10 +33,13 @@ namespace TweenTimeline.Editor
             var entries = new List<SearchTreeEntry>();
             entries.Add(new SearchTreeGroupEntry(new GUIContent(_arg.label)) { level = 0 });
 
-            foreach (var val in _arg.options)
+            for (var i = 0; i < _arg.options.Count; i++)
             {
-                entries.Add(new SearchTreeEntry(new GUIContent(val, _icon)) { level = 1, userData = val });
+                string val = _arg.options[i];
+                var userData = new UserData { Value = val, Index = i };
+                entries.Add(new SearchTreeEntry(new GUIContent(val, _icon)) { level = 1, userData = userData });
             }
+
             return entries;
         }
     }

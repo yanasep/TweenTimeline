@@ -24,7 +24,7 @@ namespace TweenTimeline.Editor
         {
             var options = Enum.GetNames(typeof(T));
             var result = await StringSearchWindow.OpenAsync(label, options, context);
-            return Enum.Parse<T>(result);
+            return Enum.Parse<T>(result.value);
         }
     }
 }
