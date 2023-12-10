@@ -172,8 +172,9 @@ namespace TweenTimeline
         {
             var typeArg = TweenParameterEditorUtility.ParameterTypeToType(paramType);
             var constructedType = typeof(TweenParameterTrack.ParameterSetEntry<>).MakeGenericType(typeArg);
-            var instance = Activator.CreateInstance(constructedType);
-            return (TweenParameterTrack.ParameterSetEntry)instance;
+            var instance = (TweenParameterTrack.ParameterSetEntry)Activator.CreateInstance(constructedType);
+            ParameterSetEntryConverter.SetDefaultValue(instance);
+            return instance;
         }
 
         private void OnDataChanged()

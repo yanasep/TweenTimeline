@@ -4,6 +4,16 @@ namespace TweenTimeline
 {
     public static class ParameterSetEntryConverter
     {
+        public static void SetDefaultValue(TweenParameterTrack.ParameterSetEntry data)
+        {
+            switch (data)
+            {
+                case TweenParameterTrack.ParameterSetEntry<Color> colorVal:
+                    colorVal.Value = Color.white;
+                    break;
+            }
+        }
+        
         public static void TryConvert(TweenParameterTrack.ParameterSetEntry prevData, TweenParameterTrack.ParameterSetEntry newData)
         {
             switch (newData)

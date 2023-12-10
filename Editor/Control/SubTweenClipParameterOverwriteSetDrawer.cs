@@ -3,7 +3,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -144,25 +146,44 @@ namespace TweenTimeline.Editor
             var typeArg = TweenParameterEditorUtility.ParameterTypeToType(paramType);
             Type expressionType = GetExpressionType(typeArg);
             var constructedType = typeof(SubTweenClip.ParameterOverwrite<,>).MakeGenericType(expressionType, typeArg);
-            var instance = Activator.CreateInstance(constructedType);
-            return (SubTweenClip.ParameterOverwrite)instance;
+            var instance = (SubTweenClip.ParameterOverwrite)Activator.CreateInstance(constructedType);
+            var expressionField = constructedType.GetField("Expression", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            expressionField?.SetValue(instance, CreateConstantExpression(typeArg));
+            return instance;
         }
 
-        private Type GetExpressionType(Type typeArg)
+        private static Type GetExpressionType(Type typeArg)
         {
-            Type genericBooType = typeof(TweenTimelineExpression<>);
+            Type genericType = typeof(TweenTimelineExpression<>);
 
             var assembly = typeof(TweenTimelineExpression<>).Assembly;
             foreach (var type in assembly.GetTypes())
             {
                 if (type.BaseType != null && type.BaseType.IsGenericType &&
-                    type.BaseType.GetGenericTypeDefinition() == genericBooType)
+                    type.BaseType.GetGenericTypeDefinition() == genericType)
                 {
                     var genericArguments = type.BaseType.GetGenericArguments();
                     if (genericArguments.Contains(typeArg))
                     {
                         return type;
                     }
+                }
+            }
+
+            return null;
+        }
+
+        private static object CreateConstantExpression(Type typeArg)
+        {
+            var baseType = typeof(TweenTimelineExpression<>).MakeGenericType(typeArg);
+            var assembly = typeof(TweenTimelineExpression<>).Assembly;
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!type.IsSubclassOf(baseType)) continue;
+                var displayName = type.GetCustomAttribute<DisplayNameAttribute>();
+                if (displayName is { DisplayName: "Constant" })
+                {
+                    return Activator.CreateInstance(type);
                 }
             }
 
