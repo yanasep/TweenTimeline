@@ -3,8 +3,7 @@
     <ui:VisualElement name="EntryRoot" class="list-entry" style="flex-grow: 1;">
         <ui:VisualElement name="NameRow" class="list-entry-name-row">
             <ui:Label text="ParameterName" name="ParameterName" class="list-entry-name" />
-            <ui:Label tabindex="-1" text="TypeName" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ParameterType" class="list-entry-type" />
         </ui:VisualElement>
-        <uie:PropertyField name="Expression" />
+        <uie:PropertyField name="Expression" label="" />
     </ui:VisualElement>
 </ui:UXML>

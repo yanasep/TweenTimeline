@@ -68,18 +68,30 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Add")]
-    public class TweenTimelineExpressionFloatAdd : TweenTimelineExpressionFloat
+    public class TweenTimelineExpressionFloatAdd : TweenTimelineExpressionFloat, ISerializationCallbackReceiver
     {
-        [SerializeReference, SelectableSerializeReference] 
-        public TweenTimelineExpressionFloat Left = new TweenTimelineExpressionFloatConstant();
-        
-        [SerializeReference, SelectableSerializeReference] 
-        public TweenTimelineExpressionFloat Right = new TweenTimelineExpressionFloatConstant();
+        [SerializeReference, SelectableSerializeReference]
+        public TweenTimelineExpressionFloat Left;
+
+        [SerializeReference, SelectableSerializeReference]
+        public TweenTimelineExpressionFloat Right;
         
         /// <inheritdoc/>
         public override float Evaluate(TweenParameter parameter)
         {
             return Left.Evaluate(parameter) + Right.Evaluate(parameter);
+        }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionFloatConstant();
+            Right ??= new TweenTimelineExpressionFloatConstant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
         }
     }
 
@@ -88,18 +100,30 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Subtract")]
-    public class TweenTimelineExpressionFloatSubtract : TweenTimelineExpressionFloat
+    public class TweenTimelineExpressionFloatSubtract : TweenTimelineExpressionFloat, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
-        public TweenTimelineExpressionFloat Left = new TweenTimelineExpressionFloatConstant();
+        public TweenTimelineExpressionFloat Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TweenTimelineExpressionFloat Right = new TweenTimelineExpressionFloatConstant();
+        public TweenTimelineExpressionFloat Right;
 
         /// <inheritdoc/>
         public override float Evaluate(TweenParameter parameter)
         {
             return Left.Evaluate(parameter) - Right.Evaluate(parameter);
+        }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionFloatConstant();
+            Right ??= new TweenTimelineExpressionFloatConstant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
         }
     }
 
@@ -108,18 +132,30 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Multiply")]
-    public class TweenTimelineExpressionFloatMultiply : TweenTimelineExpressionFloat
+    public class TweenTimelineExpressionFloatMultiply : TweenTimelineExpressionFloat, ISerializationCallbackReceiver
     {
-        [SerializeReference, SelectableSerializeReference] 
-        public TweenTimelineExpressionFloat Left = new TweenTimelineExpressionFloatConstant();
-        
-        [SerializeReference, SelectableSerializeReference] 
-        public TweenTimelineExpressionFloat Right = new TweenTimelineExpressionFloatConstant();
+        [SerializeReference, SelectableSerializeReference]
+        public TweenTimelineExpressionFloat Left;
+
+        [SerializeReference, SelectableSerializeReference]
+        public TweenTimelineExpressionFloat Right;
         
         /// <inheritdoc/>
         public override float Evaluate(TweenParameter parameter)
         {
             return Left.Evaluate(parameter) * Right.Evaluate(parameter);
+        }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionFloatConstant();
+            Right ??= new TweenTimelineExpressionFloatConstant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
         }
     }
 
@@ -128,18 +164,30 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Divide")]
-    public class TweenTimelineExpressionFloatDivide : TweenTimelineExpressionFloat
+    public class TweenTimelineExpressionFloatDivide : TweenTimelineExpressionFloat, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
-        public TweenTimelineExpressionFloat Left = new TweenTimelineExpressionFloatConstant();
+        public TweenTimelineExpressionFloat Left;
 
         [SerializeReference, SelectableSerializeReference]
-        public TweenTimelineExpressionFloat Right = new TweenTimelineExpressionFloatConstant();
+        public TweenTimelineExpressionFloat Right;
 
         /// <inheritdoc/>
         public override float Evaluate(TweenParameter parameter)
         {
             return Left.Evaluate(parameter) / Right.Evaluate(parameter);
+        }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionFloatConstant();
+            Right ??= new TweenTimelineExpressionFloatConstant(1);
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
         }
     }
 }

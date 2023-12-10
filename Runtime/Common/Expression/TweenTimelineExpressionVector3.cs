@@ -78,7 +78,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Add")]
-    public class TweenTimelineExpressionVector3Add : TweenTimelineExpressionVector3
+    public class TweenTimelineExpressionVector3Add : TweenTimelineExpressionVector3, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionVector3 Left;
@@ -91,6 +91,18 @@ namespace TweenTimeline
         {
             return Left.Evaluate(parameter) + Right.Evaluate(parameter);
         }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionVector3Constant();
+            Right ??= new TweenTimelineExpressionVector3Constant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
+        }
     }
 
     /// <summary>
@@ -98,7 +110,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Subtract")]
-    public class TweenTimelineExpressionVector3Subtract : TweenTimelineExpressionVector3
+    public class TweenTimelineExpressionVector3Subtract : TweenTimelineExpressionVector3, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionVector3 Left;
@@ -111,6 +123,18 @@ namespace TweenTimeline
         {
             return Left.Evaluate(parameter) - Right.Evaluate(parameter);
         }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionVector3Constant();
+            Right ??= new TweenTimelineExpressionVector3Constant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
+        }
     }
 
     /// <summary>
@@ -118,7 +142,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Multiply")]
-    public class TweenTimelineExpressionVector3Multiply : TweenTimelineExpressionVector3
+    public class TweenTimelineExpressionVector3Multiply : TweenTimelineExpressionVector3, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionVector3 Left;
@@ -131,6 +155,18 @@ namespace TweenTimeline
         {
             return Left.Evaluate(parameter) * Right.Evaluate(parameter);
         }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionVector3Constant();
+            Right ??= new TweenTimelineExpressionFloatConstant(1);
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
+        }
     }
 
     /// <summary>
@@ -138,7 +174,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Divide")]
-    public class TweenTimelineExpressionVector3Divide : TweenTimelineExpressionVector3
+    public class TweenTimelineExpressionVector3Divide : TweenTimelineExpressionVector3, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionVector3 Left;
@@ -151,6 +187,18 @@ namespace TweenTimeline
         {
             return Left.Evaluate(parameter) / Right.Evaluate(parameter);
         }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionVector3Constant();
+            Right ??= new TweenTimelineExpressionFloatConstant(1);
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
+        }
     }
 
     /// <summary>
@@ -158,7 +206,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Scale")]
-    public class TweenTimelineExpressionVector3Scale : TweenTimelineExpressionVector3
+    public class TweenTimelineExpressionVector3Scale : TweenTimelineExpressionVector3, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionVector3 Left;
@@ -170,6 +218,18 @@ namespace TweenTimeline
         public override Vector3 Evaluate(TweenParameter parameter)
         {
             return Vector3.Scale(Left.Evaluate(parameter), Right.Evaluate(parameter));
+        }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionVector3Constant();
+            Right ??= new TweenTimelineExpressionVector3Constant(Vector3.one);
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
         }
     }
 }

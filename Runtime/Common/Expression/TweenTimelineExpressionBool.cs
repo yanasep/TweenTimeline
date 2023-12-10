@@ -67,7 +67,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("And")]
-    public class TweenTimelineExpressionBoolAnd : TweenTimelineExpressionBool
+    public class TweenTimelineExpressionBoolAnd : TweenTimelineExpressionBool, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference] 
         public TweenTimelineExpressionBool Left;
@@ -80,6 +80,18 @@ namespace TweenTimeline
         {
             return Left.Evaluate(parameter) && Right.Evaluate(parameter);
         }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionBoolConstant();
+            Right ??= new TweenTimelineExpressionBoolConstant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
+        }
     }
 
     /// <summary>
@@ -87,7 +99,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Or")]
-    public class TweenTimelineExpressionBoolOr : TweenTimelineExpressionBool
+    public class TweenTimelineExpressionBoolOr : TweenTimelineExpressionBool, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionBool Left;
@@ -100,6 +112,18 @@ namespace TweenTimeline
         {
             return Left.Evaluate(parameter) || Right.Evaluate(parameter);
         }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Left ??= new TweenTimelineExpressionBoolConstant();
+            Right ??= new TweenTimelineExpressionBoolConstant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
+        }
     }
 
     /// <summary>
@@ -107,7 +131,7 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Not")]
-    public class TweenTimelineExpressionBoolNot : TweenTimelineExpressionBool
+    public class TweenTimelineExpressionBoolNot : TweenTimelineExpressionBool, ISerializationCallbackReceiver
     {
         [SerializeReference, SelectableSerializeReference] 
         public TweenTimelineExpressionBool Value;
@@ -116,6 +140,17 @@ namespace TweenTimeline
         public override bool Evaluate(TweenParameter parameter)
         {
             return !Value.Evaluate(parameter);
+        }
+
+        /// <inheritdoc/>
+        public void OnBeforeSerialize()
+        {
+            Value ??= new TweenTimelineExpressionBoolConstant();
+        }
+
+        /// <inheritdoc/>
+        public void OnAfterDeserialize()
+        {
         }
     }
 }
