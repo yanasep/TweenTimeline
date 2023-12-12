@@ -250,8 +250,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74f8240a904f40368ccaf2f4a6510ffe, type: 3}
   m_Name: SubTweenClip
   m_EditorClassIdentifier: 
-  timelineAsset: {fileID: 0}
   OverwriteSet:
+    TimelineAsset: {fileID: 0}
     Ints: []
     Floats: []
     Bools: []
@@ -273,8 +273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74f8240a904f40368ccaf2f4a6510ffe, type: 3}
   m_Name: SubTweenClip(Clone)(Clone)
   m_EditorClassIdentifier: 
-  timelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
   OverwriteSet:
+    TimelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
     Ints: []
     Floats: []
     Bools: []
@@ -411,8 +411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74f8240a904f40368ccaf2f4a6510ffe, type: 3}
   m_Name: SubTweenClip
   m_EditorClassIdentifier: 
-  timelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
   OverwriteSet:
+    TimelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
     Ints: []
     Floats: []
     Bools: []
@@ -528,23 +528,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74f8240a904f40368ccaf2f4a6510ffe, type: 3}
   m_Name: SubTweenClip(Clone)
   m_EditorClassIdentifier: 
-  timelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
   OverwriteSet:
+    TimelineAsset: {fileID: 11400000, guid: 6a8a3c8be8d3e453db28831fb39765c2, type: 2}
     Ints: []
     Floats: []
     Bools: []
-    Vector3s:
-    - ParameterName: 
-      ViewIndex: 0
-      Expression:
-        rid: -2
+    Vector3s: []
     Vector2s: []
     Colors: []
   references:
     version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    RefIds: []
 --- !u!114 &5855800426212961705
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -568,7 +562,6 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
-  _: 0
   floats: []
   ints: []
   bools: []
