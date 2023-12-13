@@ -53,7 +53,7 @@ namespace TweenTimeline
          [Serializable]
          public class ParameterOverwrite
          {
-             public string ParameterName;
+             public uint ParameterId;
              /// <summary>インスペクターのリスト表示におけるインデックス</summary>
              public int ViewIndex;
          }
@@ -72,24 +72,23 @@ namespace TweenTimeline
              return TweenTimelineUtility.CreateTween(OverwriteSet.TimelineAsset, info.Target, parameter =>
              {
                  if (OverwriteSet == null) return;
-                 Set(parameter.Int, OverwriteSet.Ints, info.Parameter);
-                 Set(parameter.Float, OverwriteSet.Floats, info.Parameter);
-                 Set(parameter.Bool, OverwriteSet.Bools, info.Parameter);
-                 Set(parameter.Vector3, OverwriteSet.Vector3s, info.Parameter);
-                 Set(parameter.Vector2, OverwriteSet.Vector2s, info.Parameter);
-                 Set(parameter.Color, OverwriteSet.Colors, info.Parameter);
+                 Set(OverwriteSet.Ints, info.Parameter);
+                 Set(OverwriteSet.Floats, info.Parameter);
+                 Set(OverwriteSet.Bools, info.Parameter);
+                 Set(OverwriteSet.Vector3s, info.Parameter);
+                 Set(OverwriteSet.Vector2s, info.Parameter);
+                 Set(OverwriteSet.Colors, info.Parameter);
              });
          }
 
-         private void Set<TVal, TExp>(TimelineParameterDictionary<TVal> destParamDic, List<ParameterOverwrite<TExp, TVal>> overwrites, 
-             TweenParameter parentParameter)
+         private void Set<TVal, TExp>(List<ParameterOverwrite<TExp, TVal>> overwrites, TweenParameter dest)
              where TExp : TweenTimelineExpression<TVal>
          {
              if (overwrites == null) return;
              foreach (var overwrite in overwrites)
              {
                  if (overwrite.Expression == null) continue;
-                 destParamDic.Set(overwrite.ParameterName, overwrite.Expression.Evaluate(parentParameter));
+                 dest.SetParameter<TVal>(overwrite.ParameterId, overwrite.Expression.Evaluate(dest));
              }
          }
 

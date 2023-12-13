@@ -11,7 +11,7 @@ public class ImageTweenDemo : MonoBehaviour
     {
         director.Play(tweenParam =>
         {
-            tweenParam.Color.Set("EndColor", Color.blue);
+            tweenParam.SetColor("EndColor", Color.blue);
         });
     }
 }

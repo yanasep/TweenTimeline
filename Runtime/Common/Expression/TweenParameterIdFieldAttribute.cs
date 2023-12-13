@@ -4,11 +4,11 @@ using UnityEngine;
 namespace TweenTimeline
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class TweenParameterNameFieldAttribute : PropertyAttribute
+    public class TweenParameterIdFieldAttribute : PropertyAttribute
     {
         public readonly Type ParameterType;
 
-        public TweenParameterNameFieldAttribute(Type parameterType)
+        public TweenParameterIdFieldAttribute(Type parameterType)
         {
             ParameterType = parameterType;
         }

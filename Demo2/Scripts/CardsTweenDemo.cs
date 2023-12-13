@@ -16,8 +16,6 @@ namespace TweenTimeline.Demo2
         private readonly List<Card> cards = new();
         private CancellationTokenSource cts;
 
-        private static readonly int Vec3ParamDropPosition = TweenParameter.StringToHash("DropPosition");
-
         private void Start()
         {
             foreach (var cardParent in cardParents)
@@ -52,7 +50,7 @@ namespace TweenTimeline.Demo2
 
             await director.Play(param =>
             {
-                param.Vector3.Set(Vec3ParamDropPosition, dropScreenPos);
+                param.SetVector3("DropPosition", dropScreenPos);
             }).ToUniTask(TweenCancelBehaviour.KillAndCancelAwait, cancellationToken: cts.Token);
 
             for (int i = 0; i < cardParents.Length; i++)

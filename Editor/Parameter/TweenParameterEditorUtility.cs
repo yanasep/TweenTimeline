@@ -7,24 +7,24 @@ namespace TweenTimeline
 {
     public static class TweenParameterEditorUtility
     {
-        public static IReadOnlyList<TweenParameterTrack.ParameterSetEntry> GetParameterSetEntries(TweenParameterTrack track, TweenParameterType type)
-        {
-            return type switch
-            {
-                TweenParameterType.Int => track.ints ??= new(),
-                TweenParameterType.Float => track.floats ??= new(),
-                TweenParameterType.Bool => track.bools ??= new(),
-                TweenParameterType.Vector3 => track.vector3s ??= new(),
-                TweenParameterType.Vector2 => track.vector2s ??= new(),
-                TweenParameterType.Color => track.colors ??= new(),
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
-        }
+        // public static IReadOnlyList<TweenParameterTrack.ParameterSetEntry> GetParameterSetEntries(TweenParameterTrack track, TweenParameterType type)
+        // {
+        //     return type switch
+        //     {
+        //         TweenParameterType.Int => track.ints ??= new(),
+        //         TweenParameterType.Float => track.floats ??= new(),
+        //         TweenParameterType.Bool => track.bools ??= new(),
+        //         TweenParameterType.Vector3 => track.vector3s ??= new(),
+        //         TweenParameterType.Vector2 => track.vector2s ??= new(),
+        //         TweenParameterType.Color => track.colors ??= new(),
+        //         _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        //     };
+        // }
 
-        public static IList GetParameterSetEntriesAsList(TweenParameterTrack track, TweenParameterType type)
-        {
-            return (IList)GetParameterSetEntries(track, type);
-        }
+        // public static IList GetParameterSetEntriesAsList(TweenParameterTrack track, TweenParameterType type)
+        // {
+        //     return (IList)GetParameterSetEntries(track, type);
+        // }
 
         public static Type ParameterTypeToType(TweenParameterType type)
         {

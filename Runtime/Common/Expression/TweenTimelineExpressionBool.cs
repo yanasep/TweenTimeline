@@ -39,26 +39,16 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Parameter")]
-    [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TweenTimelineExpressionBoolParameter : TweenTimelineExpressionBool, ISerializationCallbackReceiver
+    [SelectableSerializeSingleLine(nameof(ParameterId))]
+    public class TweenTimelineExpressionBoolParameter : TweenTimelineExpressionBool
     {
-        public string ParameterName;
-        private int paramHash;
+        [TweenParameterIdField(typeof(bool))] 
+        public string ParameterId;
 
         /// <inheritdoc/>
         public override bool Evaluate(TweenParameter parameter)
         {
-            return parameter.Bool.GetOrDefault(paramHash);
-        }
-
-        public void OnBeforeSerialize()
-        {
-            
-        }
-
-        public void OnAfterDeserialize()
-        {
-            paramHash = TweenParameter.StringToHash(ParameterName);
+            return parameter.GetBool(ParameterId);
         }
     }
 

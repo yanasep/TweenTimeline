@@ -20,7 +20,7 @@ namespace TweenTimeline.Editor
     {
         private ReorderableList _listView;
         private readonly List<ListItemData> _viewDataList = new();
-        private readonly List<(string paramName, TweenParameterType paramType)> _parameterCandidates = new();
+        private readonly List<(uint paramId, string paramName, TweenParameterType paramType)> _parameterCandidates = new();
         private bool initialized;
         private Vector3 _listViewPosition;
 
@@ -96,7 +96,7 @@ namespace TweenTimeline.Editor
             _listView.drawElementCallback = (rect, index, active, focused) =>
             {
                 var data = _viewDataList[index];
-                var paramName = data.BindingData.ParameterName;
+                var paramName = _parameterCandidates.FirstOrDefault(x => data.BindingData.ParameterId == x.paramId).paramName;
                 var labelRect = rect;
                 labelRect.height = EditorGUIUtility.singleLineHeight;
                 EditorGUI.LabelField(labelRect, paramName);
@@ -118,17 +118,18 @@ namespace TweenTimeline.Editor
 
         private async UniTask AddItemAsync(SerializedProperty property, SubTweenClip.ParameterOverwriteSet set)
         {
+            // 既に追加済みのパラメータは除外
             var options = _parameterCandidates
                 .Where(x => !_viewDataList.Any(viewData =>
-                    viewData.ParameterType == x.paramType && viewData.BindingData.ParameterName == x.paramName))
+                    viewData.ParameterType == x.paramType && viewData.BindingData.ParameterId == x.paramId))
                 .ToArray();
             var optionNames = options.Select(x => $"{x.paramName} ({x.paramType})").ToArray();
             var (_, selectedIndex) = await StringSearchWindow.OpenAsync("Parameter", optionNames, new SearchWindowContext(_listViewPosition));
             Undo.RecordObject(property.serializedObject.targetObject, "Add parameter overwrite");
-            var (paramName, paramType) = options[selectedIndex];
+            var (paramId, _, paramType) = options[selectedIndex];
             var bindingList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(set, paramType);
             var bindingData = CreateBindingData(paramType);
-            bindingData.ParameterName = paramName;
+            bindingData.ParameterId = paramId;
             bindingData.ViewIndex = _viewDataList.Count == 0 ? 0 : _viewDataList[^1].BindingData.ViewIndex + 1;
             bindingList.Add(bindingData);
             var viewData = new ListItemData
@@ -251,7 +252,7 @@ namespace TweenTimeline.Editor
                         BindingListName = listName,
                         BindingListItemIndex = i,
                         BindingData = paramEntry,
-                        ParameterType = parameterType
+                        ParameterType = parameterType,
                     });
                 }
             }
@@ -264,24 +265,24 @@ namespace TweenTimeline.Editor
             var timelineAsset = property.FindPropertyRelative(nameof(SubTweenClip.ParameterOverwriteSet.TimelineAsset)).GetValue<TimelineAsset>();
             if (timelineAsset == null) return;
 
-            var paramTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
-            if (paramTrack == null) return;
+            var parameterTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
+            if (parameterTrack == null) return;
 
-            var enumerable = Enumerable.Empty<(string paramName, TweenParameterType paramType, int index)>();
-            AddCandidates(paramTrack.floats);
-            AddCandidates(paramTrack.ints);
-            AddCandidates(paramTrack.bools);
-            AddCandidates(paramTrack.vector3s);
-            AddCandidates(paramTrack.vector2s);
-            AddCandidates(paramTrack.colors);
-            _parameterCandidates.AddRange(enumerable.OrderBy(x => x.index).Select(x => (x.paramName, x.paramType)));
+            var enumerable = Enumerable.Empty<(uint paramId, string paramName, TweenParameterType paramType, int index)>();
+            AddCandidates(parameterTrack.floats);
+            AddCandidates(parameterTrack.ints);
+            AddCandidates(parameterTrack.bools);
+            AddCandidates(parameterTrack.vector3s);
+            AddCandidates(parameterTrack.vector2s);
+            AddCandidates(parameterTrack.colors);
+            _parameterCandidates.AddRange(enumerable.OrderBy(x => x.index).Select(x => (x.paramId, x.paramName, x.paramType)));
             return;
 
             void AddCandidates<T>(IEnumerable<TweenParameterTrack.ParameterSetEntry<T>> list)
             {
                 foreach (var item in list)
                 {
-                    enumerable = enumerable.Append((item.Name, TweenParameterEditorUtility.TypeToParameterType(typeof(T)), item.ViewIndex));
+                    enumerable = enumerable.Append((item.ParameterId, item.ParameterName, TweenParameterEditorUtility.TypeToParameterType(typeof(T)), item.ViewIndex));
                 }
             }
         }

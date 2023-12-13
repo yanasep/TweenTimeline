@@ -38,28 +38,16 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Parameter")]
-    [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TweenTimelineExpressionFloatParameter : TweenTimelineExpressionFloat, ISerializationCallbackReceiver
+    [SelectableSerializeSingleLine(nameof(ParameterId))]
+    public class TweenTimelineExpressionFloatParameter : TweenTimelineExpressionFloat
     {
-        [TweenParameterNameField(typeof(float))]
-        public string ParameterName;
-        
-        private int paramHash;
+        [TweenParameterIdField(typeof(float))]
+        public string ParameterId;
 
         /// <inheritdoc/>
         public override float Evaluate(TweenParameter parameter)
         {
-            return parameter.Float.GetOrDefault(paramHash);
-        }
-
-        public void OnBeforeSerialize()
-        {
-            
-        }
-
-        public void OnAfterDeserialize()
-        {
-            paramHash = TweenParameter.StringToHash(ParameterName);
+            return parameter.GetFloat(ParameterId);
         }
     }
 

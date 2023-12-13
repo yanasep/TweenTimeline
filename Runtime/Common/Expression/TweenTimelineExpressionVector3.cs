@@ -18,9 +18,10 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Constant")]
+    [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionVector3Constant : TweenTimelineExpressionVector3
     {
-        [NoPropertyLabel] public Vector3 Value;
+        public Vector3 Value;
 
         public TweenTimelineExpressionVector3Constant() { }
         public TweenTimelineExpressionVector3Constant(Vector3 val) => Value = val;
@@ -30,13 +31,6 @@ namespace TweenTimeline
         {
             return Value;
         }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (Value == Vector3.zero) return "Vector3.zero";
-            return $"new Vector3{Value.ToString()}";
-        }
     }
 
     /// <summary>
@@ -44,32 +38,20 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Parameter")]
-    [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TweenTimelineExpressionVector3Parameter : TweenTimelineExpressionVector3,  ISerializationCallbackReceiver
+    [SelectableSerializeSingleLine(nameof(ParameterId))]
+    public class TweenTimelineExpressionVector3Parameter : TweenTimelineExpressionVector3
     {
-        [TweenParameterNameField(typeof(Vector3))]
-        public string ParameterName;
-        
-        private int paramHash;
+        [TweenParameterIdField(typeof(Vector3))]
+        public uint ParameterId;
 
         /// <inheritdoc/>
         public override Vector3 Evaluate(TweenParameter parameter)
         {
-            return parameter.Vector3.GetOrDefault(paramHash);
+            return parameter.GetVector3(ParameterId);
         }
 
         public void OnBeforeSerialize()
         {
-        }
-
-        public void OnAfterDeserialize()
-        {
-            paramHash = TweenParameter.StringToHash(ParameterName);
-        }
-
-        public override string ToString()
-        {
-            return ParameterName;
         }
     }
 

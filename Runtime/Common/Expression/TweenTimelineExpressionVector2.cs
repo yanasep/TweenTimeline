@@ -37,27 +37,16 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Parameter")]
-    [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TweenTimelineExpressionVector2Parameter : TweenTimelineExpressionVector2, ISerializationCallbackReceiver
+    [SelectableSerializeSingleLine(nameof(ParameterId))]
+    public class TweenTimelineExpressionVector2Parameter : TweenTimelineExpressionVector2
     {
-        [TweenParameterNameField(typeof(Vector2))]
-        public string ParameterName;
-        
-        private int paramHash;
+        [TweenParameterIdField(typeof(Vector2))]
+        public string ParameterId;
 
         /// <inheritdoc/>
         public override Vector2 Evaluate(TweenParameter parameter)
         {
-            return parameter.Vector2.GetOrDefault(paramHash);
-        }
-
-        public void OnBeforeSerialize()
-        {
-        }
-
-        public void OnAfterDeserialize()
-        {
-            paramHash = TweenParameter.StringToHash(ParameterName);
+            return parameter.GetVector2(ParameterId);
         }
     }
 

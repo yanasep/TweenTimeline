@@ -38,28 +38,16 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Parameter")]
-    [SelectableSerializeSingleLine(nameof(ParameterName))]
-    public class TweenTimelineExpressionColorParameter : TweenTimelineExpressionColor, ISerializationCallbackReceiver
+    [SelectableSerializeSingleLine(nameof(ParameterId))]
+    public class TweenTimelineExpressionColorParameter : TweenTimelineExpressionColor
     {
-        [TweenParameterNameField(typeof(Color))]
-        public string ParameterName;
-        
-        private int paramHash;
+        [TweenParameterIdField(typeof(Color))]
+        public string ParameterId;
 
         /// <inheritdoc/>
         public override Color Evaluate(TweenParameter parameter)
         {
-            return parameter.Color.GetOrDefault(paramHash);
-        }
-
-        public void OnBeforeSerialize()
-        {
-            
-        }
-
-        public void OnAfterDeserialize()
-        {
-            paramHash = TweenParameter.StringToHash(ParameterName);
+            return parameter.GetColor(ParameterId);
         }
     }
 }

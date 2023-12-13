@@ -16,8 +16,6 @@ namespace TweenTimeline
         [SerializeField] private TimelineAsset _scoreUpTween;
         [SerializeField] private TimelineAsset _changePlaceTween;
 
-        private static readonly int TweenHashScore = TweenParameter.StringToHash("Score");
-
         public void Initialize()
         {
         }
@@ -35,7 +33,7 @@ namespace TweenTimeline
         {
             return _tweenDirector.Play(_scoreUpTween, parameter =>
             {
-                parameter.Int.Set(TweenHashScore, score);
+                parameter.SetInt("Score", score);
             }).ToUniTask();
         }
 
