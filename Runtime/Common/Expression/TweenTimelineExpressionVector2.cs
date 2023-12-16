@@ -41,7 +41,7 @@ namespace TweenTimeline
     public class TweenTimelineExpressionVector2Parameter : TweenTimelineExpressionVector2
     {
         [TweenParameterIdField(typeof(Vector2))]
-        public string ParameterId;
+        public uint ParameterId;
 
         /// <inheritdoc/>
         public override Vector2 Evaluate(TweenParameter parameter)

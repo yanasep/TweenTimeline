@@ -42,7 +42,7 @@ namespace TweenTimeline
     public class TweenTimelineExpressionIntParameter : TweenTimelineExpressionInt
     {
         [TweenParameterIdField(typeof(int))]
-        public string ParameterId;
+        public uint ParameterId;
 
         /// <inheritdoc/>
         public override int Evaluate(TweenParameter parameter)

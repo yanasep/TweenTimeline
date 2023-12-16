@@ -1,11 +1,8 @@
 ﻿// NOTE: Timelineパッケージのバージョンが1.8.1以上でないと、TimelineClipのインスペクターでUIToolkitが描画できない
 #if UNITY_2023_1_OR_NEWER
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -20,14 +17,12 @@ namespace TweenTimeline.Editor
     public class SubTweenClipParameterOverwriteSetDrawer : PropertyDrawer
     {
         private ListView _listView;
-        private List<EntryViewData> _viewDataList;
-        private List<(string paramName, TweenParameterType paramType)> _parameterCandidates;
+        private List<ListItemData> _viewDataList;
+        private List<(uint paramId, string paramName, TweenParameterType paramType)> _parameterCandidates;
+        private TweenParameterTrack _paramTrack;
 
-        private class EntryViewData
+        private class ListItemData
         {
-            public string BindingListName;
-            public TweenParameterType ParameterType;
-            public int BindingListItemIndex;
             public SubTweenClip.ParameterOverwrite BindingData;
         }
 
@@ -46,13 +41,15 @@ namespace TweenTimeline.Editor
             GatherEntryViewData(set);
             GatherPropertyCandidates(property);
             
-            _listView.makeItem = TweenTimelineEditorResourceHolder.instance.SubTweenClipOverwriteEntryXml.CloneTree;
+            _listView.makeItem = TweenTimelineEditorResourceHolder.instance.SubTweenClipOverwriteEntryXml.Instantiate;
             _listView.bindItem = (elem, i) =>
             {
                 var data = _viewDataList[i];
-                elem.Q<Label>("ParameterName").text = data.BindingData.ParameterName;
-                var expressionProperty = property.FindPropertyRelative(data.BindingListName)
-                    .GetArrayElementAtIndex(data.BindingListItemIndex).FindPropertyRelative("Expression");
+
+                var (listPath, listIndex) = set.GetPropertyPath(data.BindingData.ParameterId);
+                elem.Q<Label>("ParameterName").text = _paramTrack.GetEntry(data.BindingData.ParameterId).ParameterName;
+                var expressionProperty = property.FindPropertyRelative(listPath)
+                    .GetArrayElementAtIndex(listIndex).FindPropertyRelative("Expression");
                 elem.Q<PropertyField>("Expression").BindProperty(expressionProperty);
             };
             _listView.itemsSource = _viewDataList;
@@ -84,22 +81,16 @@ namespace TweenTimeline.Editor
         private async UniTask AddItemAsync(Vector2 position, SerializedProperty property, SubTweenClip.ParameterOverwriteSet set)
         {
             var options = _parameterCandidates
-                .Where(x => !_viewDataList.Any(viewData => viewData.ParameterType == x.paramType && viewData.BindingData.ParameterName == x.paramName))
+                .Where(x => _viewDataList.All(viewData => viewData.BindingData.ParameterId != x.paramId))
                 .ToArray();
             var optionNames = options.Select(x => $"{x.paramName} ({x.paramType})").ToArray();
             var (_, selectedIndex) = await StringSearchWindow.OpenAsync("Parameter", optionNames, new SearchWindowContext(position));
             Undo.RecordObject(property.serializedObject.targetObject, "Add parameter overwrite");
-            var (paramName, paramType) = options[selectedIndex];
-            var bindingList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(set, paramType);
-            var bindingData = CreateBindingData(paramType);
-            bindingData.ParameterName = paramName;
+            var (paramId, _, paramType) = options[selectedIndex];
+            var bindingData = set.AddEntry(paramId, TweenParameterEditorUtility.ParameterTypeToType(paramType));
             bindingData.ViewIndex = _viewDataList.Count == 0 ? 0 : _viewDataList[^1].BindingData.ViewIndex + 1;
-            bindingList.Add(bindingData);
-            var viewData = new EntryViewData
+            var viewData = new ListItemData
             {
-                BindingListName = GetParameterListName(paramType),
-                ParameterType = paramType,
-                BindingListItemIndex = bindingList.Count - 1,
                 BindingData = bindingData
             };
             _viewDataList.Add(viewData);
@@ -128,67 +119,11 @@ namespace TweenTimeline.Editor
         
             return;
             
-            void remove(EntryViewData item)
+            void remove(ListItemData item)
             {
                 _viewDataList.Remove(item);
-                var dataList = SubTweenClipEditorUtility.GetParameterSetEntriesAsList(set, item.ParameterType);
-                dataList.RemoveAt(item.BindingListItemIndex);   
+                set.RemoveEntry(item.BindingData.ParameterId);  
             }
-        }
-        
-        private string GetParameterListName(TweenParameterType type)
-        {
-            var typeName = type.ToString();
-            return $"{char.ToUpper(typeName[0])}{typeName.Substring(1)}s";
-        }
-        
-        private SubTweenClip.ParameterOverwrite CreateBindingData(TweenParameterType paramType)
-        {
-            var typeArg = TweenParameterEditorUtility.ParameterTypeToType(paramType);
-            Type expressionType = GetExpressionType(typeArg);
-            var constructedType = typeof(SubTweenClip.ParameterOverwrite<,>).MakeGenericType(expressionType, typeArg);
-            var instance = (SubTweenClip.ParameterOverwrite)Activator.CreateInstance(constructedType);
-            var expressionField = constructedType.GetField("Expression", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            expressionField?.SetValue(instance, CreateConstantExpression(typeArg));
-            return instance;
-        }
-
-        private static Type GetExpressionType(Type typeArg)
-        {
-            Type genericType = typeof(TweenTimelineExpression<>);
-
-            var assembly = typeof(TweenTimelineExpression<>).Assembly;
-            foreach (var type in assembly.GetTypes())
-            {
-                if (type.BaseType != null && type.BaseType.IsGenericType &&
-                    type.BaseType.GetGenericTypeDefinition() == genericType)
-                {
-                    var genericArguments = type.BaseType.GetGenericArguments();
-                    if (genericArguments.Contains(typeArg))
-                    {
-                        return type;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private static object CreateConstantExpression(Type typeArg)
-        {
-            var baseType = typeof(TweenTimelineExpression<>).MakeGenericType(typeArg);
-            var assembly = typeof(TweenTimelineExpression<>).Assembly;
-            foreach (var type in assembly.GetTypes())
-            {
-                if (!type.IsSubclassOf(baseType)) continue;
-                var displayName = type.GetCustomAttribute<DisplayNameAttribute>();
-                if (displayName is { DisplayName: "Constant" })
-                {
-                    return Activator.CreateInstance(type);
-                }
-            }
-
-            return null;
         }
         
         private void GatherEntryViewData(SubTweenClip.ParameterOverwriteSet set)
@@ -210,12 +145,9 @@ namespace TweenTimeline.Editor
                 {
                     var entry = entries[i];
                     var paramEntry = (SubTweenClip.ParameterOverwrite)entry;
-                    _viewDataList.Add(new EntryViewData
+                    _viewDataList.Add(new ListItemData
                     {
-                        BindingListName = listName,
-                        BindingListItemIndex = i,
                         BindingData = paramEntry,
-                        ParameterType = parameterType
                     });
                 }
             }
@@ -228,24 +160,25 @@ namespace TweenTimeline.Editor
             var timelineAsset = property.FindPropertyRelative(nameof(SubTweenClip.ParameterOverwriteSet.TimelineAsset)).GetValue<TimelineAsset>();
             if (timelineAsset == null) return;
 
-            var paramTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
-            if (paramTrack == null) return;
+            _paramTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
+            if (_paramTrack == null) return;
 
-            var enumerable = Enumerable.Empty<(string paramName, TweenParameterType paramType, int index)>();
-            AddCandidates(paramTrack.floats);
-            AddCandidates(paramTrack.ints);
-            AddCandidates(paramTrack.bools);
-            AddCandidates(paramTrack.vector3s);
-            AddCandidates(paramTrack.vector2s);
-            AddCandidates(paramTrack.colors);
-            _parameterCandidates.AddRange(enumerable.OrderBy(x => x.index).Select(x => (x.paramName, x.paramType)));
+            var enumerable = Enumerable.Empty<(uint paramId, string paramName, TweenParameterType paramType, int index)>();
+            AddCandidates(_paramTrack.floats);
+            AddCandidates(_paramTrack.ints);
+            AddCandidates(_paramTrack.bools);
+            AddCandidates(_paramTrack.vector3s);
+            AddCandidates(_paramTrack.vector2s);
+            AddCandidates(_paramTrack.colors);
+            _parameterCandidates.AddRange(enumerable.OrderBy(x => x.index).Select(x => (x.paramId, x.paramName, x.paramType)));
             return;
 
             void AddCandidates<T>(IEnumerable<TweenParameterTrack.ParameterSetEntry<T>> list)
             {
                 foreach (var item in list)
                 {
-                    enumerable = enumerable.Append((item.Name, TweenParameterEditorUtility.TypeToParameterType(typeof(T)), item.ViewIndex));
+                    enumerable = enumerable.Append((item.ParameterId, item.ParameterName,
+                        TweenParameterEditorUtility.TypeToParameterType(typeof(T)), item.ViewIndex));
                 }
             }
         }

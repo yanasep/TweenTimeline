@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
+using Random = UnityEngine.Random;
 
 namespace TweenTimeline
 {
@@ -20,8 +21,10 @@ namespace TweenTimeline
         {
             public uint ParameterId;
             public string ParameterName;
+#if UNITY_EDITOR
             /// <summary>インスペクターのリスト表示におけるインデックス</summary>
             public int ViewIndex;
+#endif
         }
         
         [Serializable]
@@ -36,14 +39,30 @@ namespace TweenTimeline
         public List<ParameterSetEntry<Vector3>> vector3s;
         public List<ParameterSetEntry<Vector2>> vector2s;
         public List<ParameterSetEntry<Color>> colors;
-        
-        [SerializeField] private uint nextParameterId = 1;
+
+        private uint GenerateParameterId()
+        {
+            uint result;
+            do
+            {
+                result = RandomUint();
+            } while (GetAllEntries().Any(x => x.ParameterId == result));
+
+            return result;
+        }
+
+        private uint RandomUint()
+        {
+            uint thirtyBits = (uint) Random.Range(0, 1 << 30);
+            uint twoBits = (uint) Random.Range(0, 1 << 2);
+            return (thirtyBits << 2) | twoBits;
+        }
 
         internal ParameterSetEntry AddEntry(string parameterName, Type parameterType)
         {
             var entry = CreateEntryOfType(parameterType);
             entry.ParameterName = parameterName;
-            entry.ParameterId = nextParameterId++;
+            entry.ParameterId = GenerateParameterId();
             ParameterSetEntryConverter.SetDefaultValue(entry);
             var list = GetParameterSetList(parameterType);
             list.Add(entry);
@@ -63,6 +82,16 @@ namespace TweenTimeline
             {
                 list.RemoveAt(index);
             }
+        }
+
+        internal ParameterSetEntry GetEntry(uint parameterId)
+        {
+            if (TryFindEntry(parameterId, out var list, out var index))
+            {
+                return (ParameterSetEntry)list[index];
+            }
+
+            return null;
         }
         
         private bool TryFindEntry(uint parameterId, out IList list, out int index)
@@ -114,6 +143,8 @@ namespace TweenTimeline
             
             var newEntry = CreateEntryOfType(newType);
             newEntry.ParameterId = parameterId;
+            newEntry.ParameterName = prevEntry.ParameterName;
+            ParameterSetEntryConverter.SetDefaultValue(newEntry);
             ParameterSetEntryConverter.TryConvert(prevData: prevEntry, newData: newEntry);
             newList.Add(newEntry);
             return newEntry;
@@ -162,19 +193,10 @@ namespace TweenTimeline
             return list.Cast<ParameterSetEntry>();
         }
         
-        // private IReadOnlyList<ParameterSetEntry<T>> GetParameterSetEntries<T>()
-        // {
-        //     return typeof(T) switch
-        //     {
-        //         var type when type == typeof(float) => floats as IReadOnlyList<ParameterSetEntry<T>>,
-        //         var type when type == typeof(int) => ints as IReadOnlyList<ParameterSetEntry<T>>,
-        //         var type when type == typeof(bool) => bools as IReadOnlyList<ParameterSetEntry<T>>,
-        //         var type when type == typeof(Vector3) => vector3s as IReadOnlyList<ParameterSetEntry<T>>,
-        //         var type when type == typeof(Vector2) => vector2s as IReadOnlyList<ParameterSetEntry<T>>,
-        //         var type when type == typeof(Color) => colors as IReadOnlyList<ParameterSetEntry<T>>,
-        //         _ => throw new ArgumentOutOfRangeException()
-        //     };
-        // }
+        private IEnumerable<ParameterSetEntry> GetAllEntries()
+        {
+            return floats.Cast<ParameterSetEntry>().Concat(ints).Concat(bools).Concat(vector3s).Concat(vector2s).Concat(colors);
+        }
 
         /// <summary>
         /// TimelineParameterContainerを取得

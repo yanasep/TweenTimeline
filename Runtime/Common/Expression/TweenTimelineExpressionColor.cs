@@ -42,7 +42,7 @@ namespace TweenTimeline
     public class TweenTimelineExpressionColorParameter : TweenTimelineExpressionColor
     {
         [TweenParameterIdField(typeof(Color))]
-        public string ParameterId;
+        public uint ParameterId;
 
         /// <inheritdoc/>
         public override Color Evaluate(TweenParameter parameter)

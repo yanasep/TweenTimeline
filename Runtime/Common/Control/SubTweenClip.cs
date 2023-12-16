@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -19,7 +23,7 @@ namespace TweenTimeline
         bool m_SupportLoop;
 
         private static HashSet<PlayableDirector> s_ProcessedDirectors = new HashSet<PlayableDirector>();
-        
+
         public PlayableDirector Binding { get; set; }
         public TimelineAsset RootTimelineAsset { get; set; }
 
@@ -38,59 +42,191 @@ namespace TweenTimeline
 
         public ParameterOverwriteSet OverwriteSet;
 
-         [Serializable]
-         public class ParameterOverwriteSet
-         {
-             public TimelineAsset TimelineAsset;
-             public List<ParameterOverwrite<TweenTimelineExpressionInt, int>> Ints;
-             public List<ParameterOverwrite<TweenTimelineExpressionFloat, float>> Floats;
-             public List<ParameterOverwrite<TweenTimelineExpressionBool, bool>> Bools;
-             public List<ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>> Vector3s;
-             public List<ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>> Vector2s;
-             public List<ParameterOverwrite<TweenTimelineExpressionColor, Color>> Colors;
-         }
+        [Serializable]
+        public class ParameterOverwriteSet
+        {
+            public TimelineAsset TimelineAsset;
+            public List<ParameterOverwrite<TweenTimelineExpressionInt, int>> Ints;
+            public List<ParameterOverwrite<TweenTimelineExpressionFloat, float>> Floats;
+            public List<ParameterOverwrite<TweenTimelineExpressionBool, bool>> Bools;
+            public List<ParameterOverwrite<TweenTimelineExpressionVector3, Vector3>> Vector3s;
+            public List<ParameterOverwrite<TweenTimelineExpressionVector2, Vector2>> Vector2s;
+            public List<ParameterOverwrite<TweenTimelineExpressionColor, Color>> Colors;
 
-         [Serializable]
-         public class ParameterOverwrite
-         {
-             public uint ParameterId;
-             /// <summary>インスペクターのリスト表示におけるインデックス</summary>
-             public int ViewIndex;
-         }
+            internal ParameterOverwrite AddEntry(uint parameterId, Type parameterType)
+            {
+                var expressionType = GetExpressionType(parameterType);
+                var constructedType = typeof(ParameterOverwrite<,>).MakeGenericType(expressionType, parameterType);
+                var instance = (ParameterOverwrite)Activator.CreateInstance(constructedType);
+                instance.ParameterId = parameterId;
+                var expressionField =
+                    constructedType.GetField("Expression", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                expressionField?.SetValue(instance, CreateConstantExpression(parameterType));
+                var list = GetParameterSetList(parameterType);
+                list.Add(instance);
+                return instance;
+            }
 
-         [Serializable]
-         public class ParameterOverwrite<TExpression, TValue> : ParameterOverwrite where TExpression : TweenTimelineExpression<TValue>
-         {
-             [SerializeReference, SelectableSerializeReference]
-             public TExpression Expression;
-         }
-         
-         public override Tween CreateTween(TweenClipInfo<PlayableDirector> info)
-         {
-             if (OverwriteSet?.TimelineAsset == null) return null;
-             
-             return TweenTimelineUtility.CreateTween(OverwriteSet.TimelineAsset, info.Target, parameter =>
-             {
-                 if (OverwriteSet == null) return;
-                 Set(OverwriteSet.Ints, info.Parameter);
-                 Set(OverwriteSet.Floats, info.Parameter);
-                 Set(OverwriteSet.Bools, info.Parameter);
-                 Set(OverwriteSet.Vector3s, info.Parameter);
-                 Set(OverwriteSet.Vector2s, info.Parameter);
-                 Set(OverwriteSet.Colors, info.Parameter);
-             });
-         }
+            internal void RemoveEntry(uint parameterId)
+            {
+                if (TryFindEntry(parameterId, out var list, out var index))
+                {
+                    list.RemoveAt(index);
+                }
+            }
 
-         private void Set<TVal, TExp>(List<ParameterOverwrite<TExp, TVal>> overwrites, TweenParameter dest)
-             where TExp : TweenTimelineExpression<TVal>
-         {
-             if (overwrites == null) return;
-             foreach (var overwrite in overwrites)
-             {
-                 if (overwrite.Expression == null) continue;
-                 dest.SetParameter<TVal>(overwrite.ParameterId, overwrite.Expression.Evaluate(dest));
-             }
-         }
+            internal ParameterOverwrite GetEntry(uint parameterId)
+            {
+                if (TryFindEntry(parameterId, out var list, out var index))
+                {
+                    return (ParameterOverwrite)list[index];
+                }
+
+                return null;
+            }
+        
+            private bool TryFindEntry(uint parameterId, out IList list, out int index)
+            {
+                if (TryFind(Floats, out index)) { list = Floats; return true; }
+                if (TryFind(Ints, out index)) { list = Ints; return true; }
+                if (TryFind(Bools, out index)) { list = Bools; return true; }
+                if (TryFind(Vector3s, out index)) { list = Vector3s; return true; }
+                if (TryFind(Vector2s, out index)) { list = Vector2s; return true; }
+                if (TryFind(Colors, out index)) { list = Colors; return true; }
+                list = null;
+                index = -1;
+                return false;
+            
+                bool TryFind(IList list, out int index)
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        var entry = (ParameterOverwrite)list[i];
+                        if (entry.ParameterId == parameterId)
+                        {
+                            index = i;
+                            return true;
+                        }
+                    }
+
+                    index = -1;
+                    return false;
+                }
+            }
+            
+            internal (string listPropertyPath, int listIndex) GetPropertyPath(uint parameterId)
+            {
+                if (!TryFindEntry(parameterId, out var list, out var index))
+                {
+                    Debug.LogError($"Parameter not found: id={parameterId}");
+                    return (null, -1);
+                }
+            
+                if (list.Equals(Floats)) return (nameof(Floats), index);
+                if (list.Equals(Ints)) return (nameof(Ints), index);
+                if (list.Equals(Bools)) return (nameof(Bools), index);
+                if (list.Equals(Vector3s)) return (nameof(Vector3s), index);
+                if (list.Equals(Vector2s)) return (nameof(Vector2s), index);
+                if (list.Equals(Colors)) return (nameof(Colors), index);
+                return (null, -1);
+            }
+
+            private static Type GetExpressionType(Type typeArg)
+            {
+                Type genericType = typeof(TweenTimelineExpression<>);
+
+                var assembly = typeof(TweenTimelineExpression<>).Assembly;
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.BaseType != null && type.BaseType.IsGenericType &&
+                        type.BaseType.GetGenericTypeDefinition() == genericType)
+                    {
+                        var genericArguments = type.BaseType.GetGenericArguments();
+                        if (genericArguments.Contains(typeArg))
+                        {
+                            return type;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            private static object CreateConstantExpression(Type typeArg)
+            {
+                var baseType = typeof(TweenTimelineExpression<>).MakeGenericType(typeArg);
+                var assembly = typeof(TweenTimelineExpression<>).Assembly;
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (!type.IsSubclassOf(baseType)) continue;
+                    var displayName = type.GetCustomAttribute<DisplayNameAttribute>();
+                    if (displayName is { DisplayName: "Constant" })
+                    {
+                        return Activator.CreateInstance(type);
+                    }
+                }
+
+                return null;
+            }
+
+            private IList GetParameterSetList(Type parameterType)
+            {
+                return parameterType switch
+                {
+                    var type when type == typeof(float) => Floats,
+                    var type when type == typeof(int) => Ints,
+                    var type when type == typeof(bool) => Bools,
+                    var type when type == typeof(Vector3) => Vector3s,
+                    var type when type == typeof(Vector2) => Vector2s,
+                    var type when type == typeof(Color) => Colors,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+        }
+
+        [Serializable]
+        public class ParameterOverwrite
+        {
+            public uint ParameterId;
+#if UNITY_EDITOR
+            /// <summary>インスペクターのリスト表示におけるインデックス</summary>
+            public int ViewIndex;
+#endif
+        }
+
+        [Serializable]
+        public class ParameterOverwrite<TExpression, TValue> : ParameterOverwrite where TExpression : TweenTimelineExpression<TValue>
+        {
+            [SerializeReference, SelectableSerializeReference]
+            public TExpression Expression;
+        }
+
+        public override Tween CreateTween(TweenClipInfo<PlayableDirector> info)
+        {
+            if (OverwriteSet?.TimelineAsset == null) return null;
+
+            return TweenTimelineUtility.CreateTween(OverwriteSet.TimelineAsset, info.Target, parameter =>
+            {
+                if (OverwriteSet == null) return;
+                Set(OverwriteSet.Ints, info.Parameter);
+                Set(OverwriteSet.Floats, info.Parameter);
+                Set(OverwriteSet.Bools, info.Parameter);
+                Set(OverwriteSet.Vector3s, info.Parameter);
+                Set(OverwriteSet.Vector2s, info.Parameter);
+                Set(OverwriteSet.Colors, info.Parameter);
+            });
+        }
+
+        private void Set<TVal, TExp>(List<ParameterOverwrite<TExp, TVal>> overwrites, TweenParameter dest)
+            where TExp : TweenTimelineExpression<TVal>
+        {
+            if (overwrites == null) return;
+            foreach (var overwrite in overwrites)
+            {
+                if (overwrite.Expression == null) continue;
+                dest.SetParameter<TVal>(overwrite.ParameterId, overwrite.Expression.Evaluate(dest));
+            }
+        }
 
         /// <summary>
         /// Creates the root of a Playable subgraph to control the contents of the game object.
@@ -111,7 +247,9 @@ namespace TweenTimeline
 
                 if (go == Binding.gameObject && OverwriteSet.TimelineAsset == RootTimelineAsset)
                 {
-                    Debug.LogWarningFormat("Control Playable ({0}) is referencing the same PlayableDirector component than the one in which it is playing.", name);
+                    Debug.LogWarningFormat(
+                        "Control Playable ({0}) is referencing the same PlayableDirector component than the one in which it is playing.",
+                        name);
                     return Playable.Null;
                 }
             }
@@ -166,7 +304,7 @@ namespace TweenTimeline
         {
             foreach (var timeline in timelines)
             {
-                timeline.GatherProperties(director, driver);   
+                timeline.GatherProperties(director, driver);
             }
         }
     }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -19,7 +18,7 @@ namespace TweenTimeline.Editor
         private uint[] _optionsParamIds;
         private int _index;
         // 空の選択肢を用意したいが、空文字やスペースだとPopupで区切り線として扱われてしまうため、見えない文字で代用
-        private const string EmptyValue = "\u00A0";
+        private const string EmptyValue = "\u2800";
         private GUIContent _missingContent;
 
         private void Initialize(SerializedProperty property)
@@ -79,16 +78,21 @@ namespace TweenTimeline.Editor
 
         private void UpdateOptions(SerializedProperty property)
         {
+            bool isMissing;
+            
             if (property.uintValue == 0)
             {
                 _index = 0;
+                isMissing = false;
             }
             else
             {
                 _index = Array.FindIndex(_parameters, x => x.paramId == property.uintValue);
+                isMissing = _index < 0;
+                // emptyValueを追加する分下げる
+                if (!isMissing) _index++;
             }
-
-            bool isMissing = _index < 0;
+            
             var optionsEnumerable = _parameters.Select(x => new GUIContent(x.paramName)).Prepend(new GUIContent(EmptyValue));
             var paramIdsEnumerable = _parameters.Select(x => x.paramId).Prepend(0u);
             
@@ -102,8 +106,6 @@ namespace TweenTimeline.Editor
             {
                 _options = optionsEnumerable.ToArray();
                 _optionsParamIds = paramIdsEnumerable.ToArray();
-                // emptyValueを追加している分下げる
-                _index++;
             }
         }
     }

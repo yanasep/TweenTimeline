@@ -43,7 +43,7 @@ namespace TweenTimeline
     public class TweenTimelineExpressionBoolParameter : TweenTimelineExpressionBool
     {
         [TweenParameterIdField(typeof(bool))] 
-        public string ParameterId;
+        public uint ParameterId;
 
         /// <inheritdoc/>
         public override bool Evaluate(TweenParameter parameter)

@@ -42,7 +42,7 @@ namespace TweenTimeline
     public class TweenTimelineExpressionFloatParameter : TweenTimelineExpressionFloat
     {
         [TweenParameterIdField(typeof(float))]
-        public string ParameterId;
+        public uint ParameterId;
 
         /// <inheritdoc/>
         public override float Evaluate(TweenParameter parameter)
