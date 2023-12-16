@@ -18,10 +18,9 @@ namespace TweenTimeline
     /// </summary>
     [Serializable]
     [DisplayName("Constant")]
-    [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionVector3Constant : TweenTimelineExpressionVector3
     {
-        public Vector3 Value;
+        [NoPropertyLabel] public Vector3 Value;
 
         public TweenTimelineExpressionVector3Constant() { }
         public TweenTimelineExpressionVector3Constant(Vector3 val) => Value = val;
