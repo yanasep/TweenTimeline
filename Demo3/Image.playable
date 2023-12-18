@@ -156,7 +156,7 @@ MonoBehaviour:
     - rid: 2068997467034615810
       type: {class: TweenTimelineExpressionColorParameter, ns: TweenTimeline, asm: TweenTimeline}
       data:
-        ParameterName: EndColor
+        ParameterId: 3750985204
 --- !u!114 &6970419874002708522
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -180,15 +180,17 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
-  floats:
-  - Name: MyFloat
+  floats: []
+  ints: []
+  bools:
+  - ParameterId: 4002322645
+    ParameterName: c
     ViewIndex: 1
     Value: 0
-  ints: []
-  bools: []
   vector3s: []
   vector2s: []
   colors:
-  - Name: EndColor
+  - ParameterId: 3750985204
+    ParameterName: col
     ViewIndex: 0
-    Value: {r: 0.035793543, g: 1, b: 0, a: 1}
+    Value: {r: 1, g: 1, b: 1, a: 1}

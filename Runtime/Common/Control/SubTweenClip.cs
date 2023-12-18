@@ -185,13 +185,15 @@ namespace TweenTimeline
         }
 
         [Serializable]
-        public class ParameterOverwrite
+        public abstract class ParameterOverwrite
         {
             public uint ParameterId;
 #if UNITY_EDITOR
             /// <summary>インスペクターのリスト表示におけるインデックス</summary>
             public int ViewIndex;
 #endif
+            
+            internal abstract Type TargetParameterType { get; } 
         }
 
         [Serializable]
@@ -199,6 +201,8 @@ namespace TweenTimeline
         {
             [SerializeReference, SelectableSerializeReference]
             public TExpression Expression;
+
+            internal override Type TargetParameterType => typeof(TValue);
         }
 
         public override Tween CreateTween(TweenClipInfo<PlayableDirector> info)

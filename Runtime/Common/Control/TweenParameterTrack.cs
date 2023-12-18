@@ -76,6 +76,18 @@ namespace TweenTimeline
             return instance;
         }
 
+        internal Type GetParameterType(uint parameterId)
+        {
+            if (TryFind(floats, parameterId, out _)) return typeof(float); 
+            if (TryFind(ints, parameterId, out _)) return typeof(int); 
+            if (TryFind(bools, parameterId, out _)) return typeof(bool); 
+            if (TryFind(vector3s, parameterId, out _)) return typeof(Vector3); 
+            if (TryFind(vector2s, parameterId, out _)) return typeof(Vector2); 
+            if (TryFind(colors, parameterId, out _)) return typeof(Color);
+            Debug.LogWarning($"parameter not found {parameterId}");
+            return null;
+        }
+
         internal void RemoveEntry(uint parameterId)
         {
             if (TryFindEntry(parameterId, out var list, out var index))
@@ -96,31 +108,31 @@ namespace TweenTimeline
         
         private bool TryFindEntry(uint parameterId, out IList list, out int index)
         {
-            if (TryFind(floats, out index)) { list = floats; return true; }
-            if (TryFind(ints, out index)) { list = ints; return true; }
-            if (TryFind(bools, out index)) { list = bools; return true; }
-            if (TryFind(vector3s, out index)) { list = vector3s; return true; }
-            if (TryFind(vector2s, out index)) { list = vector2s; return true; }
-            if (TryFind(colors, out index)) { list = colors; return true; }
+            if (TryFind(floats, parameterId, out index)) { list = floats; return true; }
+            if (TryFind(ints, parameterId, out index)) { list = ints; return true; }
+            if (TryFind(bools, parameterId, out index)) { list = bools; return true; }
+            if (TryFind(vector3s, parameterId, out index)) { list = vector3s; return true; }
+            if (TryFind(vector2s, parameterId, out index)) { list = vector2s; return true; }
+            if (TryFind(colors, parameterId, out index)) { list = colors; return true; }
             list = null;
             index = -1;
             return false;
-            
-            bool TryFind(IList list, out int index)
-            {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    var entry = (ParameterSetEntry)list[i];
-                    if (entry.ParameterId == parameterId)
-                    {
-                        index = i;
-                        return true;
-                    }
-                }
+        }
 
-                index = -1;
-                return false;
+        private bool TryFind(IList list, uint parameterId, out int index)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                var entry = (ParameterSetEntry)list[i];
+                if (entry.ParameterId == parameterId)
+                {
+                    index = i;
+                    return true;
+                }
             }
+
+            index = -1;
+            return false;
         }
         
         internal ParameterSetEntry ConvertEntryType(uint parameterId, Type newType)

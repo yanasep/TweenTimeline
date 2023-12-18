@@ -21,6 +21,7 @@ namespace TweenTimeline.Editor
         private readonly List<(uint paramId, string paramName, TweenParameterType paramType)> _parameterCandidates = new();
         private bool initialized;
         private Vector3 _listViewPosition;
+        private TweenParameterTrack _paramTrack;
 
         private class ListItemData
         {
@@ -65,8 +66,10 @@ namespace TweenTimeline.Editor
 
         private float GetElementHeight(SerializedProperty property, ListItemData data)
         {
-            var expressionProperty = property.FindPropertyRelative(data.BindingListName)
-                .GetArrayElementAtIndex(data.BindingListItemIndex).FindPropertyRelative("Expression");
+            var set = property.GetValue<SubTweenClip.ParameterOverwriteSet>();
+            var (listPath, listIndex) = set.GetPropertyPath(data.BindingData.ParameterId);
+            var expressionProperty = property.FindPropertyRelative(listPath)
+                .GetArrayElementAtIndex(listIndex).FindPropertyRelative("Expression");
             var expressionHeight = EditorGUI.GetPropertyHeight(expressionProperty);
             return EditorGUIUtility.singleLineHeight + expressionHeight + EditorGUIUtility.standardVerticalSpacing;
         }
@@ -97,9 +100,16 @@ namespace TweenTimeline.Editor
                 EditorGUI.LabelField(labelRect, _paramTrack.GetEntry(data.BindingData.ParameterId).ParameterName);
                 var expressionRect = rect;
                 expressionRect.yMin = labelRect.yMax;
-                var expressionProperty = property.FindPropertyRelative(listPath)
-                    .GetArrayElementAtIndex(listIndex).FindPropertyRelative("Expression");
-                EditorGUI.PropertyField(expressionRect, expressionProperty);
+                if (data.BindingData.TargetParameterType != _paramTrack.GetParameterType(data.BindingData.ParameterId))
+                {
+                    EditorGUI.LabelField(expressionRect, "Type mismatch");
+                }
+                else
+                {
+                    var expressionProperty = property.FindPropertyRelative(listPath)
+                        .GetArrayElementAtIndex(listIndex).FindPropertyRelative("Expression");
+                    EditorGUI.PropertyField(expressionRect, expressionProperty);   
+                }
             };
             _listView.onReorderCallbackWithDetails += (list, oldIndex, newIndex) =>
             {
