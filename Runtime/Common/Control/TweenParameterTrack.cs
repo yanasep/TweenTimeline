@@ -189,12 +189,12 @@ namespace TweenTimeline
         {
             return parameterType switch
             {
-                var type when type == typeof(float) => floats,
-                var type when type == typeof(int) => ints,
-                var type when type == typeof(bool) => bools,
-                var type when type == typeof(Vector3) => vector3s,
-                var type when type == typeof(Vector2) => vector2s,
-                var type when type == typeof(Color) => colors,
+                var type when type == typeof(float) => floats ??= new(),
+                var type when type == typeof(int) => ints ??= new(),
+                var type when type == typeof(bool) => bools ??= new(),
+                var type when type == typeof(Vector3) => vector3s ??= new(),
+                var type when type == typeof(Vector2) => vector2s ??= new(),
+                var type when type == typeof(Color) => colors ??= new(),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -207,7 +207,14 @@ namespace TweenTimeline
         
         private IEnumerable<ParameterSetEntry> GetAllEntries()
         {
-            return floats.Cast<ParameterSetEntry>().Concat(ints).Concat(bools).Concat(vector3s).Concat(vector2s).Concat(colors);
+            var result = Enumerable.Empty<ParameterSetEntry>();
+            if (floats != null) result = result.Concat(floats);
+            if (ints != null) result = result.Concat(ints);
+            if (bools != null) result = result.Concat(bools);
+            if (vector3s != null) result = result.Concat(vector3s);
+            if (vector2s != null) result = result.Concat(vector2s);
+            if (colors != null) result = result.Concat(colors);
+            return result;
         }
 
         /// <summary>

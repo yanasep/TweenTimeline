@@ -22,6 +22,7 @@ namespace TweenTimeline.Editor
         private bool initialized;
         private Vector3 _listViewPosition;
         private TweenParameterTrack _paramTrack;
+        private GUIContent _typeMismatchContent;
 
         private class ListItemData
         {
@@ -51,15 +52,7 @@ namespace TweenTimeline.Editor
             height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             // list
-            foreach (var data in _viewDataList)
-            {
-                height += GetElementHeight(property, data) + EditorGUIUtility.standardVerticalSpacing;
-            }
-
-            height += _listView.headerHeight + _listView.footerHeight;
-
-            // なんかちょっと足りないので適当に余分
-            height += EditorGUIUtility.standardVerticalSpacing * 3;
+            height += _listView.GetHeight();
 
             return height;
         }
@@ -84,6 +77,9 @@ namespace TweenTimeline.Editor
             GatherListItemData(set);
             GatherPropertyCandidates(property);
 
+            _typeMismatchContent = new GUIContent(EditorGUIUtility.IconContent("console.warnicon.sml"));
+            _typeMismatchContent.text = "Type mismatch";
+
             _listView = new ReorderableList(_viewDataList, typeof(ListItemData));
             _listView.elementHeightCallback += i =>
             {
@@ -102,7 +98,7 @@ namespace TweenTimeline.Editor
                 expressionRect.yMin = labelRect.yMax;
                 if (data.BindingData.TargetParameterType != _paramTrack.GetParameterType(data.BindingData.ParameterId))
                 {
-                    EditorGUI.LabelField(expressionRect, "Type mismatch");
+                    EditorGUI.LabelField(expressionRect, _typeMismatchContent);
                 }
                 else
                 {

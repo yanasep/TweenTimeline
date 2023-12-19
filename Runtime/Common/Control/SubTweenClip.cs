@@ -212,12 +212,12 @@ namespace TweenTimeline
             return TweenTimelineUtility.CreateTween(OverwriteSet.TimelineAsset, info.Target, parameter =>
             {
                 if (OverwriteSet == null) return;
-                Set(OverwriteSet.Ints, info.Parameter);
-                Set(OverwriteSet.Floats, info.Parameter);
-                Set(OverwriteSet.Bools, info.Parameter);
-                Set(OverwriteSet.Vector3s, info.Parameter);
-                Set(OverwriteSet.Vector2s, info.Parameter);
-                Set(OverwriteSet.Colors, info.Parameter);
+                Set(OverwriteSet.Ints, parameter);
+                Set(OverwriteSet.Floats, parameter);
+                Set(OverwriteSet.Bools, parameter);
+                Set(OverwriteSet.Vector3s, parameter);
+                Set(OverwriteSet.Vector2s, parameter);
+                Set(OverwriteSet.Colors, parameter);
             });
         }
 
