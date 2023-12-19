@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 018fe04c2d564e5b8549077436916bd5, type: 3}
   m_Name: Note
   m_EditorClassIdentifier: UnityEngine.CoreModule:UnityEngine:ScriptableObject
-  Note: "\u5B9F\u88C5\u30E1\u30E2\n\n\u30EA\u30CD\u30FC\u30E0\u5BFE\u5FDC"
+  Note: "\u5B9F\u88C5\u30E1\u30E2\n\nSubTweenInspectorIMGUI\u306E\u5909\u66F4\u3092UIToolkit\u306B\u3082\u30B3\u30D4\u30DA\n\n\u30D7\u30EC\u30D3\u30E5\u30FC\u7D42\u4E86\u6642\u306B\u30EA\u30BB\u30C3\u30C8\u3055\u308C\u306A\u3044\n\nSubTweenActivation\u304C\u304A\u304B\u3057\u3044\nDemo3\u306EOverwirte\u306EEndColor\u304C"
