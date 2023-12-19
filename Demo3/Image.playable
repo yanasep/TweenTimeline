@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7563305830609674702
+--- !u!114 &-6530884999628997347
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24,10 +24,10 @@ MonoBehaviour:
   - m_Version: 1
     m_Start: 0
     m_ClipIn: 0
-    m_Asset: {fileID: 6227992028369362517}
+    m_Asset: {fileID: 1744394765321672655}
     m_Duration: 0.5
     m_TimeScale: 1
-    m_ParentTrack: {fileID: -7563305830609674702}
+    m_ParentTrack: {fileID: -6530884999628997347}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: 0
@@ -100,6 +100,109 @@ MonoBehaviour:
     G: 1
     B: 1
     A: 1
+--- !u!114 &-6380217924902268502
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c51ba2e6216446ef8f3a1c066bb70f70, type: 3}
+  m_Name: Transform Scale Tween Track
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0.7833333333333333
+    m_ClipIn: 0
+    m_Asset: {fileID: 5365087905765786801}
+    m_Duration: 0.5
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -6380217924902268502}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0
+    m_BlendOutDuration: 0
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: Punch Scale Tween
+  m_Markers:
+    m_Objects: []
+  _: 0
+  SetStartValue: 0
+  StartValue:
+    rid: 2068997644019040266
+  references:
+    version: 2
+    RefIds:
+    - rid: 2068997644019040266
+      type: {class: TweenTimelineExpressionVector3Constant, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        Value: {x: 1, y: 1, z: 1}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,19 +213,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
-  m_Name: Image
+  m_Name: image
   m_EditorClassIdentifier: 
   m_Version: 0
   m_Tracks:
-  - {fileID: -7563305830609674702}
-  - {fileID: 6970419874002708522}
+  - {fileID: 4287265995330963090}
+  - {fileID: -6530884999628997347}
+  - {fileID: 3157135642668552279}
+  - {fileID: -6380217924902268502}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
     m_ScenePreview: 1
   m_DurationMode: 0
   m_MarkerTrack: {fileID: 0}
---- !u!114 &6227992028369362517
+--- !u!114 &1744394765321672655
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,7 +240,7 @@ MonoBehaviour:
   m_Name: GraphicColorTweenClip
   m_EditorClassIdentifier: 
   EndValue:
-    rid: 2068997467034615810
+    rid: 2068997644019040281
   Enable:
     R: 1
     G: 1
@@ -153,11 +258,104 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 2068997467034615810
+    - rid: 2068997644019040281
       type: {class: TweenTimelineExpressionColorParameter, ns: TweenTimeline, asm: TweenTimeline}
       data:
-        ParameterId: 3750985204
---- !u!114 &6970419874002708522
+        ParameterId: 4169413023
+--- !u!114 &3157135642668552279
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc115dd0f98404e8238c5a9c819f8da, type: 3}
+  m_Name: Text Mesh Pro UGUI Count Up Tween Track
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: 7520979954351297163}
+    m_Duration: 0.7
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 3157135642668552279}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0
+    m_BlendOutDuration: 0
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: Text Count Up Tween
+  m_Markers:
+    m_Objects: []
+  _: 0
+--- !u!114 &4287265995330963090
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,15 +380,87 @@ MonoBehaviour:
     m_Objects: []
   floats: []
   ints: []
-  bools:
-  - ParameterId: 4002322645
-    ParameterName: c
-    ViewIndex: 1
-    Value: 0
-  vector3s: []
+  bools: []
+  vector3s:
+  - ParameterId: 1109465864
+    ParameterName: Punch
+    ViewIndex: 0
+    Value: {x: 1, y: 1, z: 0}
   vector2s: []
   colors:
-  - ParameterId: 3750985204
-    ParameterName: col
-    ViewIndex: 0
-    Value: {r: 1, g: 1, b: 1, a: 1}
+  - ParameterId: 4169413023
+    ParameterName: EndColor
+    ViewIndex: 1
+    Value: {r: 0.16509432, g: 0.26959726, b: 1, a: 1}
+--- !u!114 &5365087905765786801
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1af3da00e65b4fdb80ac9f34225fd9bb, type: 3}
+  m_Name: TransformPunchScaleTweenClip
+  m_EditorClassIdentifier: 
+  Punch:
+    rid: 2068997644019040290
+  Vibrato:
+    rid: 2068997644019040272
+  Elasticity:
+    rid: 2068997644019040273
+  Ease:
+    Ease: 0
+    UseAnimationCurve: 0
+    Curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  references:
+    version: 2
+    RefIds:
+    - rid: 2068997644019040272
+      type: {class: TweenTimelineExpressionIntConstant, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        Value: 1
+    - rid: 2068997644019040273
+      type: {class: TweenTimelineExpressionFloatConstant, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        Value: 1
+    - rid: 2068997644019040290
+      type: {class: TweenTimelineExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        ParameterId: 1109465864
+--- !u!114 &7520979954351297163
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f3fadc8c1544f119a85e4ea2bff2eff, type: 3}
+  m_Name: TextMeshProUGUICountUpTweenClip
+  m_EditorClassIdentifier: 
+  EndValue:
+    rid: 2068997644019040260
+  Ease:
+    Ease: 0
+    UseAnimationCurve: 0
+    Curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  references:
+    version: 2
+    RefIds:
+    - rid: 2068997644019040260
+      type: {class: TweenTimelineExpressionIntConstant, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        Value: 50
