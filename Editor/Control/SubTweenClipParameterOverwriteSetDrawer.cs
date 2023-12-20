@@ -17,8 +17,8 @@ namespace TweenTimeline.Editor
     public class SubTweenClipParameterOverwriteSetDrawer : PropertyDrawer
     {
         private ListView _listView;
-        private List<ListItemData> _viewDataList;
-        private List<(uint paramId, string paramName, TweenParameterType paramType)> _parameterCandidates;
+        private readonly List<ListItemData> _viewDataList = new();
+        private readonly List<(uint paramId, string paramName, TweenParameterType paramType)> _parameterCandidates = new();
         private TweenParameterTrack _paramTrack;
 
         private class ListItemData
@@ -35,12 +35,10 @@ namespace TweenTimeline.Editor
             root.Q<PropertyField>("TimelineAsset")
                 .BindProperty(property.FindPropertyRelative(nameof(SubTweenClip.ParameterOverwriteSet.TimelineAsset)));
 
-            _listView = root.Q<ListView>();
-            _viewDataList ??= new();
-            _parameterCandidates ??= new();
             GatherListItemData(set);
             GatherPropertyCandidates(property);
 
+            _listView = root.Q<ListView>();
             _listView.makeItem = TweenTimelineEditorResourceHolder.instance.SubTweenClipOverwriteEntryXml.Instantiate;
             _listView.bindItem = (elem, i) =>
             {
@@ -48,20 +46,28 @@ namespace TweenTimeline.Editor
 
                 var (listPath, listIndex) = set.GetPropertyPath(data.BindingData.ParameterId);
                 var entry = _paramTrack.GetEntry(data.BindingData.ParameterId);
-                var paramName = entry.ParameterName;
-                // TODO: expressionの型とentryの型が違う場合はtype mismatch表示
-                elem.Q<Label>("ParameterName").text = paramName;
-                var expressionProperty = property.FindPropertyRelative(listPath)
-                    .GetArrayElementAtIndex(listIndex).FindPropertyRelative("Expression");
-                elem.Q<PropertyField>("Expression").BindProperty(expressionProperty);
+                elem.Q<Label>("ParameterName").text = entry.ParameterName;
+                // expressionの型とentryの型が違う場合はtype mismatch表示
+                var expressionField = elem.Q<PropertyField>("Expression");
+                var warningField = elem.Q("warning");
+                bool isTypeOk = data.BindingData.TargetParameterType == _paramTrack.GetParameterType(data.BindingData.ParameterId);
+                void setVisible(VisualElement element, bool visible) => element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+                setVisible(expressionField, isTypeOk);
+                setVisible(warningField, !isTypeOk);
+                if (isTypeOk)
+                {
+                    var expressionProperty = property.FindPropertyRelative(listPath)
+                        .GetArrayElementAtIndex(listIndex).FindPropertyRelative("Expression");
+                    expressionField.BindProperty(expressionProperty);
+                }
             };
-            _listView.itemsSource = _viewDataList;
             _listView.itemIndexChanged += (index1, index2) =>
             {
                 Undo.RecordObject(property.serializedObject.targetObject, "Reorder parameter overwrites");
                 _viewDataList[index1].BindingData.ViewIndex = index1;
                 _viewDataList[index2].BindingData.ViewIndex = index2;
             };
+            _listView.itemsSource = _viewDataList;
 
             var addButton = root.Q<Button>("add-button");
             addButton.clicked += () => AddItemAsync(VisualElementUtility.GetScreenPosition(addButton), property, set).Forget();

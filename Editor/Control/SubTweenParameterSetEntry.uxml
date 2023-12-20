@@ -4,6 +4,10 @@
         <ui:VisualElement name="NameRow" class="list-entry-name-row">
             <ui:Label text="ParameterName" name="ParameterName" class="list-entry-name" />
         </ui:VisualElement>
-        <uie:PropertyField name="Expression" label="" />
+        <uie:PropertyField name="Expression" />
+        <ui:VisualElement name="warning" class="label-with-icon" style="flex-grow: 1; flex-direction: row;">
+            <ui:VisualElement class="label-with-icon__image" style="background-image: url(&apos;project://database/Assets/UnityDefaultRuntimeTheme.tss?fileID=4584671053970592468&amp;guid=dcbe98304cec5a046bff01c1f418564a&amp;type=3#console.warnicon&apos;);" />
+            <ui:Label text="Type mismatch" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

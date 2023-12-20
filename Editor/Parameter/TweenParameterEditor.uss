@@ -110,3 +110,17 @@
     width: 40%;
     -unity-text-align: middle-left;
 }
+
+.label-with-icon__image {
+    width: 14px;
+    height: 14px;
+    flex-grow: 0;
+}
+
+.label-with-icon > Label {
+    -unity-text-align: middle-center;
+}
+
+#warning {
+    margin-left: 3px;
+}
