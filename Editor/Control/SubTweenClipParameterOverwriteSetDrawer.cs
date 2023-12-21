@@ -13,30 +13,36 @@ using UnityEngine.UIElements;
 
 namespace TweenTimeline.Editor
 {
+    /// <summary>
+    /// SubTweenClip.ParameterOverwriteSetのPropertyDrawer
+    /// </summary>
     [CustomPropertyDrawer(typeof(SubTweenClip.ParameterOverwriteSet))]
     public class SubTweenClipParameterOverwriteSetDrawer : PropertyDrawer
     {
         private ListView _listView;
-        private readonly List<ListItemData> _viewDataList = new();
+        private readonly List<EntryViewData> _viewDataList = new();
         private readonly List<(uint paramId, string paramName, TweenParameterType paramType)> _parameterCandidates = new();
         private TweenParameterTrack _paramTrack;
 
-        private class ListItemData
+        /// <summary>
+        /// ParameterOverwriteの表示用データ
+        /// </summary>
+        private class EntryViewData
         {
             public SubTweenClip.ParameterOverwrite BindingData;
         }
 
+        /// <inheritdoc/>
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
             var set = property.GetValue<SubTweenClip.ParameterOverwriteSet>();
+            GatherListItemData(set);
+            GatherPropertyCandidates(property);
 
             var root = new VisualElement();
             TweenTimelineEditorResourceHolder.instance.SubTweenClipInspectorXml.CloneTree(root);
             root.Q<PropertyField>("TimelineAsset")
                 .BindProperty(property.FindPropertyRelative(nameof(SubTweenClip.ParameterOverwriteSet.TimelineAsset)));
-
-            GatherListItemData(set);
-            GatherPropertyCandidates(property);
 
             _listView = root.Q<ListView>();
             _listView.makeItem = TweenTimelineEditorResourceHolder.instance.SubTweenClipOverwriteEntryXml.Instantiate;
@@ -78,6 +84,9 @@ namespace TweenTimeline.Editor
             return root;
         }
 
+        /// <summary>
+        /// リスト内のプロパティの値変動時
+        /// </summary>
         private void OnPropertyValueChanged(SerializedProperty property)
         {
             var set = property.GetValue<SubTweenClip.ParameterOverwriteSet>();
@@ -87,6 +96,9 @@ namespace TweenTimeline.Editor
             EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
 
+        /// <summary>
+        /// 要素追加
+        /// </summary>
         private async UniTask AddItemAsync(Vector2 position, SerializedProperty property, SubTweenClip.ParameterOverwriteSet set)
         {
             // 既に追加済みのパラメータは除外
@@ -97,9 +109,11 @@ namespace TweenTimeline.Editor
             var (_, selectedIndex) = await StringSearchWindow.OpenAsync("Parameter", optionNames, new SearchWindowContext(position));
             Undo.RecordObject(property.serializedObject.targetObject, "Add parameter overwrite");
             var (paramId, _, paramType) = options[selectedIndex];
+            // シリアライズデータ追加
             var bindingData = set.AddEntry(paramId, TweenParameterEditorUtility.ParameterTypeToType(paramType));
             bindingData.ViewIndex = _viewDataList.Count == 0 ? 0 : _viewDataList[^1].BindingData.ViewIndex + 1;
-            var viewData = new ListItemData
+            // 表示用データ追加
+            var viewData = new EntryViewData
             {
                 BindingData = bindingData
             };
@@ -109,6 +123,9 @@ namespace TweenTimeline.Editor
             _listView.selectedIndex = _viewDataList.Count - 1;
         }
 
+        /// <summary>
+        /// 要素削除
+        /// </summary>
         private void RemoveItem(SerializedProperty property, SubTweenClip.ParameterOverwriteSet set)
         {
             Undo.RecordObject(property.serializedObject.targetObject, "Remove parameter overwrite");
@@ -129,13 +146,16 @@ namespace TweenTimeline.Editor
 
             return;
 
-            void remove(ListItemData item)
+            void remove(EntryViewData item)
             {
                 _viewDataList.Remove(item);
                 set.RemoveEntry(item.BindingData.ParameterId);
             }
         }
 
+        /// <summary>
+        /// シリアライズされたデータを表示用リストに入れる
+        /// </summary>
         private void GatherListItemData(SubTweenClip.ParameterOverwriteSet set)
         {
             _viewDataList.Clear();
@@ -155,7 +175,7 @@ namespace TweenTimeline.Editor
                 {
                     var entry = entries[i];
                     var paramEntry = (SubTweenClip.ParameterOverwrite)entry;
-                    _viewDataList.Add(new ListItemData
+                    _viewDataList.Add(new EntryViewData
                     {
                         BindingData = paramEntry,
                     });
@@ -163,6 +183,9 @@ namespace TweenTimeline.Editor
             }
         }
 
+        /// <summary>
+        /// 上書き候補のパラメータ一覧を取得する
+        /// </summary>
         private void GatherPropertyCandidates(SerializedProperty property)
         {
             _parameterCandidates.Clear();

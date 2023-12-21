@@ -11,6 +11,9 @@ using UnityEngine.UIElements;
 
 namespace TweenTimeline
 {
+    /// <summary>
+    /// TweenParameterTrackのインスペクター
+    /// </summary>
     [CustomEditor(typeof(TweenParameterTrack))]
     public class TweenParameterTrackInspector : UnityEditor.Editor
     {
@@ -20,10 +23,14 @@ namespace TweenTimeline
         private ListView _listView;
         private List<EntryViewData> _viewDataList;
 
+        /// <summary>
+        /// ParameterSetEntryの表示用データ
+        /// </summary>
         private class EntryViewData
         {
             public TweenParameterTrack.ParameterSetEntry BindingData;
         }
+
 
         private void OnEnable()
         {
@@ -84,7 +91,7 @@ namespace TweenTimeline
 
             return root;
         }
-        
+
         private async UniTask AddItemAsync(Vector2 position)
         {
             var type = await EnumSearchWindow.OpenAsync<TweenParameterType>("Type", new SearchWindowContext(position));
@@ -98,7 +105,7 @@ namespace TweenTimeline
             };
             _viewDataList.Add(viewData);
             _listView.RefreshItems();
-            
+
             // focus added item
             _listView.selectedIndex = _viewDataList.Count - 1;
             var elem = _listView.Q(className: "unity-collection-view__item--selected");
@@ -109,7 +116,7 @@ namespace TweenTimeline
         private void RemoveItem()
         {
             Undo.RecordObject(_track, "Remove Tween Parameter");
-            
+
             // 何も選択していなければ最後の要素を削除
             if (_listView.selectedIndex == -1 && _viewDataList.Count > 0)
             {
@@ -127,7 +134,7 @@ namespace TweenTimeline
             OnDataChanged();
             _listView.RefreshItems();
             return;
-            
+
             void remove(EntryViewData item)
             {
                 _viewDataList.Remove(item);

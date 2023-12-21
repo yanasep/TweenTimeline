@@ -17,7 +17,7 @@ namespace TweenTimeline
             return origin;
         }
     }
-    
+
     [Serializable]
     public class Vector3Flags : FlagGroup
     {
@@ -33,7 +33,7 @@ namespace TweenTimeline
             return origin;
         }
     }
-    
+
     [Serializable]
     public class RGBAFlags : FlagGroup
     {
@@ -49,12 +49,6 @@ namespace TweenTimeline
             if (B) origin.b = newValue.b;
             if (A) origin.a = newValue.a;
             return origin;
-        }
-
-        public string GetString(Color color)
-        {
-            string getValStr(bool enable, float val) => enable ? val.ToString() : "-";
-            return $"RGBA({getValStr(R, color.r)}, {getValStr(G, color.g)}, {getValStr(B, color.b)}, {getValStr(A, color.a)})";
         }
     }
 }

@@ -13,7 +13,6 @@ namespace TweenTimeline
             var asset = (SubTweenClip)clip.asset;
             PlayableDirector binding = null;
 
-            // go by sourceObject first, then by prefab
             if (TimelineEditor.inspectedDirector != null)
             {
                 binding = TimelineEditor.inspectedDirector.GetGenericBinding(track) as PlayableDirector;
@@ -33,7 +32,6 @@ namespace TweenTimeline
         {
             var asset = (SubTweenClip)clip.asset;
 
-            // If there is a prefab, it will override the source GameObject
             if (director == null)
                 return;
 

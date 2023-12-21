@@ -1,31 +1,16 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TweenTimeline
 {
+    /// <summary>
+    /// TweenParameterのエディタ用Utility
+    /// </summary>
     public static class TweenParameterEditorUtility
     {
-        // public static IReadOnlyList<TweenParameterTrack.ParameterSetEntry> GetParameterSetEntries(TweenParameterTrack track, TweenParameterType type)
-        // {
-        //     return type switch
-        //     {
-        //         TweenParameterType.Int => track.ints ??= new(),
-        //         TweenParameterType.Float => track.floats ??= new(),
-        //         TweenParameterType.Bool => track.bools ??= new(),
-        //         TweenParameterType.Vector3 => track.vector3s ??= new(),
-        //         TweenParameterType.Vector2 => track.vector2s ??= new(),
-        //         TweenParameterType.Color => track.colors ??= new(),
-        //         _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        //     };
-        // }
-
-        // public static IList GetParameterSetEntriesAsList(TweenParameterTrack track, TweenParameterType type)
-        // {
-        //     return (IList)GetParameterSetEntries(track, type);
-        // }
-
+        /// <summary>
+        /// TweenParameterTypeをTypeに変換する
+        /// </summary>
         public static Type ParameterTypeToType(TweenParameterType type)
         {
             return type switch
@@ -40,6 +25,9 @@ namespace TweenTimeline
             };
         }
 
+        /// <summary>
+        /// TypeをTweenParameterTypeに変換する
+        /// </summary>
         public static TweenParameterType TypeToParameterType(Type type)
         {
             if (type == typeof(int)) return TweenParameterType.Int;
@@ -49,6 +37,6 @@ namespace TweenTimeline
             if (type == typeof(Vector2)) return TweenParameterType.Vector2;
             if (type == typeof(Color)) return TweenParameterType.Color;
             throw new ArgumentException($"Unsupported type: {type}", nameof(type));
-        }   
+        }
     }
 }

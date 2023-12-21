@@ -16,10 +16,11 @@ namespace TweenTimeline
     {
         [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionColor EndValue = new TweenTimelineExpressionColorConstant(Color.white);
-        
+
         public RGBAFlags Enable;
         public EaseOrCurve Ease;
 
+        /// <inheritdoc/>
         public override Tween CreateTween(TweenClipInfo<Graphic> info)
         {
             var target = info.Target;
