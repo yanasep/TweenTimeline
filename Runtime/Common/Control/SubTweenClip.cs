@@ -84,7 +84,7 @@ namespace TweenTimeline
 
                 return null;
             }
-        
+
             private bool TryFindEntry(uint parameterId, out IList list, out int index)
             {
                 if (TryFind(Floats, out index)) { list = Floats; return true; }
@@ -96,7 +96,7 @@ namespace TweenTimeline
                 list = null;
                 index = -1;
                 return false;
-            
+
                 bool TryFind(IList list, out int index)
                 {
                     for (int i = 0; i < list.Count; i++)
@@ -113,7 +113,7 @@ namespace TweenTimeline
                     return false;
                 }
             }
-            
+
             internal (string listPropertyPath, int listIndex) GetPropertyPath(uint parameterId)
             {
                 if (!TryFindEntry(parameterId, out var list, out var index))
@@ -121,7 +121,7 @@ namespace TweenTimeline
                     Debug.LogError($"Parameter not found: id={parameterId}");
                     return (null, -1);
                 }
-            
+
                 if (list.Equals(Floats)) return (nameof(Floats), index);
                 if (list.Equals(Ints)) return (nameof(Ints), index);
                 if (list.Equals(Bools)) return (nameof(Bools), index);
@@ -192,8 +192,8 @@ namespace TweenTimeline
             /// <summary>インスペクターのリスト表示におけるインデックス</summary>
             public int ViewIndex;
 #endif
-            
-            internal abstract Type TargetParameterType { get; } 
+
+            internal abstract Type TargetParameterType { get; }
         }
 
         [Serializable]
@@ -212,23 +212,23 @@ namespace TweenTimeline
             return TweenTimelineUtility.CreateTween(OverwriteSet.TimelineAsset, info.Target, parameter =>
             {
                 if (OverwriteSet == null) return;
-                Set(OverwriteSet.Ints, parameter);
-                Set(OverwriteSet.Floats, parameter);
-                Set(OverwriteSet.Bools, parameter);
-                Set(OverwriteSet.Vector3s, parameter);
-                Set(OverwriteSet.Vector2s, parameter);
-                Set(OverwriteSet.Colors, parameter);
+                Set(OverwriteSet.Ints, parameter, info.Parameter);
+                Set(OverwriteSet.Floats, parameter, info.Parameter);
+                Set(OverwriteSet.Bools, parameter, info.Parameter);
+                Set(OverwriteSet.Vector3s, parameter, info.Parameter);
+                Set(OverwriteSet.Vector2s, parameter, info.Parameter);
+                Set(OverwriteSet.Colors, parameter, info.Parameter);
             });
         }
 
-        private void Set<TVal, TExp>(List<ParameterOverwrite<TExp, TVal>> overwrites, TweenParameter dest)
+        private void Set<TVal, TExp>(List<ParameterOverwrite<TExp, TVal>> overwrites, TweenParameter dest, TweenParameter parentParam)
             where TExp : TweenTimelineExpression<TVal>
         {
             if (overwrites == null) return;
             foreach (var overwrite in overwrites)
             {
                 if (overwrite.Expression == null) continue;
-                dest.SetParameter<TVal>(overwrite.ParameterId, overwrite.Expression.Evaluate(dest));
+                dest.SetParameter(overwrite.ParameterId, overwrite.Expression.Evaluate(parentParam));
             }
         }
 

@@ -7,16 +7,16 @@ namespace TweenTimeline
     /// タイムラインに渡すパラメータを保持するクラス
     /// </summary>
     public class TweenParameter
-    {   
+    {
         private readonly Dictionary<uint, float> floats = new();
         private readonly Dictionary<uint, int> ints = new();
         private readonly Dictionary<uint, bool> bools = new();
         private readonly Dictionary<uint, Vector3> vector3s = new();
         private readonly Dictionary<uint, Vector2> vector2s = new();
         private readonly Dictionary<uint, Color> colors = new();
-        
+
         private readonly Dictionary<string, uint> nameToIdDic = new();
-        
+
         private void AddParameter<T>(Dictionary<uint, T> dic, uint parameterId, string parameterName, T value)
         {
             nameToIdDic.Add(parameterName, parameterId);
@@ -40,11 +40,24 @@ namespace TweenTimeline
             }
         }
 
-        private T GetParameterOrDefault<T>(Dictionary<uint, T> dic, string parameterName)
+        private T GetParameterOrDefault<T>(Dictionary<uint, T> dic, uint parameterId, T defaultValue = default)
+        {
+            if (dic.TryGetValue(parameterId, out var value))
+            {
+                return value;
+            }
+            else
+            {
+                Debug.LogWarning($"parameter (id={parameterId}) is not found.");
+                return defaultValue;
+            }
+        }
+
+        private T GetParameterOrDefault<T>(Dictionary<uint, T> dic, string parameterName, T defaultValue = default)
         {
             if (nameToIdDic.TryGetValue(parameterName, out var id))
             {
-                return GetParameterOrDefault(dic, id);
+                return GetParameterOrDefault(dic, id, defaultValue);
             }
             else
             {
@@ -62,11 +75,6 @@ namespace TweenTimeline
             vector2s.Clear();
             colors.Clear();
             nameToIdDic.Clear();
-        }
-
-        private T GetParameterOrDefault<T>(Dictionary<uint, T> dic, uint parameterId)
-        {
-            return dic.GetValueOrDefault(parameterId, default);
         }
 
         public void SetFloat(uint parameterId, float value) => SetParameter(floats, parameterId, value);
@@ -91,14 +99,14 @@ namespace TweenTimeline
         public Vector2 GetVector2(string parameterName) => GetParameterOrDefault(vector2s, parameterName);
         public void SetColor(uint parameterId, Color value) => SetParameter(colors, parameterId, value);
         public void SetColor(string parameterName, Color value) => SetParameter(colors, parameterName, value);
-        public Color GetColor(uint parameterId) => GetParameterOrDefault(colors, parameterId);
-        public Color GetColor(string parameterName) => GetParameterOrDefault(colors, parameterName);
+        public Color GetColor(uint parameterId) => GetParameterOrDefault(colors, parameterId, Color.white);
+        public Color GetColor(string parameterName) => GetParameterOrDefault(colors, parameterName, Color.white);
 
         internal void AddParameter<T>(uint parameterId, string parameterName, T value)
         {
             AddParameter(GetParameterDic<T>(), parameterId, parameterName, value);
         }
-        
+
         internal void SetParameter<T>(uint parameterId, T value)
         {
             SetParameter(GetParameterDic<T>(), parameterId, value);
