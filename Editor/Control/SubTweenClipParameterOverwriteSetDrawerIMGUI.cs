@@ -22,6 +22,7 @@ namespace TweenTimeline.Editor
         private bool initialized;
         private Vector3 _listViewPosition;
         private TweenParameterTrack _paramTrack;
+        private GUIContent _parameterMissingContent;
         private GUIContent _typeMismatchContent;
 
         private class ListItemData
@@ -77,6 +78,8 @@ namespace TweenTimeline.Editor
             GatherListItemData(set);
             GatherPropertyCandidates(property);
 
+            _parameterMissingContent = new GUIContent(EditorGUIUtility.IconContent("console.warnicon.sml"));
+            _parameterMissingContent.text = "Target Parameter is missing";
             _typeMismatchContent = new GUIContent(EditorGUIUtility.IconContent("console.warnicon.sml"));
             _typeMismatchContent.text = "Type mismatch";
 
@@ -91,9 +94,11 @@ namespace TweenTimeline.Editor
             {
                 var data = _viewDataList[index];
                 var (listPath, listIndex) = set.GetPropertyPath(data.BindingData.ParameterId);
+                var entry = _paramTrack.GetEntry(data.BindingData.ParameterId);
+                var targetExists = entry != null;
                 var labelRect = rect;
                 labelRect.height = EditorGUIUtility.singleLineHeight;
-                EditorGUI.LabelField(labelRect, _paramTrack.GetEntry(data.BindingData.ParameterId).ParameterName);
+                EditorGUI.LabelField(labelRect, targetExists ? new GUIContent(entry.ParameterName) : _parameterMissingContent);
                 var expressionRect = rect;
                 expressionRect.yMin = labelRect.yMax;
                 if (data.BindingData.TargetParameterType != _paramTrack.GetParameterType(data.BindingData.ParameterId))
@@ -104,7 +109,7 @@ namespace TweenTimeline.Editor
                 {
                     var expressionProperty = property.FindPropertyRelative(listPath)
                         .GetArrayElementAtIndex(listIndex).FindPropertyRelative("Expression");
-                    EditorGUI.PropertyField(expressionRect, expressionProperty);   
+                    EditorGUI.PropertyField(expressionRect, expressionProperty);
                 }
             };
             _listView.onReorderCallbackWithDetails += (list, oldIndex, newIndex) =>

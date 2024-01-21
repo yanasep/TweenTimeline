@@ -41,7 +41,7 @@ namespace TweenTimeline.Editor
 
             var root = new VisualElement();
             TweenTimelineEditorResourceHolder.instance.SubTweenClipInspectorXml.CloneTree(root);
-            root.Q<PropertyField>("TimelineAsset")
+            root.Q<PropertyField>("timeline-asset")
                 .BindProperty(property.FindPropertyRelative(nameof(SubTweenClip.ParameterOverwriteSet.TimelineAsset)));
 
             _listView = root.Q<ListView>();
@@ -52,14 +52,15 @@ namespace TweenTimeline.Editor
 
                 var (listPath, listIndex) = set.GetPropertyPath(data.BindingData.ParameterId);
                 var entry = _paramTrack.GetEntry(data.BindingData.ParameterId);
-                elem.Q<Label>("ParameterName").text = entry.ParameterName;
+                var targetExists = entry != null;
+                elem.Q<Label>("parameter-name").text = targetExists ? entry.ParameterName : "Target Parameter is missing";
+                SetElementVisible(elem.Q("parameter-name-warning"), !targetExists);
+                var expressionField = elem.Q<PropertyField>("expression");
                 // expressionの型とentryの型が違う場合はtype mismatch表示
-                var expressionField = elem.Q<PropertyField>("Expression");
-                var warningField = elem.Q("warning");
-                bool isTypeOk = data.BindingData.TargetParameterType == _paramTrack.GetParameterType(data.BindingData.ParameterId);
-                void setVisible(VisualElement element, bool visible) => element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-                setVisible(expressionField, isTypeOk);
-                setVisible(warningField, !isTypeOk);
+                var typeWarningElem = elem.Q("warning");
+                var isTypeOk = !targetExists || data.BindingData.TargetParameterType == _paramTrack.GetParameterType(data.BindingData.ParameterId);
+                SetElementVisible(expressionField, isTypeOk);
+                SetElementVisible(typeWarningElem, !isTypeOk);
                 if (isTypeOk)
                 {
                     var expressionProperty = property.FindPropertyRelative(listPath)
@@ -83,6 +84,8 @@ namespace TweenTimeline.Editor
             root.TrackPropertyValue(property, OnPropertyValueChanged);
             return root;
         }
+
+        private void SetElementVisible(VisualElement element, bool visible) => element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
 
         /// <summary>
         /// リスト内のプロパティの値変動時
