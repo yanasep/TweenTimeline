@@ -7,8 +7,7 @@ using Yanasep;
 namespace TweenTimeline
 {
     /// <summary>
-    /// TweenTimelineのDirector
-    /// TimelineParameterを渡したい場合に使う
+    /// TweenTimelineのDirector (TweenTimelineは通常のPlayableDirectorだと再生できない)
     /// </summary>
     [ExecuteInEditMode]
     public class TweenTimelineDirector : MonoBehaviour
@@ -27,7 +26,7 @@ namespace TweenTimeline
         {
             return Play(null);
         }
-        
+
         /// <summary>
         /// 再生
         /// </summary>
