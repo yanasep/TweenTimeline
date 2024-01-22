@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Yanasep
+namespace TweenTimeline
 {
     /// <summary>
     /// プロパティ名なしで描画する

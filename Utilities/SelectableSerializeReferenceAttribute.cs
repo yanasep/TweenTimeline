@@ -8,11 +8,10 @@ using UnityEngine;
 using UnityEngine.Assertions;
 #endif
 
-namespace Yanasep
+namespace TweenTimeline
 {
     /// <summary>
-    /// シリアライズフィールドで特定の選択肢を選ぶと、特定のクラスの要素を選ばせるための拡張に必要な属性
-    /// (SerializeReferenceのドロップダウン)
+    /// SerializeReferenceのドロップダウン
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class SelectableSerializeReferenceAttribute : MultiPropertyAttribute, IMultiPropertyGUIAttribute

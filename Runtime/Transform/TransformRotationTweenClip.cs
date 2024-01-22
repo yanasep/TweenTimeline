@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -13,14 +12,15 @@ namespace TweenTimeline
     [DisplayName("Rotation Tween")]
     public class TransformRotationTweenClip : TweenClip<Transform>
     {
-        [SerializeReference, SelectableSerializeReference] 
+        [SerializeReference, SelectableSerializeReference]
         private TweenTimelineExpressionVector3 EndValue = new TweenTimelineExpressionVector3Constant();
-        
+
         [SerializeField] private EaseOrCurve Ease;
-        
+
         [SerializeReference, SelectableSerializeReference]
         private TweenTimelineExpressionBool IsLocal = new TweenTimelineExpressionBoolConstant();
 
+        /// <inheritdoc/>
         public override Tween CreateTween(TweenClipInfo<Transform> info)
         {
             if (IsLocal.Evaluate(info.Parameter))

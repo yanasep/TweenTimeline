@@ -3,11 +3,15 @@ using UnityEditor.Timeline;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-namespace TweenTimeline
+namespace TweenTimeline.Editor
 {
+    /// <summary>
+    /// SubTweenClipのクリップエディタ
+    /// </summary>
     [CustomTimelineEditor(typeof(SubTweenClip))]
     public class SubTweenClipEditor : ClipEditor
     {
+        /// <inheritdoc/>
         public override void OnCreate(TimelineClip clip, TrackAsset track, TimelineClip clonedFrom)
         {
             var asset = (SubTweenClip)clip.asset;
@@ -28,6 +32,7 @@ namespace TweenTimeline
             }
         }
 
+        /// <inheritdoc/>
         public override void GetSubTimelines(TimelineClip clip, PlayableDirector director, List<PlayableDirector> subTimelines)
         {
             var asset = (SubTweenClip)clip.asset;

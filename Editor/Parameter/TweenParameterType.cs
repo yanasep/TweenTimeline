@@ -1,4 +1,4 @@
-﻿namespace TweenTimeline
+﻿namespace TweenTimeline.Editor
 {
     public enum TweenParameterType
     {

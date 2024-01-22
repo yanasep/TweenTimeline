@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace TweenTimeline
+namespace TweenTimeline.Editor
 {
     /// <summary>
     /// TweenParameterのエディタ用Utility

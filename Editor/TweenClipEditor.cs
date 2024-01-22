@@ -3,6 +3,9 @@ using UnityEngine.Timeline;
 
 namespace TweenTimeline.Editor
 {
+    /// <summary>
+    /// TweenClipのクリップエディタ
+    /// </summary>
     [CustomTimelineEditor(typeof(TweenClip))]
     public class TweenClipEditor : ClipEditor
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace Yanasep
+namespace TweenTimeline
 {
     /// <summary>
     /// 他のフィールドの値を条件として有効状態を切り替える

@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Yanasep
+namespace TweenTimeline
 {
     /// <summary>
     /// 複数のフラグをまとめて管理するクラスのベース

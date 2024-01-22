@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace TweenTimeline
 {
+    /// <summary>
+    /// EaseかAnimationCurve
+    /// </summary>
     [Serializable]
     public struct EaseOrCurve
     {
@@ -19,12 +22,12 @@ namespace TweenTimeline
     {
         private readonly string[] options = { "Ease", "Curve" };
         private const float PopupWidth = 60;
-        
+
         /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             using var _ = new EditorGUI.PropertyScope(position, label, property);
-            
+
             var easeProp = property.FindPropertyRelative(nameof(EaseOrCurve.Ease));
             var curveProp = property.FindPropertyRelative(nameof(EaseOrCurve.Curve));
             var isCurveProp = property.FindPropertyRelative(nameof(EaseOrCurve.UseAnimationCurve));

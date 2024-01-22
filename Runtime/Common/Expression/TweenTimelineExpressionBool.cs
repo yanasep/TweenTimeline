@@ -1,8 +1,6 @@
 using System;
 using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -22,8 +20,8 @@ namespace TweenTimeline
     [SelectableSerializeSingleLine(nameof(Value))]
     public class TweenTimelineExpressionBoolConstant : TweenTimelineExpressionBool
     {
-        [FormerlySerializedAs("Val")] public bool Value;
-        
+        public bool Value;
+
         public TweenTimelineExpressionBoolConstant() { }
         public TweenTimelineExpressionBoolConstant(bool value) => Value = value;
 
@@ -42,7 +40,7 @@ namespace TweenTimeline
     [SelectableSerializeSingleLine(nameof(ParameterId))]
     public class TweenTimelineExpressionBoolParameter : TweenTimelineExpressionBool
     {
-        [TweenParameterIdField(typeof(bool))] 
+        [TweenParameterIdField(typeof(bool))]
         public uint ParameterId;
 
         /// <inheritdoc/>
@@ -59,12 +57,12 @@ namespace TweenTimeline
     [DisplayName("And")]
     public class TweenTimelineExpressionBoolAnd : TweenTimelineExpressionBool, ISerializationCallbackReceiver
     {
-        [SerializeReference, SelectableSerializeReference] 
+        [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionBool Left;
-        
-        [SerializeReference, SelectableSerializeReference] 
+
+        [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionBool Right;
-        
+
         /// <inheritdoc/>
         public override bool Evaluate(TweenParameter parameter)
         {
@@ -123,9 +121,9 @@ namespace TweenTimeline
     [DisplayName("Not")]
     public class TweenTimelineExpressionBoolNot : TweenTimelineExpressionBool, ISerializationCallbackReceiver
     {
-        [SerializeReference, SelectableSerializeReference] 
+        [SerializeReference, SelectableSerializeReference]
         public TweenTimelineExpressionBool Value;
-        
+
         /// <inheritdoc/>
         public override bool Evaluate(TweenParameter parameter)
         {

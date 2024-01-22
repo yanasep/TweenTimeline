@@ -84,7 +84,6 @@ namespace TweenTimeline.Editor
             var parameterTrack = TweenTimelineUtility.FindTweenParameterTrack(timelineAsset);
             if (parameterTrack == null) return;
             var attr = (TweenParameterIdFieldAttribute)attribute;
-            // _parameters = paramList.Select(x => (x.ParameterId, x.ParameterName)).Prepend((0u, EmptyValue)).ToArray();
             _parameters = parameterTrack.GetEntriesOfType(attr.ParameterType).Select(x => (x.ParameterId, x.ParameterName)).ToArray();
         }
 

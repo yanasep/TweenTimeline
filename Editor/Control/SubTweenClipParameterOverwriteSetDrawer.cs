@@ -54,13 +54,13 @@ namespace TweenTimeline.Editor
                 var entry = _paramTrack.GetEntry(data.BindingData.ParameterId);
                 var targetExists = entry != null;
                 elem.Q<Label>("parameter-name").text = targetExists ? entry.ParameterName : "Target Parameter is missing";
-                SetElementVisible(elem.Q("parameter-name-warning"), !targetExists);
+                elem.Q("parameter-name-warning").SetVisible(!targetExists);
                 var expressionField = elem.Q<PropertyField>("expression");
                 // expressionの型とentryの型が違う場合はtype mismatch表示
                 var typeWarningElem = elem.Q("warning");
                 var isTypeOk = !targetExists || data.BindingData.TargetParameterType == _paramTrack.GetParameterType(data.BindingData.ParameterId);
-                SetElementVisible(expressionField, isTypeOk);
-                SetElementVisible(typeWarningElem, !isTypeOk);
+                expressionField.SetVisible(isTypeOk);
+                typeWarningElem.SetVisible(!isTypeOk);
                 if (isTypeOk)
                 {
                     var expressionProperty = property.FindPropertyRelative(listPath)
@@ -77,15 +77,13 @@ namespace TweenTimeline.Editor
             _listView.itemsSource = _viewDataList;
 
             var addButton = root.Q<Button>("add-button");
-            addButton.clicked += () => AddItemAsync(VisualElementUtility.GetScreenPosition(addButton), property, set).Forget();
+            addButton.clicked += () => AddItemAsync(addButton.GetScreenPosition(), property, set).Forget();
             var removeButton = root.Q<Button>("remove-button");
             removeButton.clicked += () => RemoveItem(property, set);
 
             root.TrackPropertyValue(property, OnPropertyValueChanged);
             return root;
         }
-
-        private void SetElementVisible(VisualElement element, bool visible) => element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
 
         /// <summary>
         /// リスト内のプロパティの値変動時

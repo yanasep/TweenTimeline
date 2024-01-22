@@ -1,9 +1,8 @@
 ﻿using System.Linq;
-using Common;
 using UnityEditor;
 using UnityEngine;
 
-namespace Yanasep
+namespace TweenTimeline
 {
     /// <summary>
     /// 複数のPropertyDrawerを同時に描画するためのAttributeのベースクラス
@@ -104,7 +103,7 @@ namespace Yanasep
                 ? GetDefaultHeight()
                 : propertyDrawers.Last().GetPropertyHeight(property, label);
             return height;
-            
+
             float GetDefaultHeight()
             {
                 var drawer = PropertyDrawerUtility.GetPropertyDrawerForField(PropertyDrawerUtility.GetFieldInfo(this));

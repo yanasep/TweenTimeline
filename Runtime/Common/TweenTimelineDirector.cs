@@ -2,7 +2,6 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using Yanasep;
 
 namespace TweenTimeline
 {
@@ -21,16 +20,7 @@ namespace TweenTimeline
         /// <summary>
         /// 再生
         /// </summary>
-        [EditorPlayModeButton("Play")]
-        public Tween Play()
-        {
-            return Play(null);
-        }
-
-        /// <summary>
-        /// 再生
-        /// </summary>
-        public Tween Play(SetParameter setParameter)
+        public Tween Play(SetParameter setParameter = null)
         {
             var asset = _director.playableAsset as TimelineAsset;
             if (asset == null) return null;
@@ -46,6 +36,9 @@ namespace TweenTimeline
             return tween;
         }
 
+        /// <summary>
+        /// Trackの対象オブジェクトをセット
+        /// </summary>
         public void SetTrackBinding(PlayableAsset timelineAsset, string trackName, Object value)
         {
             foreach (var trackBinding in timelineAsset.outputs)
@@ -58,6 +51,9 @@ namespace TweenTimeline
             }
         }
 
+        /// <summary>
+        /// Trackの対象オブジェクトを取得
+        /// </summary>
         public Object GetTrackBinding(PlayableAsset timelineAsset, string trackName)
         {
             foreach (var trackBinding in timelineAsset.outputs)

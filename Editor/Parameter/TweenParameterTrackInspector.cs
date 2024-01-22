@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using TweenTimeline.Editor;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace TweenTimeline
+namespace TweenTimeline.Editor
 {
     /// <summary>
     /// TweenParameterTrackのインスペクター
@@ -31,7 +30,6 @@ namespace TweenTimeline
             public TweenParameterTrack.ParameterSetEntry BindingData;
         }
 
-
         private void OnEnable()
         {
             _track = (TweenParameterTrack)target;
@@ -50,6 +48,7 @@ namespace TweenTimeline
             _listView.RefreshItems();
         }
 
+        /// <inheritdoc/>
         public override VisualElement CreateInspectorGUI()
         {
             var root = new VisualElement();
@@ -85,13 +84,16 @@ namespace TweenTimeline
             };
 
             var addButton = root.Q<Button>("add-button");
-            addButton.clicked += () => AddItemAsync(VisualElementUtility.GetScreenPosition(addButton)).Forget();
+            addButton.clicked += () => AddItemAsync(addButton.GetScreenPosition()).Forget();
             var removeButton = root.Q<Button>("remove-button");
             removeButton.clicked += () => RemoveItem();
 
             return root;
         }
 
+        /// <summary>
+        /// Parameter追加
+        /// </summary>
         private async UniTask AddItemAsync(Vector2 position)
         {
             var type = await EnumSearchWindow.OpenAsync<TweenParameterType>("Type", new SearchWindowContext(position));
@@ -108,11 +110,12 @@ namespace TweenTimeline
 
             // focus added item
             _listView.selectedIndex = _viewDataList.Count - 1;
-            var elem = _listView.Q(className: "unity-collection-view__item--selected");
-            var text = elem.Q<TextField>();
-            text.Focus();
+            _listView.GetSelectedItem().Q<TextField>().Focus();
         }
 
+        /// <summary>
+        /// Parameter削除
+        /// </summary>
         private void RemoveItem()
         {
             Undo.RecordObject(_track, "Remove Tween Parameter");
@@ -142,8 +145,12 @@ namespace TweenTimeline
             }
         }
 
+        /// <summary>
+        /// ParameterType変更時
+        /// </summary>
         private void OnParamTypeChange(ChangeEvent<Enum> evt, EntryViewData data)
         {
+            // データ側に反映
             Undo.RecordObject(_track, "Change Tween Parameter Type");
             var newType = (TweenParameterType)evt.newValue;
             var prevData = data.BindingData;
@@ -154,6 +161,9 @@ namespace TweenTimeline
             _listView.RefreshItems();
         }
 
+        /// <summary>
+        /// データ変更時
+        /// </summary>
         private void OnDataChanged()
         {
             serializedObject.ApplyModifiedProperties();
@@ -161,6 +171,9 @@ namespace TweenTimeline
             EditorUtility.SetDirty(target);
         }
 
+        /// <summary>
+        /// シリアライズされているデータを表示用データリストに格納
+        /// </summary>
         private void GatherEntryViewData()
         {
             _viewDataList.Clear();

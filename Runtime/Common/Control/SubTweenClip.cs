@@ -8,7 +8,6 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using Yanasep;
 
 namespace TweenTimeline
 {

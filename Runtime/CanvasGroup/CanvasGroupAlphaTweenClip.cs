@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using DG.Tweening;
 using UnityEngine;
-using Yanasep;
 
 namespace TweenTimeline
 {

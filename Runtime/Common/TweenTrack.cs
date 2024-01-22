@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using Common;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -12,14 +11,14 @@ namespace TweenTimeline
     /// <summary>
     /// TweenTimelineのTrackのベースクラス
     /// </summary>
-    public abstract class TweenTrack : TrackAsset 
+    public abstract class TweenTrack : TrackAsset
     {
 #if UNITY_EDITOR
         /// <summary>Trackのアイコン</summary>
         /// <remarks>ビルトインアイコン： https://github.com/halak/unity-editor-icons</remarks>
-        public virtual Texture2D Icon => null;  
+        public virtual Texture2D Icon => null;
 #endif
-        
+
         public abstract Tween CreateTween(CreateTweenArgs args);
 
         public ClipInputs GetClipInputs()
@@ -34,7 +33,7 @@ namespace TweenTimeline
             return inputs;
         }
     }
-    
+
     /// <summary>
     /// TweenTimelineのTrackのベースクラス
     /// </summary>
@@ -45,12 +44,12 @@ namespace TweenTimeline
 
         public virtual TweenCallback GetStartCallback(CreateTweenArgs args) => null;
         public virtual TweenCallback GetKillCallback(CreateTweenArgs args) => null;
-        
+
         public override Tween CreateTween(CreateTweenArgs args)
         {
             var target = args.Binding as TBinding;
             if (target == null) return null;
-            
+
             var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
             var startCallback = GetStartCallback(args);
@@ -115,7 +114,7 @@ namespace TweenTimeline
             playable.GetBehaviour().Tween = tween;
             return playable;
         }
-        
+
         /// <inheritdoc/>
         protected override void OnCreateClip(TimelineClip clip)
         {
@@ -125,11 +124,11 @@ namespace TweenTimeline
             if (attr != null)
             {
                 clip.displayName = attr.DisplayName;
-            }      
+            }
 #endif
         }
     }
-    
+
     /// <summary>
     /// TweenTimelineのMixerBehaviour
     /// </summary>
@@ -146,7 +145,7 @@ namespace TweenTimeline
 
         /// <inheritdoc/>
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
-        {   
+        {
             var trackTime = (float)GetTrackTime(playable.GetTime(), playable.GetGraph().GetRootPlayable(0).GetDuration());
             Tween.GotoWithCallbacks(trackTime);
         }
@@ -155,7 +154,7 @@ namespace TweenTimeline
         public override void OnPlayableDestroy(Playable playable)
         {
             Tween.Kill();
-            
+
             // NOTE: EditModeだと自動でonKillが呼ばれない
             if (!Application.isPlaying)
             {

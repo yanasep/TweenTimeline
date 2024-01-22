@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using UnityEditor;
 using UnityEngine;
 
-namespace Yanasep
+namespace TweenTimeline
 {
     public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {

@@ -12,7 +12,7 @@ namespace TweenTimeline
         /// <summary>
         /// PlayableAssetをTweenに変換
         /// </summary>
-        public static Tween CreateTween(TimelineAsset timelineAsset, PlayableDirector director, 
+        public static Tween CreateTween(TimelineAsset timelineAsset, PlayableDirector director,
             TweenTimelineDirector.SetParameter setParameter)
         {
             var sequence = DOTween.Sequence();
@@ -38,12 +38,18 @@ namespace TweenTimeline
             return sequence;
         }
 
+        /// <summary>
+        /// 再生時用のParameterを取得
+        /// </summary>
         public static TweenParameter GetTweenParameter(TimelineAsset timelineAsset)
         {
             var track = FindTweenParameterTrack(timelineAsset);
             return track == null ? new TweenParameter() : track.GetParameter();
         }
 
+        /// <summary>
+        /// TweenParameterTrackを検索
+        /// </summary>
         public static TweenParameterTrack FindTweenParameterTrack(TimelineAsset timelineAsset)
         {
             if (timelineAsset == null) return null;
