@@ -1,5 +1,105 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7563305830609674702
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dcaa03517b340f8921b2fc9fdfba81b, type: 3}
+  m_Name: Graphic Color Tween Track
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: 6227992028369362517}
+    m_Duration: 0.5
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -7563305830609674702}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0
+    m_BlendOutDuration: 0
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: Color Tween
+  m_Markers:
+    m_Objects: []
+  _: 0
+  SetStartValue: 0
+  StartValue: {r: 1, g: 1, b: 1, a: 1}
+  Enable:
+    R: 1
+    G: 1
+    B: 1
+    A: 1
 --- !u!114 &-6530884999628997347
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -213,14 +313,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
-  m_Name: image
+  m_Name: Image
   m_EditorClassIdentifier: 
   m_Version: 0
   m_Tracks:
-  - {fileID: 4287265995330963090}
-  - {fileID: -6530884999628997347}
-  - {fileID: 3157135642668552279}
-  - {fileID: -6380217924902268502}
+  - {fileID: -7563305830609674702}
+  - {fileID: 7707759536817346590}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
@@ -434,6 +532,41 @@ MonoBehaviour:
       type: {class: TweenTimelineExpressionVector3Parameter, ns: TweenTimeline, asm: TweenTimeline}
       data:
         ParameterId: 1109465864
+--- !u!114 &6227992028369362517
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8bac25d783841c0b3cdfe99f9e83788, type: 3}
+  m_Name: GraphicColorTweenClip
+  m_EditorClassIdentifier: 
+  EndValue:
+    rid: 5631687917066780749
+  Enable:
+    R: 1
+    G: 1
+    B: 1
+    A: 1
+  Ease:
+    Ease: 0
+    UseAnimationCurve: 0
+    Curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  references:
+    version: 2
+    RefIds:
+    - rid: 5631687917066780749
+      type: {class: TweenTimelineExpressionColorParameter, ns: TweenTimeline, asm: TweenTimeline}
+      data:
+        ParameterId: 479222094
 --- !u!114 &7520979954351297163
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -464,3 +597,36 @@ MonoBehaviour:
       type: {class: TweenTimelineExpressionIntConstant, ns: TweenTimeline, asm: TweenTimeline}
       data:
         Value: 50
+--- !u!114 &7707759536817346590
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d3d779e34f44098c3f5abfdd751155, type: 3}
+  m_Name: Tween Parameter Track
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips: []
+  m_Markers:
+    m_Objects: []
+  floats: []
+  ints: []
+  bools: []
+  vector3s: []
+  vector2s: []
+  colors:
+  - ParameterId: 479222094
+    ParameterName: aa
+    ViewIndex: 0
+    Value: {r: 0.23357056, g: 0.9169811, b: 0.25742513, a: 1}

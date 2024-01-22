@@ -1,15 +1,7 @@
 {
-    "name": "TweenTimeline.Editor",
+    "name": "TweenTimeline.Utilities.Editor",
     "rootNamespace": "",
-    "references": [
-        "TweenTimeline",
-        "TweenTimeline.Utilities",
-        "TweenTimeline.Utilities.Editor",
-        "Unity.Timeline",
-        "Unity.Timeline.Editor",
-        "Unity.TextMeshPro",
-        "UniTask"
-    ],
+    "references": [],
     "includePlatforms": [
         "Editor"
     ],
