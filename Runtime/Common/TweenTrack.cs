@@ -19,6 +19,12 @@ namespace TweenTimeline
         public virtual Texture2D Icon => null;
 #endif
 
+        // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
+        [SerializeField, ReadOnly] private byte _;
+
+        protected virtual TweenCallback GetStartCallback(CreateTweenArgs args) => null;
+        protected virtual TweenCallback GetKillCallback(CreateTweenArgs args) => null;
+
         public abstract Tween CreateTween(CreateTweenArgs args);
 
         public ClipInputs GetClipInputs()
@@ -32,6 +38,19 @@ namespace TweenTimeline
 
             return inputs;
         }
+
+        /// <inheritdoc/>
+        protected override void OnCreateClip(TimelineClip clip)
+        {
+            base.OnCreateClip(clip);
+#if UNITY_EDITOR
+            var attr = clip.asset.GetType().GetCustomAttribute<System.ComponentModel.DisplayNameAttribute>(inherit: true);
+            if (attr != null)
+            {
+                clip.displayName = attr.DisplayName;
+            }
+#endif
+        }
     }
 
     /// <summary>
@@ -39,12 +58,6 @@ namespace TweenTimeline
     /// </summary>
     public abstract class TweenTrack<TBinding> : TweenTrack where TBinding : Object
     {
-        // Unityの不具合？でTrackの最初のfoldoutが表示されないっぽいので適当なフィールドで回避
-        [SerializeField, ReadOnly] private byte _;
-
-        public virtual TweenCallback GetStartCallback(CreateTweenArgs args) => null;
-        public virtual TweenCallback GetKillCallback(CreateTweenArgs args) => null;
-
         public override Tween CreateTween(CreateTweenArgs args)
         {
             var target = args.Binding as TBinding;
@@ -114,18 +127,72 @@ namespace TweenTimeline
             playable.GetBehaviour().Tween = tween;
             return playable;
         }
+    }
+
+    /// <summary>
+    /// TweenTimelineのTrackのベースクラス
+    /// </summary>
+    public abstract class TweenTrackNoBinding : TweenTrack
+    {
+        public override Tween CreateTween(CreateTweenArgs args)
+        {
+            var sequence = DOTween.Sequence().Pause().SetAutoKill(false);
+
+            var startCallback = GetStartCallback(args);
+            if (startCallback != null)
+            {
+                sequence.AppendCallback(startCallback);
+            }
+
+            double currentTime = 0;
+            foreach (var clip in GetClips())
+            {
+                // interval
+                var tweenClip = (TweenClipNoBinding)clip.asset;
+                float interval = (float)(clip.start - currentTime);
+                currentTime = clip.start + clip.duration;
+                if (interval > 0) sequence.AppendInterval(interval);
+
+                var tweenClipInfo = new TweenClipInfo
+                {
+                    Duration = (float)clip.duration,
+                    Parameter = args.Parameter
+                };
+                var tween = tweenClip.CreateTween(tweenClipInfo);
+                if (tween != null)
+                {
+                    sequence.Append(tween);
+                }
+            }
+
+            var remain = duration - currentTime;
+            if (remain > 0)
+            {
+                sequence.AppendInterval((float)remain);
+            }
+
+            var killCallback = GetKillCallback(args);
+            if (killCallback != null)
+            {
+                sequence.OnKill(GetKillCallback(args));
+            }
+
+            return sequence;
+        }
 
         /// <inheritdoc/>
-        protected override void OnCreateClip(TimelineClip clip)
+        public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
-            base.OnCreateClip(clip);
-#if UNITY_EDITOR
-            var attr = clip.asset.GetType().GetCustomAttribute<System.ComponentModel.DisplayNameAttribute>(inherit: true);
-            if (attr != null)
+            var parameter = TweenTimelineUtility.GetTweenParameter(timelineAsset);
+            var tween = CreateTween(new CreateTweenArgs
             {
-                clip.displayName = attr.DisplayName;
-            }
-#endif
+                Parameter = parameter,
+                Duration = (float)timelineAsset.duration
+            });
+            if (tween == null) return base.CreateTrackMixer(graph, go, inputCount);
+            var playable = ScriptPlayable<TweenMixerBehaviour>.Create(graph, inputCount);
+            playable.GetBehaviour().Tween = tween;
+            return playable;
         }
     }
 

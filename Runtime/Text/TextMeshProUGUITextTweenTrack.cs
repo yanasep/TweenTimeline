@@ -14,7 +14,7 @@ namespace TweenTimeline
     public class TextMeshProUGUITextTweenTrack : TextMeshProUGUITweenTrack
     {        
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(CreateTweenArgs args)
+        protected override TweenCallback GetStartCallback(CreateTweenArgs args)
         {
             var target = (TextMeshProUGUI)args.Binding;
             return () =>
@@ -24,7 +24,7 @@ namespace TweenTimeline
         }
 
         /// <inheritdoc/>
-        public override TweenCallback GetKillCallback(CreateTweenArgs args)
+        protected override TweenCallback GetKillCallback(CreateTweenArgs args)
         {
             var target = (TextMeshProUGUI)args.Binding;
             return () =>

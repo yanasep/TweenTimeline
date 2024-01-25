@@ -23,7 +23,23 @@ namespace TweenTimeline
         public virtual ClipCaps clipCaps => ClipCaps.None;
 
         public abstract Tween CreateTween(TweenClipInfo<TBinding> info);
-        
+
+        public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
+    /// タイムラインTweenクリップ
+    /// </summary>
+    [Serializable]
+    public abstract class TweenClipNoBinding : TweenClip, ITimelineClipAsset
+    {
+        public virtual ClipCaps clipCaps => ClipCaps.None;
+
+        public abstract Tween CreateTween(TweenClipInfo info);
+
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             return default;

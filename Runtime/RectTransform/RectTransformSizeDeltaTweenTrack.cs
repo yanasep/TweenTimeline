@@ -26,7 +26,7 @@ namespace TweenTimeline
         public TweenTimelineExpressionVector2 StartValue = new TweenTimelineExpressionVector2Constant { Value = Vector3.zero };
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(CreateTweenArgs args)
+        protected override TweenCallback GetStartCallback(CreateTweenArgs args)
         {
             if (!SetStartValue) return null;
 

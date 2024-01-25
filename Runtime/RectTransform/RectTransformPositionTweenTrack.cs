@@ -30,7 +30,7 @@ namespace TweenTimeline
         public RectTransformTweenPositionType PositionType;
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(CreateTweenArgs args)
+        protected override TweenCallback GetStartCallback(CreateTweenArgs args)
         {
             if (!SetStartValue) return null;
 

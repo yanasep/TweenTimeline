@@ -26,7 +26,7 @@ namespace TweenTimeline
         [SerializeField] private TweenTimelineExpressionVector3 startValue = new TweenTimelineExpressionVector3Constant();
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(CreateTweenArgs args)
+        protected override TweenCallback GetStartCallback(CreateTweenArgs args)
         {
             if (!setStartValue) return null;
             var target = (RectTransform)args.Binding;

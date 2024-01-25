@@ -27,7 +27,7 @@ namespace TweenTimeline
         public TweenTimelineExpressionVector3 StartValue = new TweenTimelineExpressionVector3Constant(Vector3.one);
 
         /// <inheritdoc/>
-        public override TweenCallback GetStartCallback(CreateTweenArgs args)
+        protected override TweenCallback GetStartCallback(CreateTweenArgs args)
         {
             if (!SetStartValue) return null;
             var target = (RectTransform)args.Binding;
