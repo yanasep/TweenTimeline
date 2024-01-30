@@ -39,6 +39,7 @@ namespace TweenTimeline
         public List<ParameterSetEntry<Vector3>> vector3s;
         public List<ParameterSetEntry<Vector2>> vector2s;
         public List<ParameterSetEntry<Color>> colors;
+        public List<ParameterSetEntry<object>> objects;
 
         private uint GenerateParameterId()
         {
@@ -84,6 +85,7 @@ namespace TweenTimeline
             if (TryFind(vector3s, parameterId, out _)) return typeof(Vector3); 
             if (TryFind(vector2s, parameterId, out _)) return typeof(Vector2); 
             if (TryFind(colors, parameterId, out _)) return typeof(Color);
+            if (TryFind(objects, parameterId, out _)) return typeof(object);
             Debug.LogWarning($"parameter not found {parameterId}");
             return null;
         }
@@ -114,6 +116,7 @@ namespace TweenTimeline
             if (TryFind(vector3s, parameterId, out index)) { list = vector3s; return true; }
             if (TryFind(vector2s, parameterId, out index)) { list = vector2s; return true; }
             if (TryFind(colors, parameterId, out index)) { list = colors; return true; }
+            if (TryFind(objects, parameterId, out index)) { list = objects; return true; }
             list = null;
             index = -1;
             return false;
@@ -176,6 +179,7 @@ namespace TweenTimeline
             if (list.Equals(vector3s)) return (nameof(vector3s), index);
             if (list.Equals(vector2s)) return (nameof(vector2s), index);
             if (list.Equals(colors)) return (nameof(colors), index);
+            if (list.Equals(objects)) return (nameof(objects), index);
             return (null, -1);
         }
 
@@ -195,6 +199,7 @@ namespace TweenTimeline
                 var type when type == typeof(Vector3) => vector3s ??= new(),
                 var type when type == typeof(Vector2) => vector2s ??= new(),
                 var type when type == typeof(Color) => colors ??= new(),
+                var type when type == typeof(object) => objects ??= new(),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -214,6 +219,7 @@ namespace TweenTimeline
             if (vector3s != null) result = result.Concat(vector3s);
             if (vector2s != null) result = result.Concat(vector2s);
             if (colors != null) result = result.Concat(colors);
+            if (objects != null) result = result.Concat(objects);
             return result;
         }
 
@@ -229,6 +235,7 @@ namespace TweenTimeline
             Add(vector3s, parameter);
             Add(vector2s, parameter);
             Add(colors, parameter);
+            Add(objects, parameter);
 
             return parameter;
         }

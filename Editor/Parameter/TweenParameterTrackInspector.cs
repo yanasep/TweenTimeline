@@ -65,15 +65,15 @@ namespace TweenTimeline.Editor
                 var (listPropertyPath, listIndex) = _track.GetPropertyPath(data.BindingData.ParameterId);
                 var property = serializedObject.FindProperty(listPropertyPath).GetArrayElementAtIndex(listIndex);
                 (elem as IBindable)!.BindProperty(property);
-                var typeEnumField = elem.Q<EnumField>();
+                var paramTypeField = elem.Q<SearchDropdownField>();
                 var paramType = _track.GetParameterType(data.BindingData);
-                typeEnumField.SetValueWithoutNotify(TweenParameterEditorUtility.TypeToParameterType(paramType));
-                typeEnumField.RegisterCallback<ChangeEvent<Enum>, EntryViewData>(OnParamTypeChange, data);
+                paramTypeField.SetValueWithoutNotify(TweenParameterEditorUtility.TypeToParameterType(paramType));
+                paramTypeField.RegisterCallback<ChangeEvent<string>, EntryViewData>(OnParamTypeChange, data);
             };
             _listView.unbindItem = (elem, _) =>
             {
                 var typeEnumField = elem.Q<EnumField>();
-                typeEnumField.UnregisterCallback<ChangeEvent<Enum>, EntryViewData>(OnParamTypeChange);
+                typeEnumField.UnregisterCallback<ChangeEvent<string>, EntryViewData>(OnParamTypeChange);
             };
             _listView.itemsSource = _viewDataList;
             _listView.itemIndexChanged += (index1, index2) =>
@@ -148,7 +148,7 @@ namespace TweenTimeline.Editor
         /// <summary>
         /// ParameterType変更時
         /// </summary>
-        private void OnParamTypeChange(ChangeEvent<Enum> evt, EntryViewData data)
+        private void OnParamTypeChange(ChangeEvent<string> evt, EntryViewData data)
         {
             // データ側に反映
             Undo.RecordObject(_track, "Change Tween Parameter Type");
@@ -177,16 +177,17 @@ namespace TweenTimeline.Editor
         private void GatherEntryViewData()
         {
             _viewDataList.Clear();
-            AddEntries(_track.floats, nameof(_track.floats), TweenParameterType.Float);
-            AddEntries(_track.ints, nameof(_track.ints), TweenParameterType.Int);
-            AddEntries(_track.bools, nameof(_track.bools), TweenParameterType.Bool);
-            AddEntries(_track.vector3s, nameof(_track.vector3s), TweenParameterType.Vector3);
-            AddEntries(_track.vector2s, nameof(_track.vector2s), TweenParameterType.Vector2);
-            AddEntries(_track.colors, nameof(_track.colors), TweenParameterType.Color);
+            AddEntries(_track.floats);
+            AddEntries(_track.ints);
+            AddEntries(_track.bools);
+            AddEntries(_track.vector3s);
+            AddEntries(_track.vector2s);
+            AddEntries(_track.colors);
+            AddEntries(_track.objects);
             _viewDataList.Sort((a, b) => a.BindingData.ViewIndex.CompareTo(b.BindingData.ViewIndex));
             return;
 
-            void AddEntries<T>(List<TweenParameterTrack.ParameterSetEntry<T>> entries, string listName, TweenParameterType parameterType)
+            void AddEntries<T>(List<TweenParameterTrack.ParameterSetEntry<T>> entries)
             {
                 if (entries == null) return;
                 for (int i = 0; i < entries.Count; i++)
