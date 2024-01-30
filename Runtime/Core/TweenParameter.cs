@@ -14,6 +14,7 @@ namespace TweenTimeline
         private readonly Dictionary<uint, Vector3> vector3s = new();
         private readonly Dictionary<uint, Vector2> vector2s = new();
         private readonly Dictionary<uint, Color> colors = new();
+        private readonly Dictionary<uint, object> objects = new();
 
         private readonly Dictionary<string, uint> nameToIdDic = new();
 
@@ -74,6 +75,7 @@ namespace TweenTimeline
             vector3s.Clear();
             vector2s.Clear();
             colors.Clear();
+            objects.Clear();
             nameToIdDic.Clear();
         }
 
@@ -101,6 +103,8 @@ namespace TweenTimeline
         public void SetColor(string parameterName, Color value) => SetParameter(colors, parameterName, value);
         public Color GetColor(uint parameterId) => GetParameterOrDefault(colors, parameterId, Color.white);
         public Color GetColor(string parameterName) => GetParameterOrDefault(colors, parameterName, Color.white);
+        public object GetObject(uint parameterId) => GetParameterOrDefault(objects, parameterId);
+        public object GetObject(string parameterName) => GetParameterOrDefault(objects, parameterName);
 
         internal void AddParameter<T>(uint parameterId, string parameterName, T value)
         {
@@ -137,6 +141,10 @@ namespace TweenTimeline
             else if (typeof(T) == typeof(Color))
             {
                 return colors as Dictionary<uint, T>;
+            }
+            else if (typeof(T) == typeof(object))
+            {
+                return objects as Dictionary<uint, T>;
             }
             else
             {
